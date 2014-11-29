@@ -1,0 +1,48 @@
+上网搜一些入门资料吧，下面只是快速入门
+
+【准备工作】
+http://www.th7.cn/Program/java/201308/146930.shtml 教程
+首先安装git，下面介绍的是gitbash的使用方法（也就是命令行的形式）
+注册github账号，然后告诉大家你的账号是啥，给你添加权限
+
+
+【我想下载】
+
+启动gitbash，cd到你想放的路径下，键入以下内容下载工程：
+“git clone git@github.com:zhouzhaoping/iMap.git”
+不用ssh则git clone git://github.com/ZHAOTING/WebDataMining_Kaggle.git
+
+【我要修改工程】
+
+做你想做的事情，任何修改删除添加等等，但要考虑后果。能够上传的标准以编译没有错误为准。
+
+做完了我想上传怎么办？则按照以下步骤：
+1、启动gitbash，cd到工程里
+2、键入“git pull”更新到最新版
+	如果提示你CONFLICT，那么你需要手动更改冲突，发生冲突的地方会自动在冲突的文件里帮你添加=====、<<<<、>>>>一类的符号表明冲突。你直接去修改就行。然后merge
+3、键入“git status”查看你做了哪些修改，之后它会提示你一些信息：
+	提示你modify、add了哪些文件 --> 此时键入“git add .”确认所有添加修改
+	提示你delete了哪些文件 --> 此时键入“git rm filename”删除某些文件
+4、键入“git commit”添加commit记录你更改的内容 -m "XXXX"
+5、键入“git push”上传
+
+
+【可能出现的问题】
+key-gen、ssh、需要外网
+这些都可以上网找到相应解决方法
+
+
+【新建上传】
+touch README.md
+git init
+git add README.md
+git commit -m "first commit"
+git remote add origin https://github.com/zhouzhaoping/RhythmPi.git
+git push -u origin master
+
+
+【gitignore之前不小心上传】
+git rm --cached filename
+
+【远程代码强行覆盖本地代码】
+git pull origin master
