@@ -14,7 +14,7 @@ public class WelcomeActivity extends Activity {
 	 public void onCreate(Bundle savedInstanceState) {
 	 super.onCreate(savedInstanceState);
 	 setContentView(R.layout.activity_welcome);
-	 autoSwitch(2);	 
+	 autoSwitch(3);	 
 	}
 	 
 	private void autoSwitch(int second)
@@ -24,7 +24,8 @@ public class WelcomeActivity extends Activity {
 			 @Override
 			 public void run() {
 				  Intent intent = new Intent();
-				  intent.setClass(WelcomeActivity.this, MainActivity.class);
+				  //TODO:如果填了用户名和密码就直接登陆
+				  intent.setClass(WelcomeActivity.this, LoginActivity.class);
 				  startActivity(intent);				  
 				  WelcomeActivity.this.finish();				  
 			 }
