@@ -11,12 +11,15 @@ import com.baidu.mapapi.model.LatLng;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 
 public class MainActivity extends Activity {
 
+	long firstTime=0;
 	private MapView mMapView;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -84,4 +87,20 @@ public class MainActivity extends Activity {
 	        //在activity执行onPause时执行mMapView. onPause ()，实现地图生命周期管理  
 	        mMapView.onPause();  
 	        }  
+	    
+	    @Override 
+	    public boolean onKeyUp(int keyCode, KeyEvent event) { 
+	        if (keyCode == KeyEvent.KEYCODE_BACK) { 
+	            long secondTime = System.currentTimeMillis(); 
+	            if (secondTime - firstTime > 1600) {//如果两次按键时间间隔大于1600毫秒，则不退出 
+	                Toast.makeText(MainActivity.this, "再按一次退出程序...", 
+	                        Toast.LENGTH_SHORT).show(); 
+	                firstTime = secondTime;//更新firstTime 
+	                return true; 
+	            } else { 
+	                System.exit(0);//否则退出程序 
+	            } 
+	        } 
+	        return super.onKeyUp(keyCode, event); 
+	    } 
 }
