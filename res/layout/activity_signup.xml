@@ -7,14 +7,27 @@
     android:gravity="center"
     android:layout_gravity="center_horizontal">
   
+    
+   	
     <ImageView 
         android:id="@+id/facepic"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
-        android:src="@drawable/face"/>
-    
+        android:src="@drawable/face0"/>
+	
+     <Button
+        android:id="@+id/face_button"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="100dp"
+        android:layout_marginRight="100dp"
+        android:background="@drawable/face_change"/>
+	    
+
     <LinearLayout
         android:layout_width="match_parent"
     	android:layout_height="wrap_content"

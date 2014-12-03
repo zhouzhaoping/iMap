@@ -16,6 +16,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -29,6 +30,9 @@ public class SignupActivity extends Activity {
 	}
 	 
 	 long firstTime=0;
+	 int facenum = 0;
+	 private ImageView view_face;
+	 private Button face_button;
 	 private Button button_comfirm;
 	 private Button button_cancle;
 	 private EditText view_username;
@@ -37,6 +41,8 @@ public class SignupActivity extends Activity {
 	 	 
 	 private void findViews()
 	 {
+		 view_face = (ImageView) findViewById(R.id.facepic);
+		 face_button = (Button) findViewById(R.id.face_button);
 		 button_comfirm = (Button) findViewById(R.id.signup_button);
 		 button_cancle = (Button) findViewById(R.id.cancle_button);
 		 view_username = (EditText) findViewById(R.id.username_edit);
@@ -47,9 +53,19 @@ public class SignupActivity extends Activity {
 	 }
 	 
 	 private void setListensers() {
+		 face_button.setOnClickListener(faceListener);
 		 button_comfirm.setOnClickListener(comfirmListener);
 		 button_cancle.setOnClickListener(cancleListener);
 	 }
+	 
+	 private Button.OnClickListener faceListener = new Button.OnClickListener()
+	 {
+		  public void onClick(View v)
+		 {
+			  facenum = (facenum + 1) % 8;
+			  view_face.setImageResource(LoginActivity.picId[facenum]);
+		 }
+	 };
 	 
 	 private Button.OnClickListener comfirmListener = new Button.OnClickListener()
 	 {
@@ -77,6 +93,7 @@ public class SignupActivity extends Activity {
 				  Editor editor = sp.edit();
 				  editor.putString("username", username);
 				  editor.putString("password", password);
+				  editor.putInt("face", facenum);
 				  editor.commit();
 				  
 				  Intent intent = new Intent();
@@ -111,12 +128,16 @@ public class SignupActivity extends Activity {
 	        if (keyCode == KeyEvent.KEYCODE_BACK) { 
 	            long secondTime = System.currentTimeMillis(); 
 	            if (secondTime - firstTime > 1600) {//如果两次按键时间间隔大于1600毫秒，则不退出 
-	                Toast.makeText(SignupActivity.this, "再按一次退出程序...", 
+	                Toast.makeText(SignupActivity.this, "再按一次退出注册...", 
 	                        Toast.LENGTH_SHORT).show(); 
 	                firstTime = secondTime;//更新firstTime 
 	                return true; 
 	            } else { 
-	                System.exit(0);//否则退出程序 
+					Intent intent = new Intent();
+					intent.setClass(SignupActivity.this, LoginActivity.class);				  
+					startActivity(intent);
+					SignupActivity.this.finish();
+	            	//System.exit(0);//否则退出程序 
 	            } 
 	        } 
 	        return super.onKeyUp(keyCode, event); 

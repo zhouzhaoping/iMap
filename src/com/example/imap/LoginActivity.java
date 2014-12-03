@@ -15,6 +15,7 @@ import android.view.KeyEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -28,6 +29,8 @@ public class LoginActivity extends Activity {
 	}
 	 
 	 long firstTime=0;
+	 private ImageView view_face;
+	 static int picId[] = {R.drawable.face0, R.drawable.face1, R.drawable.face2, R.drawable.face3, R.drawable.face4, R.drawable.face5, R.drawable.face6, R.drawable.face7};
 	 private Button button_login;
 	 private Button button_tosignup;
 	 private EditText view_username;
@@ -35,6 +38,7 @@ public class LoginActivity extends Activity {
 	 	 
 	 private void findViews()
 	 {
+		 view_face = (ImageView) findViewById(R.id.facepic);
 		 button_login = (Button) findViewById(R.id.login_button);
 		 button_tosignup = (Button) findViewById(R.id.tosignup_button);
 		 view_username = (EditText) findViewById(R.id.username_edit);
@@ -44,12 +48,13 @@ public class LoginActivity extends Activity {
 		 SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
 		 String name = sp.getString("username", "");
 		 String pw = sp.getString("password", "");
+		 int facenum = sp.getInt("face", 0);
 		 if (!name.isEmpty() && !pw.isEmpty())
 		 {
 			 view_username.setText(name);
 			 view_password.setText(pw);
 		 }
-			 
+		 view_face.setImageResource(picId[facenum]);
 	 }
 	 
 	 private void setListensers() {
@@ -64,11 +69,18 @@ public class LoginActivity extends Activity {
 			  String username = view_username.getText().toString();
 			  String password = view_password.getText().toString();
 			  
-			  SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-			  Editor editor = sp.edit();
-			  editor.putString("username", username);
-			  editor.putString("password", password);
-			  editor.commit();
+			  if(username.isEmpty() || password.isEmpty())
+				  Toast.makeText(LoginActivity.this, "用户名、密码不能为空！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else
+			  {
+				  SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+				  Editor editor = sp.edit();
+				  editor.putString("username", username);
+				  editor.putString("password", password);
+				  editor.commit();
+			  
+			  }
 			  
 			  //TODO:登陆验证
 			  //NetThread.url = "http://" + username + "/cgi-bin/handler.py";
