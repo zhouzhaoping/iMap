@@ -1,14 +1,17 @@
 package com.example.imap;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
-//import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 
 
+import android.widget.EditText;
+import android.widget.TableLayout;
 import android.widget.Toast;
 
 
@@ -17,7 +20,7 @@ import android.widget.Toast;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
-import android.widget.RadioGroup;
+import android.widget.ImageButton;
 import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.baidu.location.BDLocation;
@@ -33,7 +36,10 @@ import com.baidu.mapapi.map.MapStatusUpdate;
 import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.OverlayOptions;
+import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
@@ -51,7 +57,7 @@ public class MainActivity extends Activity {
 	// UI相关
 		OnCheckedChangeListener radioButtonListener;
 		Button requestLocButton;
-	
+		boolean isFirstLoc = true;// 是否首次定位
 		
 	LocationClient mLocClient;
 	public BDLocationListener myListener = new MyLocationListenner();
@@ -73,13 +79,13 @@ public class MainActivity extends Activity {
 					.direction(100).latitude(location.getLatitude())
 					.longitude(location.getLongitude()).build();
 			mBaiduMap.setMyLocationData(locData);
-			//if (isFirstLoc) {
-			//	isFirstLoc = false;
+			if (isFirstLoc) {
+				isFirstLoc = false;
 				LatLng ll = new LatLng(location.getLatitude(),
 						location.getLongitude());
 				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
 				mBaiduMap.animateMapStatus(u);
-		//	}
+			}
 				//经纬度
 				location.getLatitude();
 				location.getLongitude();
@@ -103,8 +109,7 @@ public class MainActivity extends Activity {
        
       //普通地图  
       mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);  
-      //卫星地图  
-     // mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
+      
       
      
 	/********14-12-03 xj* 定位功能************************************************/ 
@@ -159,87 +164,125 @@ public class MainActivity extends Activity {
 	mLocClient.setLocOption(option_loc);
 	mLocClient.start();
 	
+	//下面要开始添加地理围栏
 	
 	
 	
 	
 	
-	/********************************************************************/
-  /******14-12-02 xj**********************************************************/ 
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+/********************************************************************/
+	
+	
+ /******14-12-03 xj**点击景点，显示语音**********************************************/ 
     //在地图上添加Marker，并显示
   
-   /* markera= (Marker) (mBaiduMap.addOverlay(option));
-    OnMarkerClickListener listener = new OnMarkerClickListener() {  
-        * 
-        * 地图 Marker 覆盖物点击事件监听函数 
-        * @param marker 被点击的 marker 
-        *  
-        public boolean onMarkerClick(final Marker marker){  
-        	 
-        	if(marker == markera)
-        	{
-        	OnInfoWindowClickListener lis = null;
-        	
-			lis = new OnInfoWindowClickListener() {
-				public void onInfoWindowClick() {
-					Button button_default = (Button) findViewById(R.id.button_huatong);
-					
-					final Builder builder_default = new AlertDialog.Builder(null);
-					
-					button_default.setOnClickListener(new View.OnClickListener() {
-						
-						@Override
-						public void onClick(View v) {
-							// TODO 自动生成的方法存根
-							builder_default.setIcon(R.drawable.icon);
-							builder_default.setTitle("自定义对话框");
-							builder_default.setMessage("haha ");
-							builder_default.setPositiveButton("默认",
-								new OnClickListener()
+	BitmapDescriptor ooa = BitmapDescriptorFactory
+			.fromResource(R.drawable.icon);
+	LatLng llA = new LatLng(40.000718, 116.316972);
+	OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+			.zIndex(9).draggable(true);
+    markera= (Marker) (mBaiduMap.addOverlay(option));
+    final Builder builder = new AlertDialog.Builder(this);
+    mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+		public boolean onMarkerClick(final Marker marker) {
+			if(marker == markera)
+			{
+				builder.setIcon(R.drawable.tools);
+				builder.setTitle("选择语音");
+				builder.setMessage("none");
+				builder.setPositiveButton("更多"
+						, new  DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int which)
 							{
-								
-								@Override
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// TODO 自动生成的方法存根
-									EditText show = (EditText) findViewById(R.id.bmapView);
-									show.setText("确定");
-									
-								}
-								});
-							
-							builder_default.setNegativeButton("更多",
-									new OnClickListener()
-								{
-									
-									@Override
-									public void onClick(DialogInterface dialog,
-											int which) {
-										// TODO 自动生成的方法存根
-										EditText show = (EditText) findViewById(R.id.bmapView);
-										show.setText("更多更多");
-										
-									}
-									});
-							builder_default.create().show();
-							
-						}
-					});
-					
-					
-				}
-			};
+							//这里添加默认语音
+							}
+						});
+				builder.setNegativeButton("默认"
+						, new  DialogInterface.OnClickListener()
+						{
+							public void onClick(DialogInterface dialog, int which)
+							{
+							//	这里跳转到语音列表
+							}
+						});
+				builder.create().show();
+			}
 			
-			mBaiduMap.showInfoWindow(mInfoWindow);
-        	}
-        	return true;
-        }  
-    };
-   // listener.onMarkerClick(marker);
-     mBaiduMap.setOnMarkerClickListener(listener);*/
-   
+			return true;
+		}
+    });
     
-  /****************************************************************/     
+ 
+ /****************************************************************/  
+    
+    
+    
+    
+    
+    
+    
+    
+    
+/**********14-12-03 xj* 添加下面5个按钮的选项提示***********************/
+    //添加景点
+    ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+    final Builder alert_viewpoint = new AlertDialog.Builder(this);   
+    button_viewpoint.setOnClickListener(
+    		new View.OnClickListener()
+    		{
+    			
+    			public void onClick(View v)
+    			{
+    				//添加景点处理方法，未完成
+    				
+    				alert_viewpoint.setIcon(R.drawable.viewpoint);
+    				alert_viewpoint.setTitle("添加景点");
+    				
+    				//装载对话框界面布局
+    				TableLayout loginForm = (TableLayout)getLayoutInflater()
+    						.inflate( R.layout.addview, null);
+    				alert_viewpoint.setView(loginForm);
+    				
+    				alert_viewpoint.setPositiveButton("确定"
+    						
+    						, new DialogInterface.OnClickListener()
+    						{
+    							@Override
+    							public void onClick(DialogInterface dialog, int which)
+    							{
+    								//发送增加景点请求
+    							}
+    						});
+    					
+    					builder.setNegativeButton("取消"
+    						,  new DialogInterface.OnClickListener()
+    						{
+    							@Override
+    							public void onClick(DialogInterface dialog, int which)
+    							{
+    								//取消，不做操作
+    							}
+    						});
+    				
+    			
+    				alert_viewpoint.create().show();
+    			}
+    		}
+    	);
+    
+    
+/*************************************************************************/
 	}
 
 	@Override

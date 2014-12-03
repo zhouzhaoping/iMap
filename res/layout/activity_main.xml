@@ -14,20 +14,30 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
     android:stretchColumns="*">
-    
-    <TableRow
-        android:layout_weight="1">
-        <ImageButton
-			android:id="@+id/button_listen"
-			android:layout_column="4"
-			android:layout_width="1dip"
-			android:scaleType="fitCenter"
-			android:src="@drawable/selector" 
-			android:background="#00000000" />
-    </TableRow>
+
+     <TableRow android:layout_weight="1" >
+
+         <ImageButton
+             android:id="@+id/button_listen"
+             android:layout_width="1dip"
+             android:layout_column="4"
+             android:background="#00000000"
+             android:scaleType="fitCenter"
+             android:src="@drawable/selector" />
+
+
+     </TableRow>
    
 	<TableRow
 	    android:layout_weight="1">
+
+		<Button
+		    android:id="@+id/button1"
+		    android:layout_width="wrap_content"
+		    android:layout_height="wrap_content"
+		    
+		    android:layout_marginTop="10dip" />
+	    
     </TableRow>
     
 	<TableRow
@@ -75,13 +85,6 @@
     
 </TableLayout>
 
-  <Button
-        android:id="@+id/button1"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_listen"
-        android:layout_marginRight="25dp"
-        android:layout_marginTop="10dip" />
-  
+      
 
 </FrameLayout>
