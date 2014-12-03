@@ -14,7 +14,9 @@ public class WelcomeActivity extends Activity {
 	 public void onCreate(Bundle savedInstanceState) {
 	 super.onCreate(savedInstanceState);
 	 setContentView(R.layout.activity_welcome);
+
 	 autoSwitch(3);	 
+
 	}
 	 
 	private void autoSwitch(int second)

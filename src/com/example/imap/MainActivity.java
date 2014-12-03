@@ -1,26 +1,94 @@
 package com.example.imap;
 
-import com.baidu.mapapi.SDKInitializer;
-import com.baidu.mapapi.map.BaiduMap;
-import com.baidu.mapapi.map.BitmapDescriptor;
-import com.baidu.mapapi.map.BitmapDescriptorFactory;
-import com.baidu.mapapi.map.MapView;
-import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.OverlayOptions;
-import com.baidu.mapapi.model.LatLng;
-
 import android.app.Activity;
+import android.content.DialogInterface;
+//import android.content.DialogInterface.OnClickListener;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+
+
 import android.widget.Toast;
 
+
+/*定位用import*/
+
+import android.view.View;
+import android.view.View.OnClickListener;
+import android.widget.Button;
+import android.widget.RadioGroup;
+import android.widget.RadioGroup.OnCheckedChangeListener;
+
+import com.baidu.location.BDLocation;
+import com.baidu.location.BDLocationListener;
+import com.baidu.location.LocationClient;
+import com.baidu.location.LocationClientOption;
+import com.baidu.mapapi.SDKInitializer;
+import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BitmapDescriptor;
+import com.baidu.mapapi.map.BitmapDescriptorFactory;
+import com.baidu.mapapi.map.InfoWindow;
+import com.baidu.mapapi.map.MapStatusUpdate;
+import com.baidu.mapapi.map.MapStatusUpdateFactory;
+import com.baidu.mapapi.map.MapView;
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MyLocationConfiguration;
+import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+import com.baidu.mapapi.map.MyLocationData;
+import com.baidu.mapapi.model.LatLng;
+//假如用到位置提醒功能，需要import该类
+//如果使用地理围栏功能，需要import如下类
 
 public class MainActivity extends Activity {
 
 	long firstTime=0;
 	private MapView mMapView;
+	private InfoWindow mInfoWindow;
+	BaiduMap mBaiduMap;
+	Marker markera;
+	/********14-12-03 xj*************************************************/
+	// UI相关
+		OnCheckedChangeListener radioButtonListener;
+		Button requestLocButton;
+	
+		
+	LocationClient mLocClient;
+	public BDLocationListener myListener = new MyLocationListenner();
+	private LocationMode mCurrentMode;
+	BitmapDescriptor mCurrentMarker;
+	/**
+	 * 定位SDK监听函数
+	 */
+	public class MyLocationListenner implements BDLocationListener {
+
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			// map view 销毁后不在处理新接收的位置
+			if (location == null || mMapView == null)
+				return;
+			MyLocationData locData = new MyLocationData.Builder()
+					.accuracy(location.getRadius())
+					// 此处设置开发者获取到的方向信息，顺时针0-360
+					.direction(100).latitude(location.getLatitude())
+					.longitude(location.getLongitude()).build();
+			mBaiduMap.setMyLocationData(locData);
+			//if (isFirstLoc) {
+			//	isFirstLoc = false;
+				LatLng ll = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
+				mBaiduMap.animateMapStatus(u);
+		//	}
+				//经纬度
+				location.getLatitude();
+				location.getLongitude();
+		}
+
+		public void onReceivePoi(BDLocation poiLocation) {
+		}
+	}
+	/********************************************************************/
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -31,23 +99,147 @@ public class MainActivity extends Activity {
 
 		//获取地图控件引用  
         mMapView = (MapView) findViewById(R.id.bmapView);  
-       BaiduMap mBaiduMap = mMapView.getMap();  
+       mBaiduMap = mMapView.getMap();  
        
       //普通地图  
       mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);  
       //卫星地图  
      // mBaiduMap.setMapType(BaiduMap.MAP_TYPE_SATELLITE);
       
-      LatLng point = new LatLng(39.963175, 116.400244);  
-    //构建Marker图标  
-    BitmapDescriptor bitmap = BitmapDescriptorFactory.fromResource(R.drawable.icon);  
-    //构建MarkerOption，用于在地图上添加Marker  
-    OverlayOptions option = new MarkerOptions().position(point).icon(bitmap);  
-    //在地图上添加Marker，并显示  
-    mBaiduMap.addOverlay(option);
-      
-      
-      
+     
+	/********14-12-03 xj* 定位功能************************************************/ 
+      //设置地图缩放级别
+    MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(18.0f);
+	mBaiduMap.animateMapStatus(u);
+    requestLocButton = (Button) findViewById(R.id.button1);
+	mCurrentMode = LocationMode.NORMAL;
+	requestLocButton.setText("普通");  
+	OnClickListener btnClickListener = new OnClickListener() {
+		public void onClick(View v) {
+			switch (mCurrentMode) {
+			case NORMAL:
+				requestLocButton.setText("跟随");
+				mCurrentMode = LocationMode.FOLLOWING;
+				mBaiduMap
+						.setMyLocationConfigeration(new MyLocationConfiguration(
+								mCurrentMode, true, mCurrentMarker));
+				break;
+			case COMPASS:
+				requestLocButton.setText("普通");
+				mCurrentMode = LocationMode.NORMAL;
+				mBaiduMap
+						.setMyLocationConfigeration(new MyLocationConfiguration(
+								mCurrentMode, true, mCurrentMarker));
+				break;
+			case FOLLOWING:
+				requestLocButton.setText("罗盘");
+				mCurrentMode = LocationMode.COMPASS;
+				mBaiduMap
+						.setMyLocationConfigeration(new MyLocationConfiguration(
+								mCurrentMode, true, mCurrentMarker));
+				break;
+			}
+		}
+
+		
+	};
+	requestLocButton.setOnClickListener(btnClickListener);
+	mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
+					mCurrentMode, true, null));
+	
+    // 开启定位图层
+	mBaiduMap.setMyLocationEnabled(true);
+	// 定位初始化
+	mLocClient = new LocationClient(this);
+	mLocClient.registerLocationListener(myListener);
+	LocationClientOption option_loc = new LocationClientOption();
+	option_loc.setOpenGps(true);// 打开gps
+	option_loc.setCoorType("bd09ll"); // 设置坐标类型
+	option_loc.setScanSpan(1000);//设置扫描间隔，单位是毫秒
+	mLocClient.setLocOption(option_loc);
+	mLocClient.start();
+	
+	
+	
+	
+	
+	
+	/********************************************************************/
+  /******14-12-02 xj**********************************************************/ 
+    //在地图上添加Marker，并显示
+  
+   /* markera= (Marker) (mBaiduMap.addOverlay(option));
+    OnMarkerClickListener listener = new OnMarkerClickListener() {  
+        * 
+        * 地图 Marker 覆盖物点击事件监听函数 
+        * @param marker 被点击的 marker 
+        *  
+        public boolean onMarkerClick(final Marker marker){  
+        	 
+        	if(marker == markera)
+        	{
+        	OnInfoWindowClickListener lis = null;
+        	
+			lis = new OnInfoWindowClickListener() {
+				public void onInfoWindowClick() {
+					Button button_default = (Button) findViewById(R.id.button_huatong);
+					
+					final Builder builder_default = new AlertDialog.Builder(null);
+					
+					button_default.setOnClickListener(new View.OnClickListener() {
+						
+						@Override
+						public void onClick(View v) {
+							// TODO 自动生成的方法存根
+							builder_default.setIcon(R.drawable.icon);
+							builder_default.setTitle("自定义对话框");
+							builder_default.setMessage("haha ");
+							builder_default.setPositiveButton("默认",
+								new OnClickListener()
+							{
+								
+								@Override
+								public void onClick(DialogInterface dialog,
+										int which) {
+									// TODO 自动生成的方法存根
+									EditText show = (EditText) findViewById(R.id.bmapView);
+									show.setText("确定");
+									
+								}
+								});
+							
+							builder_default.setNegativeButton("更多",
+									new OnClickListener()
+								{
+									
+									@Override
+									public void onClick(DialogInterface dialog,
+											int which) {
+										// TODO 自动生成的方法存根
+										EditText show = (EditText) findViewById(R.id.bmapView);
+										show.setText("更多更多");
+										
+									}
+									});
+							builder_default.create().show();
+							
+						}
+					});
+					
+					
+				}
+			};
+			
+			mBaiduMap.showInfoWindow(mInfoWindow);
+        	}
+        	return true;
+        }  
+    };
+   // listener.onMarkerClick(marker);
+     mBaiduMap.setOnMarkerClickListener(listener);*/
+   
+    
+  /****************************************************************/     
 	}
 
 	@Override
@@ -71,9 +263,16 @@ public class MainActivity extends Activity {
 	
 	 @Override  
 	    protected void onDestroy() {  
-	        super.onDestroy();  
+	          
 	        //在activity执行onDestroy时执行mMapView.onDestroy()，实现地图生命周期管理  
-	        mMapView.onDestroy();  
+	        
+	     // 退出时销毁定位
+			mLocClient.stop();
+			// 关闭定位图层
+			mBaiduMap.setMyLocationEnabled(false);
+			mMapView.onDestroy();
+			mMapView = null;
+			super.onDestroy();
 	    }  
 	    @Override  
 	    protected void onResume() {  
