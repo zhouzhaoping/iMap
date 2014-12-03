@@ -24,7 +24,7 @@ public class WelcomeActivity extends Activity {
 			 @Override
 			 public void run() {
 				  Intent intent = new Intent();
-				  //TODO:如果填了用户名和密码就直接登陆
+				  //TODO:如果填了用户名和密码就自动登录（需要验证）
 				  intent.setClass(WelcomeActivity.this, LoginActivity.class);
 				  startActivity(intent);				  
 				  WelcomeActivity.this.finish();				  

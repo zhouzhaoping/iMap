@@ -8,6 +8,8 @@
     <string name="login_username_hint">请填入用户名</string>
     <string name="login_label_password">密码</string>
     <string name="login_password_hint">请输入密码</string>
+    <string name="login_label_password2">确认密码</string>
+     <string name="login_password_hint2">请再输入密码</string>
     
     
 

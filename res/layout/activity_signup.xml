@@ -65,6 +65,34 @@
         android:id="@+id/password_edit"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:hint="@string/login_password_hint2"
+        android:inputType="textPassword"
+        android:singleLine="true" />
+    
+    </LinearLayout>
+    
+    <LinearLayout
+        android:layout_width="match_parent"
+    	android:layout_height="wrap_content"
+    	android:layout_marginTop="5dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginLeft="50dp"
+        android:layout_marginRight="50dp"
+    	android:orientation="horizontal"
+    	android:gravity="center">
+    	
+    <TextView
+        android:id="@+id/login_password_input2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/login_label_password2" 
+        android:textSize="20sp" 
+        android:textColor="#111111"/>
+
+    <EditText
+        android:id="@+id/password_edit2"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:hint="@string/login_password_hint"
         android:inputType="textPassword"
         android:singleLine="true" />
@@ -72,23 +100,23 @@
     </LinearLayout>
     
     <Button
-        android:id="@+id/login_button"
+        android:id="@+id/signup_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:background="@drawable/login" />
+        android:background="@drawable/signup_comfirm" />
     
      <Button
-        android:id="@+id/tosignup_button"
+        android:id="@+id/cancle_button"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="5dp"
         android:layout_marginBottom="5dp"
         android:layout_marginLeft="50dp"
         android:layout_marginRight="50dp"
-        android:background="@drawable/to_signup" />
+        android:background="@drawable/signup_cancle" />
      
 </LinearLayout>

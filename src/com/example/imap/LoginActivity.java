@@ -7,6 +7,8 @@ import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.view.KeyEvent;
@@ -27,23 +29,32 @@ public class LoginActivity extends Activity {
 	 
 	 long firstTime=0;
 	 private Button button_login;
-	 private Button button_signup;
+	 private Button button_tosignup;
 	 private EditText view_username;
 	 private EditText view_password;
 	 	 
 	 private void findViews()
 	 {
 		 button_login = (Button) findViewById(R.id.login_button);
-		 button_signup = (Button) findViewById(R.id.signup_button);
+		 button_tosignup = (Button) findViewById(R.id.tosignup_button);
 		 view_username = (EditText) findViewById(R.id.username_edit);
 		 view_password = (EditText) findViewById(R.id.password_edit);
 	}
 	 private void showResults() {
+		 SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+		 String name = sp.getString("username", "");
+		 String pw = sp.getString("password", "");
+		 if (!name.isEmpty() && !pw.isEmpty())
+		 {
+			 view_username.setText(name);
+			 view_password.setText(pw);
+		 }
+			 
 	 }
 	 
 	 private void setListensers() {
 		 button_login.setOnClickListener(loginListener);
-		 button_signup.setOnClickListener(SignupListener);
+		 button_tosignup.setOnClickListener(SignupListener);
 	 }
 	 
 	 private Button.OnClickListener loginListener = new Button.OnClickListener()
@@ -52,6 +63,13 @@ public class LoginActivity extends Activity {
 		 {
 			  String username = view_username.getText().toString();
 			  String password = view_password.getText().toString();
+			  
+			  SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+			  Editor editor = sp.edit();
+			  editor.putString("username", username);
+			  editor.putString("password", password);
+			  editor.commit();
+			  
 			  //TODO:登陆验证
 			  //NetThread.url = "http://" + username + "/cgi-bin/handler.py";
 			  //NetThread netThread = new NetThread(password, -1, -1, -1);
@@ -122,7 +140,16 @@ public class LoginActivity extends Activity {
 	 {
 		  public void onClick(View v)
 		 {
-			 
+			  Intent intent = new Intent();
+			  intent.setClass(LoginActivity.this, SignupActivity.class);
+			  /*
+			  Bundle bundle = new Bundle();
+			  bundle.putString("KEY_USERNAME", username);
+			  bundle.putString("KEY_PASSWORD", password);
+			  intent.putExtras(bundle);
+			  */
+			  startActivity(intent);
+			  LoginActivity.this.finish();
 		 }
 	 };
 	 
