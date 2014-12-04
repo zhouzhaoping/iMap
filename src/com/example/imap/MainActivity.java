@@ -4,7 +4,9 @@ import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
@@ -49,6 +51,7 @@ import com.baidu.mapapi.model.LatLng;
 public class MainActivity extends Activity {
 
 	long firstTime=0;
+	private ImageButton button_settings;
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
@@ -102,7 +105,7 @@ public class MainActivity extends Activity {
         //注意该方法要再setContentView方法之前实现  
         SDKInitializer.initialize(getApplicationContext()); 
 		setContentView(R.layout.activity_main);
-
+		
 		//获取地图控件引用  
         mMapView = (MapView) findViewById(R.id.bmapView);  
        mBaiduMap = mMapView.getMap();  
@@ -283,6 +286,18 @@ public class MainActivity extends Activity {
     
     
 /*************************************************************************/
+    button_settings = (ImageButton) findViewById(R.id.button_settings);
+    button_settings.setOnClickListener(new ImageButton.OnClickListener()
+	 {
+		  public void onClick(View v)
+		 {
+			  Intent intent = new Intent();
+			  intent.setClass(MainActivity.this, MusicActivity.class);
+			 
+			  startActivity(intent);
+			  //MainActivity.this.finish();
+		 }
+	 });
 	}
 
 	@Override
