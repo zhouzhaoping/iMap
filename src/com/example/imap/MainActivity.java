@@ -58,7 +58,6 @@ public class MainActivity extends Activity {
 
 	public int select_button = -1;
 	long firstTime=0;
-	private ImageButton button_settings;
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
@@ -369,7 +368,7 @@ public class MainActivity extends Activity {
 			}
 			);
 /*************************************************************************/
-    button_settings = (ImageButton) findViewById(R.id.button_settings);
+   
     button_settings.setOnClickListener(new ImageButton.OnClickListener()
 	 {
 		  public void onClick(View v)
