@@ -11,9 +11,11 @@
 
          
  <TableLayout 
+    android:id="@+id/tablelayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
-    android:stretchColumns="*">
+    android:stretchColumns="0,1,2,3,4"
+    >
 
      <TableRow>
 
@@ -80,10 +82,28 @@
 			android:layout_column="4"
 			android:scaleType="fitCenter"
 			android:src="@drawable/settings" />
+	     
+
+	    
     </TableRow>
     
 </TableLayout>
 
+      	     <TextView 
+	        android:id="@+id/textview_tip"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:layout_marginBottom="0px"
+			android:visibility="gone"
+			android:text="请长按地图确定地点"
+			android:scaleType="fitCenter"
+			android:textSize="10pt"
+			android:textColor="#FF0000"
+	        
+	         />
+	     
+     
+     
       
 
 </FrameLayout>

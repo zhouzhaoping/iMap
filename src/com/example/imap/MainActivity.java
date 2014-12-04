@@ -1,9 +1,12 @@
 package com.example.imap;
 
+import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
 import android.content.DialogInterface;
+import android.content.Intent;
+import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 import android.view.KeyEvent;
 import android.view.Menu;
@@ -12,6 +15,7 @@ import android.view.MenuItem;
 
 import android.widget.EditText;
 import android.widget.TableLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 
@@ -29,6 +33,7 @@ import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
 import com.baidu.mapapi.map.BaiduMap;
+import com.baidu.mapapi.map.BaiduMap.OnMapLongClickListener;
 import com.baidu.mapapi.map.BitmapDescriptor;
 import com.baidu.mapapi.map.BitmapDescriptorFactory;
 import com.baidu.mapapi.map.InfoWindow;
@@ -46,8 +51,10 @@ import com.baidu.mapapi.model.LatLng;
 //假如用到位置提醒功能，需要import该类
 //如果使用地理围栏功能，需要import如下类
 
+
 public class MainActivity extends Activity {
 
+	public int select_button = -1;
 	long firstTime=0;
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
@@ -236,52 +243,128 @@ public class MainActivity extends Activity {
     
 /**********14-12-03 xj* 添加下面5个按钮的选项提示***********************/
     //添加景点
-    ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+    final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+    final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
+    final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
+    final ImageButton button_paihang = (ImageButton) findViewById(R.id.button_paihang);
+    final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
+    final TextView Tip = (TextView) findViewById(R.id.textview_tip);
     final Builder alert_viewpoint = new AlertDialog.Builder(this);   
+    
+   
+    
+    //地图长按时间监听注册
+	OnMapLongClickListener listener_view = new OnMapLongClickListener() {  
+	    /** 
+	    * 地图长按事件监听回调函数 
+	    * @param point 长按的地理坐标 
+	    */  
+	    public void onMapLongClick(LatLng point){
+
+	    	if(select_button != 0) return ;
+	    	select_button = -1;
+	    	button_viewpoint.setImageResource(R.drawable.viewpoint);
+	    	Tip.setVisibility(View.GONE );
+	    	
+	    	//显示弹窗
+	    	alert_viewpoint.setIcon(R.drawable.viewpoint);
+	    	alert_viewpoint.setTitle("添加景点");
+	    	
+	    	//装载对话框界面布局
+	    	TableLayout loginForm = (TableLayout)getLayoutInflater()
+	    			.inflate( R.layout.addview, null);
+	    	alert_viewpoint.setView(loginForm);
+	    	
+	    	alert_viewpoint.setPositiveButton("确定"
+	    			
+	    			, new DialogInterface.OnClickListener()
+	    			{
+	    				@Override
+	    				public void onClick(DialogInterface dialog, int which)
+	    				{
+	    					//发送增加景点请求，使用point传地址
+	    				}
+	    			});
+	    		
+	    	alert_viewpoint.setNegativeButton("取消"
+	    			,  new DialogInterface.OnClickListener()
+	    			{
+	    				@Override
+	    				public void onClick(DialogInterface dialog, int which)
+	    				{
+	    					//取消，不做操作
+	    				}
+	    			});
+	    	
+	    	
+	    	
+	    	alert_viewpoint.create().show();
+	    }  
+	};
+	mBaiduMap.setOnMapLongClickListener(listener_view);
+    //长按时间结束
+    
+    
+    
     button_viewpoint.setOnClickListener(
+    		
     		new View.OnClickListener()
     		{
-    			
+    		
     			public void onClick(View v)
     			{
-    				//添加景点处理方法，未完成
-    				
-    				alert_viewpoint.setIcon(R.drawable.viewpoint);
-    				alert_viewpoint.setTitle("添加景点");
-    				
-    				//装载对话框界面布局
-    				TableLayout loginForm = (TableLayout)getLayoutInflater()
-    						.inflate( R.layout.addview, null);
-    				alert_viewpoint.setView(loginForm);
-    				
-    				alert_viewpoint.setPositiveButton("确定"
-    						
-    						, new DialogInterface.OnClickListener()
-    						{
-    							@Override
-    							public void onClick(DialogInterface dialog, int which)
-    							{
-    								//发送增加景点请求
-    							}
-    						});
-    					
-    					builder.setNegativeButton("取消"
-    						,  new DialogInterface.OnClickListener()
-    						{
-    							@Override
-    							public void onClick(DialogInterface dialog, int which)
-    							{
-    								//取消，不做操作
-    							}
-    						});
-    				
-    			
-    				alert_viewpoint.create().show();
+    				select_button = 0;
+    				button_viewpoint.setImageResource(R.drawable.settings);
+    		    	Tip.setVisibility(View.VISIBLE );
+
     			}
     		}
     	);
     
     
+    
+    
+    button_person.setOnClickListener(
+			new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					select_button = 1;
+					//跳转到个人activity
+				}
+			}
+			);
+    button_huatong.setOnClickListener(
+ 			new View.OnClickListener()
+ 			{
+ 				public void onClick(View v)
+ 				{
+ 					select_button = 2;
+ 					
+ 				}
+ 			}
+ 			);
+    button_paihang.setOnClickListener(
+ 			new View.OnClickListener()
+ 			{
+ 				public void onClick(View v)
+ 				{
+ 					select_button = 3;
+ 					//跳转到排行activity
+ 				}
+ 			}
+ 			);
+     
+    button_settings.setOnClickListener(
+			new View.OnClickListener()
+			{
+				public void onClick(View v)
+				{
+					select_button = 4;
+					//跳转到设置activity
+				}
+			}
+			);
 /*************************************************************************/
 	}
 
