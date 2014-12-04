@@ -314,7 +314,7 @@ public class MainActivity extends Activity {
     			public void onClick(View v)
     			{
     				select_button = 0;
-    				button_viewpoint.setImageResource(R.drawable.settings);
+    				button_viewpoint.setImageResource(R.drawable.viewing);
     		    	Tip.setVisibility(View.VISIBLE );
 
     			}
