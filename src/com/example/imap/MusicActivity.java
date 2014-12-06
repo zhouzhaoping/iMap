@@ -75,6 +75,7 @@ public class MusicActivity extends Activity implements OnViewChangeListener, OnC
     }
 	
 	private ArrayList<ContactP> getContact(){
+		// TODO：用数据库中的数据替代
 		ArrayList<ContactP> hcList = new ArrayList<ContactP>();
 		ContactP c0 = new ContactP();
 		c0.setTxPath(R.drawable.face0+"");
@@ -150,6 +151,7 @@ public class MusicActivity extends Activity implements OnViewChangeListener, OnC
 		return hcList;
 	}
 	private ArrayList<HuiHua> getHuahui(){
+		// TODO：用数据库中的数据替代
 		ArrayList<HuiHua> hhList = new ArrayList<HuiHua>();
 		HuiHua h1 = new HuiHua();
 		h1.setTxPath(R.drawable.face0+"");
@@ -224,32 +226,6 @@ public class MusicActivity extends Activity implements OnViewChangeListener, OnC
 		return hhList;
 	} 
 	
-	 public void uploadImage(final Activity context){
-		 //menuWindow = new SelectPicPopupWindow(MusicActivity.this, itemsOnClick);
-			//显示窗口
-		//menuWindow.showAtLocation(MusicActivity.this.findViewById(R.id.set), Gravity.TOP|Gravity.RIGHT, 10, 230); //设置layout在PopupWindow中显示的位置
-	 }
-	 public void uploadImage2(final Activity context){
-		 //menuWindow2 = new SelectAddPopupWindow(MusicActivity.this, itemsOnClick2);
-		 //显示窗口
-		 //menuWindow2.showAtLocation(MusicActivity.this.findViewById(R.id.add), Gravity.TOP|Gravity.RIGHT, 10, 230); //设置layout在PopupWindow中显示的位置
-	 }
-	 
-	 //为弹出窗口实现监听类
-	    private OnClickListener  itemsOnClick = new OnClickListener(){
-
-			public void onClick(View v) {
-				//menuWindow.dismiss();
-			}
-	    };
-	    
-	    //为弹出窗口实现监听类
-	    private OnClickListener  itemsOnClick2 = new OnClickListener(){
-	    	
-	    	public void onClick(View v) {
-	    		//menuWindow2.dismiss();
-	    	}
-	    };
 	    
 	private void setCurPoint(int index)
     {
@@ -266,12 +242,12 @@ public class MusicActivity extends Activity implements OnViewChangeListener, OnC
     		shaixuan_title.setTextColor(Color.BLACK);
     	}else if(index==1){
     		popular_title.setTextColor(Color.BLACK);
-    		new_title.setTextColor(0xff228B22);
-    		shaixuan_title.setTextColor(Color.BLACK);
-    	}else{
-    		popular_title.setTextColor(Color.BLACK);
     		new_title.setTextColor(Color.BLACK);
     		shaixuan_title.setTextColor(0xff228B22);
+    	}else{
+    		popular_title.setTextColor(Color.BLACK);
+    		new_title.setTextColor(0xff228B22);
+    		shaixuan_title.setTextColor(Color.BLACK);
     	}
     }
 
