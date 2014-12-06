@@ -7,10 +7,13 @@ import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
 import android.app.AlertDialog.Builder;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.KeyEvent;
@@ -69,8 +72,14 @@ public class MainActivity extends Activity {
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
-	Marker markera;
+	ArrayList<Marker> markers = new ArrayList<Marker>();
+	ArrayList<Intent> intents = new ArrayList<Intent>();
+	ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
+	Marker marker1;
+
 	EditText show;
+	public int radius = 100;
+	public static int alarmCount = 0;
 	/******** 14-12-03 xj *************************************************/
 	// UI相关
 	OnCheckedChangeListener radioButtonListener;
@@ -154,10 +163,10 @@ public class MainActivity extends Activity {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-			Location location_temp=new Location("GPS");
+			Location location_temp = new Location("GPS");
 			location_temp.setLatitude(location.getLatitude());
 			location_temp.setLongitude(location.getLongitude());
-			//updateView(location_temp);测试用的
+			// updateView(location_temp);测试用的
 			// logMsg(sb.toString());
 			// ///
 		}
@@ -165,59 +174,62 @@ public class MainActivity extends Activity {
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
-//测试用的函数updateView
-	public void updateView(Location newLocation)
-	{
-		if (newLocation != null)
-		{
+
+	// 测试用的函数updateView
+	public void updateView(Location newLocation) {
+		if (newLocation != null) {
 			StringBuilder sb = new StringBuilder();
 			sb.append("实时位置信息：\n");
 			sb.append("经度： ");
 			sb.append(newLocation.getLongitude());
 			sb.append("纬度： ");
-			sb.append(newLocation.getLatitude());		
+			sb.append(newLocation.getLatitude());
 			show.setText(sb.toString());
-		}
-		else
-		{ 
+		} else {
 			show.setText("");
 		}
 	}
-	
-	
-	
+
 	/********************************************************************/
+
+	public void init() {
+		// TODO 自动生成的方法存根
+		// 添加景点坐标于markers
+		BitmapDescriptor ooa = BitmapDescriptorFactory
+				.fromResource(R.drawable.icon);
+		LatLng llA = new LatLng(39.996987, 116.313082);
+		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+				.zIndex(9).draggable(true);
+		marker1 = (Marker) (mBaiduMap.addOverlay(option));
+		markers.add(marker1);
+	}
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
+
 		// 在使用SDK各组件之前初始化context信息，传入ApplicationContext
 		// 注意该方法要再setContentView方法之前实现
 		SDKInitializer.initialize(getApplicationContext());
 		setContentView(R.layout.activity_main);
 
-		
-		
-		
-		
-		
-		
-/*测试实时经纬度用***********************************************************************************/
-		
-		//show = (EditText) findViewById(R.id.show);
-		
-		
-		
-/************************************************************************************/
-		
-		
-		
+		/*
+		 * 测试实时经纬度用**************************************************************
+		 * ********************
+		 */
+
+		// show = (EditText) findViewById(R.id.show);
+
+		/************************************************************************************/
+
 		// 获取地图控件引用
 		mMapView = (MapView) findViewById(R.id.bmapView);
 		mBaiduMap = mMapView.getMap();
 
 		// 普通地图
 		mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
-
+		// 将数据库中景点坐标放入列表markers中
+		init();
 		/******** 14-12-03 xj* 定位功能 ************************************************/
 		// 设置地图缩放级别
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(18.0f);
@@ -275,21 +287,19 @@ public class MainActivity extends Activity {
 		mLocClient.start();
 
 		/****** 14-12-03 xj**点击景点，显示语音 **********************************************/
-		// 在地图上添加Marker，并显示
-
-		BitmapDescriptor ooa = BitmapDescriptorFactory
-				.fromResource(R.drawable.icon);
-		LatLng llA = new LatLng(39.996987, 116.313082);
-		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
-				.zIndex(9).draggable(true);
-		markera = (Marker) (mBaiduMap.addOverlay(option));
-
-		// /
+		//
+		/*
+		 * BitmapDescriptor ooa = BitmapDescriptorFactory
+		 * .fromResource(R.drawable.icon); LatLng llA = new LatLng(39.996987,
+		 * 116.313082); OverlayOptions option = new
+		 * MarkerOptions().position(llA).icon(ooa) .zIndex(9).draggable(true);
+		 * marker1 = (Marker) (mBaiduMap.addOverlay(option));
+		 */
 		// //////////////////////////////////////////////////////////////////////////////////////////
 		final Builder builder = new AlertDialog.Builder(this);
 		mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 			public boolean onMarkerClick(final Marker marker) {
-				if (marker == markera) {
+				if (marker == marker1) {
 					builder.setIcon(R.drawable.tools);
 					builder.setTitle("选择语音");
 					builder.setMessage("none");
@@ -325,6 +335,42 @@ public class MainActivity extends Activity {
 
 		/****************************************************************/
 
+		/*
+		 * 为每个marker添加一个临近警告地理围栏*************************************************
+		 * *********************************
+		 * 参见http://blog.csdn.net/huang_hws/article/details/7327670
+		 */
+
+		// 定位服务常量
+		String locService = Context.LOCATION_SERVICE;
+		// 定位服务管理器实例
+		LocationManager locationManager;
+		locationManager = (LocationManager) getSystemService(locService);
+
+		for (int i = 0; i < markers.size(); i++) {
+			intents.add(new Intent(this, AlertReceiver.class));
+			intents.get(i).putExtra(String.valueOf(i), i);
+			// 由于不是马上触发，所以需要PendingIntent
+			pendingIntents.add(PendingIntent.getBroadcast(this, alarmCount++,
+					intents.get(i), PendingIntent.FLAG_UPDATE_CURRENT));
+			// 添加临近警告 参照http://blog.csdn.net/flowingflying/article/details/38871219
+			locationManager.addProximityAlert(
+					markers.get(i).getPosition().latitude, markers.get(i)
+							.getPosition().longitude, radius, -1,
+					pendingIntents.get(i));
+		}
+
+		// Intent intent1 = new Intent(this, AlertReceiver.class);
+		// intent1.putExtra("intent1", "intent1");
+		// 由于不是马上触发，所以需要PendingIntent
+		// PendingIntent pi1 = PendingIntent.getBroadcast(this, alarmCount++,
+		// intent1,
+		// PendingIntent.FLAG_UPDATE_CURRENT);
+		// 添加临近警告 参照http://blog.csdn.net/flowingflying/article/details/38871219
+		// locationManager.addProximityAlert(marker1.getPosition().latitude,
+		// marker1.getPosition().longitude, radius, -1, pi1);
+		/*** end *********************************************************************************/
+
 		/************************** 14-12-04 xj下面要开始添加地理围栏 ********************************/
 		// final Builder temp = new AlertDialog.Builder(this);
 		/*
@@ -358,7 +404,7 @@ public class MainActivity extends Activity {
 		/********************************************************************/
 
 		/********** 14-12-03 xj* 添加下面5个按钮的选项提示 ***********************/
-		// 添加景点
+	
 		final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
 		final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
 		final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
@@ -366,7 +412,7 @@ public class MainActivity extends Activity {
 		final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
 		final TextView Tip = (TextView) findViewById(R.id.textview_tip);
 		final Builder alert_viewpoint = new AlertDialog.Builder(this);
-
+		// 添加景点
 		// 地图长按时间监听注册
 		OnMapLongClickListener listener_view = new OnMapLongClickListener() {
 			/**
@@ -435,6 +481,7 @@ public class MainActivity extends Activity {
 				// 跳转到个人activity
 			}
 		});
+		//话筒短按，地图上所有图标发亮，然后选择一个开始录音
 		button_huatong.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				button_huatong.setImageResource(R.drawable.huatonging);
