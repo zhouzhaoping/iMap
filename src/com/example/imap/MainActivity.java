@@ -1,5 +1,10 @@
 package com.example.imap;
 
+
+
+import java.util.ArrayList;
+import java.util.List;
+
 import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -31,6 +36,7 @@ import android.widget.RadioGroup.OnCheckedChangeListener;
 
 import com.baidu.location.BDLocation;
 import com.baidu.location.BDLocationListener;
+import com.baidu.location.GeofenceClient;
 import com.baidu.location.LocationClient;
 import com.baidu.location.LocationClientOption;
 import com.baidu.mapapi.SDKInitializer;
@@ -48,11 +54,17 @@ import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 //假如用到位置提醒功能，需要import该类
 //如果使用地理围栏功能，需要import如下类
-
+import com.baidu.location.BDGeofence;  
+import com.baidu.location.BDLocationStatusCodes;  
+import com.baidu.location.GeofenceClient;  
+import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;  
+import com.baidu.location.GeofenceClient.OnGeofenceTriggerListener;  
+import com.baidu.location.GeofenceClient.OnRemoveBDGeofencesResultListener; 
 
 public class MainActivity extends Activity {
 
@@ -72,6 +84,42 @@ public class MainActivity extends Activity {
 	public BDLocationListener myListener = new MyLocationListenner();
 	private LocationMode mCurrentMode;
 	BitmapDescriptor mCurrentMarker;
+	public GeofenceClient mGeofenceClient = null;
+
+	/********14-12-05 xj********************************************/
+	public class AddGeofenceListener implements  OnAddBDGeofencesResultListener {
+		@Override
+		public void onAddBDGeofencesResult(int statusCode, String geofenceRequestId) {
+		if (statusCode == BDLocationStatusCodes.SUCCESS) {
+			mGeofenceClient.start();
+		 //围栏创建成功
+		}}}
+	public class RemoveFenceListener implements OnRemoveBDGeofencesResultListener {
+		@Override
+		public void onRemoveBDGeofencesByRequestIdsResult(int statusCode, String[] geofenceRequestIds) {
+		if (statusCode == BDLocationStatusCodes.SUCCESS) {
+		//围栏删除成功
+		}}}
+	
+/***************************************************************/	
+/***************************************************************/
+	/** 
+	* 从SD卡导入离线地图安装包 
+	*/  
+	private MKOfflineMap mOffline = null;
+	
+	public void importFromSDCard(View view) {  
+	    int num = mOffline.importOfflineData();  
+	    String msg = "";  
+	    if (num == 0) {  
+	        msg = "没有导入离线包，这可能是离线包放置位置不正确，或离线包已经导入过";  
+	    } else {  
+	        msg = String.format("成功导入 %d 个离线包，可以在下载管理查看", num);  
+	    }  
+	    Toast.makeText(this, msg, Toast.LENGTH_SHORT).show();  
+	}
+	/***************************************************************/
+	
 	/**
 	 * 定位SDK监听函数
 	 */
@@ -96,6 +144,8 @@ public class MainActivity extends Activity {
 				mBaiduMap.animateMapStatus(u);
 			}
 				//经纬度
+				//System.out.println(location.getLatitude());
+				//System.out.println(location.getLongitude());
 				location.getLatitude();
 				location.getLongitude();
 		}
@@ -119,7 +169,7 @@ public class MainActivity extends Activity {
       //普通地图  
       mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);  
       
-      
+     
      
 	/********14-12-03 xj* 定位功能************************************************/ 
       //设置地图缩放级别
@@ -173,34 +223,17 @@ public class MainActivity extends Activity {
 	mLocClient.setLocOption(option_loc);
 	mLocClient.start();
 	
-	//下面要开始添加地理围栏
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-	
-/********************************************************************/
-	
-	
- /******14-12-03 xj**点击景点，显示语音**********************************************/ 
+/******14-12-03 xj**点击景点，显示语音**********************************************/ 
     //在地图上添加Marker，并显示
   
 	BitmapDescriptor ooa = BitmapDescriptorFactory
 			.fromResource(R.drawable.icon);
-	LatLng llA = new LatLng(40.000718, 116.316972);
+	LatLng llA = new LatLng(39.995728, 116.311806);
 	OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
 			.zIndex(9).draggable(true);
     markera= (Marker) (mBaiduMap.addOverlay(option));
+    
+ /// //////////////////////////////////////////////////////////////////////////////////////////
     final Builder builder = new AlertDialog.Builder(this);
     mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 		public boolean onMarkerClick(final Marker marker) {
@@ -234,14 +267,57 @@ public class MainActivity extends Activity {
     
  
  /****************************************************************/  
-    
-    
-    
-    
-    
-    
-    
-    
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	/**************************14-12-04 xj下面要开始添加地理围栏********************************/ 
+    /*class GeofenceEnterLister implements OnGeofenceTriggerListener {
+		@Override
+		public void onGeofenceTrigger(String geofenceRequestId) {
+		 //进入围栏，围栏Id = geofenceRequestId
+			System.out.println("进入围栏了**********************************************************");
+		final Builder temp = new AlertDialog.Builder(null);
+		  temp.setTitle("biabia");
+		  temp.setMessage("haaha");
+		  temp.create().show();
+		}
+		@Override
+		public void onGeofenceExit(String geofenceRequestId) {
+		 //退出围栏，围栏Id = geofenceRequestId
+		}
+		
+	
+
+		}
+mGeofenceClient = new GeofenceClient(getApplicationContext());	
+	//注册并开启围栏扫描服务
+	mGeofenceClient.registerGeofenceTriggerListener(new GeofenceEnterLister());
+	//mGeofenceClient.start();
+	
+	BDGeofence fence = new BDGeofence.Builder().setGeofenceId("markera").
+			setCircularRegion(markera.getAnchorX(), markera.getAnchorY(), 4)
+			. setExpirationDruation(14400*20)
+			. setCoordType("bd09ll")
+			.build();
+	
+	//添加一个围栏：
+	mGeofenceClient.addBDGeofence(fence, new AddGeofenceListener());
+	//删除，指定要删除围栏的名字列表
+	List<String> fences = new ArrayList<String>();
+	fences.add("markera");
+	//mGeofenceClient. removeBDGeofences(fences, new RemoveFenceListener());
+/********************************************************************/
+	
+	
+
     
 /**********14-12-03 xj* 添加下面5个按钮的选项提示***********************/
     //添加景点
@@ -317,6 +393,7 @@ public class MainActivity extends Activity {
     			{
     				select_button = 0;
     				button_viewpoint.setImageResource(R.drawable.viewing);
+    				
     		    	Tip.setVisibility(View.VISIBLE );
 
     			}
@@ -341,11 +418,42 @@ public class MainActivity extends Activity {
  			{
  				public void onClick(View v)
  				{
+ 					button_huatong.setImageResource(R.drawable.huatonging);
+ 				
+ 					//button_huatong.setBackgroundColor(0x00000000);
  					select_button = 2;
- 					
+ 					//对地图上所有marker 标亮
+ 					//
+ 					select_button = 5;
  				}
  			}
  			);
+    
+    button_huatong.setOnLongClickListener(
+    		new View.OnLongClickListener() {
+    			
+				
+				@Override
+				public boolean onLongClick(View v) {
+					// TODO 自动生成的方法存根
+					if(select_button != 5)  
+					return false;
+					button_huatong.setImageResource(R.drawable.huatong2);
+					//button_huatong.setBackgroundColor(0x00000000);
+					select_button = -1;
+					//开始录音
+					//录音结束
+					//button_huatong.setImageResource(R.drawable.huatong);
+					return true;
+					
+				}
+			}
+    		
+    		
+    		
+    		);
+    
+    
     button_paihang.setOnClickListener(
  			new View.OnClickListener()
  			{
