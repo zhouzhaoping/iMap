@@ -58,6 +58,7 @@
         <activity android:name="LoginActivity"></activity>
         <activity android:name="SignupActivity"></activity>
         <activity android:name="MusicActivity"></activity>
+        <activity android:name="OfflineDemo"></activity>
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
