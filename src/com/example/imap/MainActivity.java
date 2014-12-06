@@ -203,7 +203,7 @@ public class MainActivity extends Activity {
 		
 /*测试实时经纬度用***********************************************************************************/
 		
-		show = (EditText) findViewById(R.id.show);
+		//show = (EditText) findViewById(R.id.show);
 		
 		
 		
