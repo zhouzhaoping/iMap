@@ -48,10 +48,13 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-import com.baidu.mapapi.map.MyLocationConfiguration;
+
+
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
+import com.baidu.mapapi.map.MyLocationConfiguration;
 import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
+
 //import com.baidu.location.LocationClientOption.LocationMode;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.MyLocationData;
@@ -64,6 +67,10 @@ import com.baidu.location.GeofenceClient;
 import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;
 import com.baidu.location.GeofenceClient.OnGeofenceTriggerListener;
 import com.baidu.location.GeofenceClient.OnRemoveBDGeofencesResultListener;
+import com.example.imap.MyOrientationListener.OnOrientationListener;
+
+
+
 
 public class MainActivity extends Activity {
 
@@ -80,6 +87,23 @@ public class MainActivity extends Activity {
 	EditText show;
 	public int radius = 100;
 	public static int alarmCount = 0;
+	/**
+	 * 最新一次的经纬度
+	 */
+	private double mCurrentLantitude;
+	private double mCurrentLongitude;
+	/**
+	 * 当前的精度
+	 */
+	private float mCurrentAccracy;
+	/**
+	 * 方向传感器的监听器
+	 */
+	private MyOrientationListener myOrientationListener;
+	/**
+	 * 方向传感器X方向的值
+	 */
+	private int mXDirection;
 	/******** 14-12-03 xj *************************************************/
 	// UI相关
 	OnCheckedChangeListener radioButtonListener;
@@ -124,7 +148,7 @@ public class MainActivity extends Activity {
 			MyLocationData locData = new MyLocationData.Builder()
 					.accuracy(location.getRadius())
 					// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(100).latitude(location.getLatitude())
+					.direction(mXDirection).latitude(location.getLatitude())
 					.longitude(location.getLongitude()).build();
 			mBaiduMap.setMyLocationData(locData);
 			if (isFirstLoc) {
@@ -135,6 +159,9 @@ public class MainActivity extends Activity {
 				mBaiduMap.animateMapStatus(u);
 			}
 			// 经纬度
+			mCurrentLantitude=location.getLatitude();
+			mCurrentLongitude=location.getLongitude();
+			mCurrentAccracy=location.getRadius();
 			// System.out.println(location.getLatitude());
 			// System.out.println(location.getLongitude());
 			location.getLatitude();
@@ -163,10 +190,11 @@ public class MainActivity extends Activity {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-			Location location_temp = new Location("GPS");
-			location_temp.setLatitude(location.getLatitude());
-			location_temp.setLongitude(location.getLongitude());
-			// updateView(location_temp);测试用的
+		
+		//	Location location_temp = new Location("GPS");测试用的
+			//location_temp.setLatitude(location.getLatitude());
+			//location_temp.setLongitude(location.getLongitude());
+			// updateView(location_temp);
 			// logMsg(sb.toString());
 			// ///
 		}
@@ -174,7 +202,7 @@ public class MainActivity extends Activity {
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
-
+	
 	// 测试用的函数updateView
 	public void updateView(Location newLocation) {
 		if (newLocation != null) {
@@ -230,6 +258,8 @@ public class MainActivity extends Activity {
 		mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
 		// 将数据库中景点坐标放入列表markers中
 		init();
+		
+		
 		/******** 14-12-03 xj* 定位功能 ************************************************/
 		// 设置地图缩放级别
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(18.0f);
@@ -271,6 +301,7 @@ public class MainActivity extends Activity {
 
 		// 开启定位图层
 		mBaiduMap.setMyLocationEnabled(true);
+		
 		// 定位初始化
 		mLocClient = new LocationClient(this);
 		mLocClient.registerLocationListener(myListener);
@@ -283,9 +314,10 @@ public class MainActivity extends Activity {
 		option_loc
 				.setLocationMode(com.baidu.location.LocationClientOption.LocationMode.Hight_Accuracy);
 		mLocClient.setLocOption(option_loc);
-
 		mLocClient.start();
-
+		// 初始化传感器
+				initOritationListener();
+				myOrientationListener.start();
 		/****** 14-12-03 xj**点击景点，显示语音 **********************************************/
 		//
 		/*
@@ -530,7 +562,40 @@ public class MainActivity extends Activity {
 	}
 
 	/*************************************************************************/
+	/**
+	 * 初始化方向传感器
+	 */
+	private void initOritationListener()
+	{
+		myOrientationListener = new MyOrientationListener(
+				getApplicationContext());
+		myOrientationListener
+				.setOnOrientationListener(new OnOrientationListener()
+				{
+					public void onOrientationChanged(float x)
+					{
+						mXDirection = (int) x;
 
+						// 构造定位数据
+						MyLocationData locData = new MyLocationData.Builder()
+								.accuracy(mCurrentAccracy)
+								// 此处设置开发者获取到的方向信息，顺时针0-360
+								.direction(mXDirection)
+								.latitude(mCurrentLantitude)
+								.longitude(mCurrentLongitude).build();
+						// 设置定位数据
+						mBaiduMap.setMyLocationData(locData);
+						// 设置自定义图标
+					//	BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
+						//		.fromResource(R.drawable.navi_map_gps_locked);
+						MyLocationConfiguration config = new MyLocationConfiguration(
+								mCurrentMode, true, null);
+						System.out.println("你是发动过按个啊阿尔法安慰");
+						mBaiduMap.setMyLocationConfigeration(config);
+
+					}
+				});
+	}
 	/*
 	 * button_settings.setOnClickListener(new ImageButton.OnClickListener() {
 	 * public void onClick(View v) { Intent intent = new Intent();
