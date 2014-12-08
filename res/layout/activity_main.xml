@@ -25,7 +25,7 @@
              android:layout_column="4"
              android:background="#00000000"
              android:scaleType="fitCenter"
-             android:src="@drawable/selector" />
+             android:src="@drawable/listen" />
 
 
      </TableRow>
@@ -43,13 +43,13 @@
     
 	<TableRow
 	    android:layout_weight="1">
-<!-- <EditText
+ <EditText
 	android:id="@+id/show"  
 	android:layout_width="fill_parent" 
 	android:layout_height="wrap_content" 
 	android:editable="false"
 	android:cursorVisible="false"
-	/>-->
+	/>
     </TableRow> 
 
     

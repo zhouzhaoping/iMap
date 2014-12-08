@@ -3,6 +3,9 @@ package com.example.imap;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.crypto.spec.IvParameterSpec;
+
+import android.R.integer;
 import android.animation.StateListAnimator;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -48,8 +51,6 @@ import com.baidu.mapapi.map.MapStatusUpdateFactory;
 import com.baidu.mapapi.map.MapView;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
-
-
 import com.baidu.mapapi.map.OverlayOptions;
 import com.baidu.mapapi.map.BaiduMap.OnMarkerClickListener;
 import com.baidu.mapapi.map.MyLocationConfiguration;
@@ -59,6 +60,7 @@ import com.baidu.mapapi.map.MyLocationConfiguration.LocationMode;
 import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
+import com.baidu.navisdk.ui.routeguide.fsm.RouteGuideFSM.IFSMDestStateListener;
 //假如用到位置提醒功能，需要import该类
 //如果使用地理围栏功能，需要import如下类
 import com.baidu.location.BDGeofence;
@@ -68,9 +70,6 @@ import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;
 import com.baidu.location.GeofenceClient.OnGeofenceTriggerListener;
 import com.baidu.location.GeofenceClient.OnRemoveBDGeofencesResultListener;
 import com.example.imap.MyOrientationListener.OnOrientationListener;
-
-
-
 
 public class MainActivity extends Activity {
 
@@ -83,9 +82,9 @@ public class MainActivity extends Activity {
 	ArrayList<Intent> intents = new ArrayList<Intent>();
 	ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
 	Marker marker1;
-
+	int sure_choose_marker = 0;
 	EditText show;
-	public int radius = 100;
+	public int radius = 30;
 	public static int alarmCount = 0;
 	/**
 	 * 最新一次的经纬度
@@ -104,6 +103,12 @@ public class MainActivity extends Activity {
 	 * 方向传感器X方向的值
 	 */
 	private int mXDirection;
+	
+	/**
+	 * 判断是否边走边听
+	 */
+	 // private MyAppData myAppData_listen; 
+	private static int walk_listen = 1;
 	/******** 14-12-03 xj *************************************************/
 	// UI相关
 	OnCheckedChangeListener radioButtonListener;
@@ -159,9 +164,9 @@ public class MainActivity extends Activity {
 				mBaiduMap.animateMapStatus(u);
 			}
 			// 经纬度
-			mCurrentLantitude=location.getLatitude();
-			mCurrentLongitude=location.getLongitude();
-			mCurrentAccracy=location.getRadius();
+			mCurrentLantitude = location.getLatitude();
+			mCurrentLongitude = location.getLongitude();
+			mCurrentAccracy = location.getRadius();
 			// System.out.println(location.getLatitude());
 			// System.out.println(location.getLongitude());
 			location.getLatitude();
@@ -190,11 +195,11 @@ public class MainActivity extends Activity {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-		
-		//	Location location_temp = new Location("GPS");测试用的
-			//location_temp.setLatitude(location.getLatitude());
-			//location_temp.setLongitude(location.getLongitude());
-			// updateView(location_temp);
+
+			 Location location_temp = new Location("GPS");//测试用的
+			 location_temp.setLatitude(location.getLatitude());
+			 location_temp.setLongitude(location.getLongitude());
+			 updateView(location_temp);
 			// logMsg(sb.toString());
 			// ///
 		}
@@ -202,16 +207,17 @@ public class MainActivity extends Activity {
 		public void onReceivePoi(BDLocation poiLocation) {
 		}
 	}
-	
+
 	// 测试用的函数updateView
 	public void updateView(Location newLocation) {
 		if (newLocation != null) {
 			StringBuilder sb = new StringBuilder();
-			sb.append("实时位置信息：\n");
-			sb.append("经度： ");
+			sb.append("经度 \n");
 			sb.append(newLocation.getLongitude());
-			sb.append("纬度： ");
+			sb.append("\n纬度 \n");
 			sb.append(newLocation.getLatitude());
+			sb.append("\n select:\n");
+			sb.append(select_button);
 			show.setText(sb.toString());
 		} else {
 			show.setText("");
@@ -230,6 +236,12 @@ public class MainActivity extends Activity {
 				.zIndex(9).draggable(true);
 		marker1 = (Marker) (mBaiduMap.addOverlay(option));
 		markers.add(marker1);
+		markers.add((Marker) mBaiduMap.addOverlay(
+				new MarkerOptions()
+				.position(new LatLng(39.995633, 116.313145))
+				.icon(ooa)
+				.zIndex(9).draggable(true)
+				));
 	}
 
 	@Override
@@ -246,7 +258,7 @@ public class MainActivity extends Activity {
 		 * ********************
 		 */
 
-		// show = (EditText) findViewById(R.id.show);
+		 show = (EditText) findViewById(R.id.show);
 
 		/************************************************************************************/
 
@@ -258,6 +270,10 @@ public class MainActivity extends Activity {
 		mBaiduMap.setMapType(BaiduMap.MAP_TYPE_NORMAL);
 		// 将数据库中景点坐标放入列表markers中
 		init();
+		mMapView.showZoomControls(false);
+		
+		//获取全局变量
+		//myAppData_listen = (MyAppData) getApplication();
 		
 		
 		/******** 14-12-03 xj* 定位功能 ************************************************/
@@ -295,13 +311,13 @@ public class MainActivity extends Activity {
 			}
 
 		};
-		requestLocButton.setOnClickListener(btnClickListener);
+		requestLocButton.setOnClickListener(btnClickListener);//设置监听函数
 		mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
 				mCurrentMode, true, null));
 
 		// 开启定位图层
 		mBaiduMap.setMyLocationEnabled(true);
-		
+
 		// 定位初始化
 		mLocClient = new LocationClient(this);
 		mLocClient.registerLocationListener(myListener);
@@ -316,8 +332,8 @@ public class MainActivity extends Activity {
 		mLocClient.setLocOption(option_loc);
 		mLocClient.start();
 		// 初始化传感器
-				initOritationListener();
-				myOrientationListener.start();
+		initOritationListener();
+		myOrientationListener.start();
 		/****** 14-12-03 xj**点击景点，显示语音 **********************************************/
 		//
 		/*
@@ -329,38 +345,86 @@ public class MainActivity extends Activity {
 		 */
 		// //////////////////////////////////////////////////////////////////////////////////////////
 		final Builder builder = new AlertDialog.Builder(this);
+		 
 		mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
+			int num = 0;
+			 int pre_marker = -1;
 			public boolean onMarkerClick(final Marker marker) {
-				if (marker == marker1) {
-					builder.setIcon(R.drawable.tools);
-					builder.setTitle("选择语音");
-					builder.setMessage("none");
-					builder.setPositiveButton("更多",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// 这里添加默认语音
-									Intent intent = new Intent();
-									intent.setClass(MainActivity.this,
-											MusicActivity.class);
-
-									startActivity(intent);
-								}
-							});
-					builder.setNegativeButton("默认",
-							new DialogInterface.OnClickListener() {
-								public void onClick(DialogInterface dialog,
-										int which) {
-									// 这里跳转到语音列表
-									Intent intent = new Intent();
-									intent.setClass(MainActivity.this,
-											OfflineDemo.class);
-									startActivity(intent);
-								}
-							});
-					builder.create().show();
+				
+				if(sure_choose_marker == 0)
+				{
+					num = 0;
+					pre_marker = -1;
 				}
+				
+				if(select_button == -1)
+				{
+					for(int i = 0 ;i < markers.size();i++)
+					{
+						if (marker == markers.get(i)) {
+							builder.setIcon(R.drawable.tools);
+							builder.setTitle("选择语音");
+							builder.setMessage("none");
+							builder.setPositiveButton("更多",
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// 这里添加默认语音
+											Intent intent = new Intent();
+											intent.setClass(MainActivity.this,
+													MusicActivity.class);
 
+											startActivity(intent);
+										}
+									});
+							builder.setNegativeButton("默认",
+									new DialogInterface.OnClickListener() {
+										public void onClick(DialogInterface dialog,
+												int which) {
+											// 这里跳转到语音列表
+											Intent intent = new Intent();
+											intent.setClass(MainActivity.this,
+													OfflineDemo.class);
+											startActivity(intent);
+										}
+									});
+							builder.create().show();
+						}
+
+					}
+					
+				}
+				if(select_button == 2)//短按话筒键，选择录音地点
+				{
+					
+					for(int i = 0 ;i <markers.size();i++)
+					{
+						
+						if(marker == markers.get(i))
+						{
+							if(num == 0)//保证地图上只能选择一个点
+							{
+								System.out.println("num: "+num +" pre: "+pre_marker);
+								markers.get(i).setIcon( BitmapDescriptorFactory
+										.fromResource(R.drawable.icon_choosed));
+								sure_choose_marker = 1;
+								num = 1;
+								pre_marker = i;
+							}
+							else {
+								System.out.println("num: "+num +" pre: "+pre_marker);
+								markers.get(pre_marker).setIcon( BitmapDescriptorFactory
+										.fromResource(R.drawable.icon_choosing));
+								markers.get(i).setIcon( BitmapDescriptorFactory
+										.fromResource(R.drawable.icon_choosed));
+								pre_marker = i;
+								sure_choose_marker = 1;
+							}
+						
+						}
+					}
+				}
+				
 				return true;
 			}
 		});
@@ -372,7 +436,7 @@ public class MainActivity extends Activity {
 		 * *********************************
 		 * 参见http://blog.csdn.net/huang_hws/article/details/7327670
 		 */
-
+		
 		// 定位服务常量
 		String locService = Context.LOCATION_SERVICE;
 		// 定位服务管理器实例
@@ -382,10 +446,12 @@ public class MainActivity extends Activity {
 		for (int i = 0; i < markers.size(); i++) {
 			intents.add(new Intent(this, AlertReceiver.class));
 			intents.get(i).putExtra(String.valueOf(i), i);
+			intents.get(i).putExtra("walk_listen", walk_listen);
 			// 由于不是马上触发，所以需要PendingIntent
 			pendingIntents.add(PendingIntent.getBroadcast(this, alarmCount++,
 					intents.get(i), PendingIntent.FLAG_UPDATE_CURRENT));
-			// 添加临近警告 参照http://blog.csdn.net/flowingflying/article/details/38871219
+			// 添加临近警告
+			// 参照http://blog.csdn.net/flowingflying/article/details/38871219
 			locationManager.addProximityAlert(
 					markers.get(i).getPosition().latitude, markers.get(i)
 							.getPosition().longitude, radius, -1,
@@ -433,10 +499,40 @@ public class MainActivity extends Activity {
 		 * removeBDGeofences(fences, new // RemoveFenceListener());
 		 */
 
+		/*******14-12-07 xj 为边走边听添加判断*************************************************************/
+		final ImageButton button_listen = (ImageButton) findViewById(R.id.button_listen);
+		button_listen.setOnClickListener(new View.OnClickListener() {
+			public void onClick(View v) {
+			
+				if(walk_listen == 1)
+				{
+					walk_listen = 0;
+					System.out.println("walk_listen: "+walk_listen);
+					button_listen.setImageResource(R.drawable.listen_off);
+					//关闭边走边听
+				}
+				else {
+					walk_listen = 1;
+					System.out.println("walk_listen: "+walk_listen);
+					button_listen.setImageResource(R.drawable.listen);
+					//开启边走边听
+				}
+				// 跳转到设置activity
+			}
+		});
 		/********************************************************************/
+		
+		
+		
+		
+		
+		/********************************************************************/
+		
+		
+		
 
 		/********** 14-12-03 xj* 添加下面5个按钮的选项提示 ***********************/
-	
+
 		final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
 		final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
 		final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
@@ -513,7 +609,7 @@ public class MainActivity extends Activity {
 				// 跳转到个人activity
 			}
 		});
-		//话筒短按，地图上所有图标发亮，然后选择一个开始录音
+		// 话筒短按，地图上所有图标发亮，然后选择一个开始录音
 		button_huatong.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				button_huatong.setImageResource(R.drawable.huatonging);
@@ -521,8 +617,8 @@ public class MainActivity extends Activity {
 				// button_huatong.setBackgroundColor(0x00000000);
 				select_button = 2;
 				// 对地图上所有marker 标亮
-				//
-				select_button = 5;
+				lightallmarkers();
+				
 			}
 		});
 
@@ -531,14 +627,26 @@ public class MainActivity extends Activity {
 			@Override
 			public boolean onLongClick(View v) {
 				// TODO 自动生成的方法存根
-				if (select_button != 5)
+				if (sure_choose_marker  != 1)
 					return false;
+				sure_choose_marker = 0;
 				button_huatong.setImageResource(R.drawable.huatong2);
 				// button_huatong.setBackgroundColor(0x00000000);
 				select_button = -1;
+				//将marker恢复成原来的样子
+				for(int i= 0 ;i<markers.size();i++)
+				{
+					markers.get(i).setIcon( BitmapDescriptorFactory
+							.fromResource(R.drawable.icon));
+					
+				}
 				// 开始录音
+				Intent intent_luyin = new Intent();
+				intent_luyin.setClass(MainActivity.this,OneRecorderActivity.class);
+				startActivity(intent_luyin);
+				
 				// 录音结束
-				// 添加button_huatong.setImageResource(R.drawable.huatong);
+				// 在确定弹窗中添加button_huatong.setImageResource(R.drawable.huatong);
 				return true;
 
 			}
@@ -565,15 +673,12 @@ public class MainActivity extends Activity {
 	/**
 	 * 初始化方向传感器
 	 */
-	private void initOritationListener()
-	{
+	private void initOritationListener() {
 		myOrientationListener = new MyOrientationListener(
 				getApplicationContext());
 		myOrientationListener
-				.setOnOrientationListener(new OnOrientationListener()
-				{
-					public void onOrientationChanged(float x)
-					{
+				.setOnOrientationListener(new OnOrientationListener() {
+					public void onOrientationChanged(float x) {
 						mXDirection = (int) x;
 
 						// 构造定位数据
@@ -584,18 +689,25 @@ public class MainActivity extends Activity {
 								.latitude(mCurrentLantitude)
 								.longitude(mCurrentLongitude).build();
 						// 设置定位数据
-						mBaiduMap.setMyLocationData(locData);
-						// 设置自定义图标
-					//	BitmapDescriptor mCurrentMarker = BitmapDescriptorFactory
-						//		.fromResource(R.drawable.navi_map_gps_locked);
+						mBaiduMap.setMyLocationData(locData);					
 						MyLocationConfiguration config = new MyLocationConfiguration(
-								mCurrentMode, true, null);
-						System.out.println("你是发动过按个啊阿尔法安慰");
+								mCurrentMode, true, null);			
 						mBaiduMap.setMyLocationConfigeration(config);
 
 					}
 				});
+		
+	
 	}
+	public void lightallmarkers()
+	{
+		for(int i= 0; i< markers.size() ;i++)
+		{
+			markers.get(i).setIcon( BitmapDescriptorFactory
+					.fromResource(R.drawable.icon_choosing));
+		}
+	}
+
 	/*
 	 * button_settings.setOnClickListener(new ImageButton.OnClickListener() {
 	 * public void onClick(View v) { Intent intent = new Intent();
