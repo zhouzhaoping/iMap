@@ -65,7 +65,7 @@
         <activity android:name="MusicActivity"></activity>
         <activity android:name="OfflineDemo"></activity>
         <activity android:name="AlertReceiver"></activity>
-        <activity android:name="OneRecorderActivity"></activity>
+        <activity android:name="OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  

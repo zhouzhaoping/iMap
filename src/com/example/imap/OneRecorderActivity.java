@@ -92,75 +92,7 @@ public class OneRecorderActivity extends Activity {
 		bar = (ProgressBar) findViewById(R.id.progressBar1);
 		timeText = (TextView) findViewById(R.id.time);
 
-		// 录音按钮监听
-		recordBt.setOnTouchListener(new OnTouchListener() {
-
-			@Override
-			public boolean onTouch(View v, MotionEvent event) {
-				switch (event.getAction()) {
-				case MotionEvent.ACTION_DOWN:// 按下
-					// 如果当前不是正在录音状态，开始录音
-					if (RECODE_STATE != RECORD_ING) {
-						recorder = new MyRecorder("voice");
-						RECODE_STATE = RECORD_ING;
-						// 显示录音情况
-						showVoiceDialog();
-						// 开始录音
-						recorder.start();
-						timeText.setVisibility(View.VISIBLE);
-						bar.setVisibility(View.GONE);
-						// 计时线程
-						myThread();
-					}
-					break;
-
-				case MotionEvent.ACTION_UP:// 离开
-					// 如果是正在录音
-					if (RECODE_STATE == RECORD_ING) {
-						RECODE_STATE = RECODE_ED;
-						// 如果录音图标正在显示,关闭
-						if (dialog.isShowing()) {
-							dialog.dismiss();
-						}
-
-						// 停止录音
-						recorder.stop();
-						voiceValue = 0.0;
-
-						if (recodeTime < MIX_TIME) {
-							showWarnToast();
-							recordBt.setText("按住录音");
-							RECODE_STATE = RECORD_NO;
-						} else {
-							recordBt.setText("按住录音");
-							MediaPlayer player = new MediaPlayer();
-							File file = new File(Environment
-									.getExternalStorageDirectory(), "myvoice/voice.amr");
-							try {
-								player.setDataSource(file.getAbsolutePath());
-							} catch (IllegalArgumentException e) {
-								e.printStackTrace();
-							} catch (SecurityException e) {
-								e.printStackTrace();
-							} catch (IllegalStateException e) {
-								e.printStackTrace();
-							} catch (IOException e) {
-								e.printStackTrace();
-							}
-							timeText.setText("录音时间：" + ((int)recodeTime));
-						}
-					}
-					break;
-				}
-				return false;
-			}
-		});
-
-		// 播放语音
-		playBt.setOnClickListener(new OnClickListener() {
-
-			@Override
-			public void onClick(View arg0) {
+		
 				// 如果不是正在播放
 				if (!playState) {
 					// 实例化MediaPlayer对象
@@ -190,6 +122,7 @@ public class OneRecorderActivity extends Activity {
 							public void onCompletion(MediaPlayer mp) {
 								if (playState) {
 									playState = false;
+									finish();
 								}
 							}
 						});
@@ -212,16 +145,13 @@ public class OneRecorderActivity extends Activity {
 					}
 
 				}
-			}
-		});
-
 	}
 
 	
 
 	/** 显示正在录音的图标 */
 	private void showVoiceDialog() {
-		dialog = new Dialog(OneRecorderActivity.this, R.style.AppTheme);
+		dialog = new Dialog(OneRecorderActivity.this, R.style.MyDialogStyle);
 		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
 		dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
 				WindowManager.LayoutParams.FLAG_FULLSCREEN);
