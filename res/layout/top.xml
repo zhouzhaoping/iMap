@@ -22,7 +22,7 @@
             >
             <TextView 
                 android:padding="10dip"
-                android:id="@+id/liaotian"
+                android:id="@+id/popular_title"
                 android:text="最热"
                 android:gravity="center"
                 android:textSize="15dip"
@@ -44,7 +44,7 @@
             >
             <TextView 
                 android:padding="10dip"
-                android:id="@+id/faxian"
+                android:id="@+id/new_title"
                 android:text="最新"
                 android:gravity="center"
                 android:textSize="15dip"
@@ -65,7 +65,7 @@
             >
             <TextView 
                 android:padding="10dip"
-                android:id="@+id/tongxunlu"
+                android:id="@+id/shaixuan_title"
                 android:text="筛选"
                 android:gravity="center"
                 android:textSize="15dip"

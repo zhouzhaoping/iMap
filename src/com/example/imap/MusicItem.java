@@ -1,6 +1,6 @@
 package com.example.imap;
 
-public class HuiHua {
+public class MusicItem {
 	private String weixinID1;
 	private String weixinID2;
 	private String name1;
