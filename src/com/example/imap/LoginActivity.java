@@ -1,5 +1,8 @@
 package com.example.imap;
 
+import imap.nettools.NetThread;
+import imap.nettools.Variable;
+
 import com.example.imap.R;
 
 import android.app.Activity;
@@ -69,115 +72,96 @@ public class LoginActivity extends Activity {
 			  String username = view_username.getText().toString();
 			  String password = view_password.getText().toString();
 			  
-			  if(username.isEmpty() || password.isEmpty())
+			  if (username.isEmpty() || password.isEmpty())
 				  Toast.makeText(LoginActivity.this, "用户名、密码不能为空！", 
 			                 Toast.LENGTH_SHORT).show(); 
+			  else if (username.length() < 4 || username.length() > 20)
+				  Toast.makeText(LoginActivity.this, "用户名在4~20位！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else if (!checkString(username))
+				  Toast.makeText(LoginActivity.this, "用户名只能为字母数字下划线！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else if (password.length() < 6 || password.length() > 14)
+				  Toast.makeText(LoginActivity.this, "密码在6~14位！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else if (!checkString(password))
+				  Toast.makeText(LoginActivity.this, "密码只能为字母数字下划线！", 
+			                 Toast.LENGTH_SHORT).show(); 
 			  else
-			  {
-				  SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-				  Editor editor = sp.edit();
-				  editor.putString("username", username);
-				  editor.putString("password", password);
-				  editor.commit();
-			  
-			  }
-			  
-			  //TODO:登陆验证
-			  //NetThread.url = "http://" + username + "/cgi-bin/handler.py";
-			  //NetThread netThread = new NetThread(password, -1, -1, -1);
-			  Intent intent = new Intent();
-			  intent.setClass(LoginActivity.this, MainActivity.class);
-			  /*
-			  Bundle bundle = new Bundle();
-			  bundle.putString("KEY_USERNAME", username);
-			  bundle.putString("KEY_PASSWORD", password);
-			  intent.putExtras(bundle);
-			  */
-			  startActivity(intent);
-			  Toast.makeText(LoginActivity.this, username+"登录成功！", 
-		                 Toast.LENGTH_SHORT).show(); 
-			  LoginActivity.this.finish();
-			  /*
-			  if (netThread.sendPassword())
-			  {
-			   		Intent intent = new Intent();
-					  intent.setClass(LoginActivity.this, MainActivity.class);
-					  Bundle bundle = new Bundle();
-					  bundle.putString("KEY_USERNAME", username);
-					  bundle.putString("KEY_PASSWORD", password);
-					  intent.putExtras(bundle);
-					  startActivity(intent);
-					  Toast.makeText(LoginActivity.this, "登录成功！", 
-				                 Toast.LENGTH_SHORT).show(); 
-					  LoginActivity.this.finish();
-			  } else {
-				  NetThread.url = "http://162.105.171.246/cgi-bin/handler.py";
-				  Intent intent = new Intent();
-				  intent.setClass(LoginActivity.this, MainActivity.class);
-				  Bundle bundle = new Bundle();
-				  bundle.putString("KEY_USERNAME", username);
-				  bundle.putString("KEY_PASSWORD", password);
-				  intent.putExtras(bundle);
-				  startActivity(intent);
+			  {				  
+				  NetThread netthread = new NetThread(username, password);
+				  netthread.makeParam(Variable.login);
+				  int returnCode = netthread.beginDeal();
 				  
-				  Toast.makeText(LoginActivity.this, "IP地址或密码错误！", 
-			                 Toast.LENGTH_SHORT).show(); 
-				  LoginActivity.this.finish();
-			  }*/
-			  /*
-			  if (username.equals("") || password.equals(""))
-			  {
-				  Toast.makeText(LoginActivity.this, "IP地址或密码不能为空！", 
-			                 Toast.LENGTH_SHORT).show(); 
-			  }
-			  else if (username.equals("162.105.171.246") && password.equals("123456"))
-			{
-				// Close this Activity
-				  Intent intent = new Intent();
-				  intent.setClass(LoginActivity.this, MainActivity.class);
-				  Bundle bundle = new Bundle();
-				  bundle.putString("KEY_USERNAME", username);
-				  bundle.putString("KEY_PASSWORD", password);
-				  intent.putExtras(bundle);
-				  startActivity(intent);
-				  LoginActivity.this.finish();
-			  } else {
-				  Toast.makeText(LoginActivity.this, "IP地址或密码错误！", 
-			                 Toast.LENGTH_SHORT).show(); 
-			  }
-			  */
+				  if (returnCode == 0)
+				  {
+					  SharedPreferences sp = LoginActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+					  Editor editor = sp.edit();
+					  editor.putString("username", username);
+					  editor.putString("password", password);
+					  editor.commit();
+					  
+					  Intent intent = new Intent();
+					  intent.setClass(LoginActivity.this, MainActivity.class);
+					  
+					  startActivity(intent);
+					  Toast.makeText(LoginActivity.this, "欢迎 " + username + "！", 
+				                 Toast.LENGTH_SHORT).show(); 
+					  LoginActivity.this.finish();	
+				  }
+				  else if (returnCode == -1)
+				  {
+					  Toast.makeText(LoginActivity.this, "网络错误！", 
+				                 Toast.LENGTH_SHORT).show();
+				  }
+				  else
+				  {
+					  Toast.makeText(LoginActivity.this, Variable.errorCode[returnCode] + "！", 
+				                 Toast.LENGTH_SHORT).show();
+				  }
+			  } 
 		 }
 	 };
+	 
 	 private Button.OnClickListener SignupListener = new Button.OnClickListener()
 	 {
 		  public void onClick(View v)
 		 {
 			  Intent intent = new Intent();
 			  intent.setClass(LoginActivity.this, SignupActivity.class);
-			  /*
-			  Bundle bundle = new Bundle();
-			  bundle.putString("KEY_USERNAME", username);
-			  bundle.putString("KEY_PASSWORD", password);
-			  intent.putExtras(bundle);
-			  */
+
 			  startActivity(intent);
 			  LoginActivity.this.finish();
 		 }
 	 };
 	 
+	 public static boolean checkString(String obj)
+	 {
+		 for (int i = 0; i < obj.length(); ++i)
+		 {
+			 char ch = obj.charAt(i);
+			 if (Character.isLetter(ch) || Character.isDigit(ch) || ch == '_') 
+				 continue;
+			 else
+				 return false;
+		 }
+		 return true;
+	 }
+	 
 	 @Override 
-	    public boolean onKeyUp(int keyCode, KeyEvent event) { 
-	        if (keyCode == KeyEvent.KEYCODE_BACK) { 
-	            long secondTime = System.currentTimeMillis(); 
-	            if (secondTime - firstTime > 1600) {//如果两次按键时间间隔大于1600毫秒，则不退出 
-	                Toast.makeText(LoginActivity.this, "再按一次退出程序...", 
-	                        Toast.LENGTH_SHORT).show(); 
-	                firstTime = secondTime;//更新firstTime 
-	                return true; 
-	            } else { 
-	                System.exit(0);//否则退出程序 
-	            } 
+	 public boolean onKeyUp(int keyCode, KeyEvent event) 
+	 {
+		 if (keyCode == KeyEvent.KEYCODE_BACK) { 
+	        long secondTime = System.currentTimeMillis(); 
+	        if (secondTime - firstTime > 1600) {//如果两次按键时间间隔大于1600毫秒，则不退出 
+	    Toast.makeText(LoginActivity.this, "再按一次退出程序...", 
+	            Toast.LENGTH_SHORT).show(); 
+	    firstTime = secondTime;//更新firstTime 
+	    return true; 
+	} else { 
+	    System.exit(0);//否则退出程序 
 	        } 
-	        return super.onKeyUp(keyCode, event); 
 	    } 
+	    return super.onKeyUp(keyCode, event); 
+	} 
 }

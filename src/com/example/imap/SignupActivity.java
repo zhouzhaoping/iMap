@@ -1,5 +1,8 @@
 package com.example.imap;
 
+import imap.nettools.NetThread;
+import imap.nettools.Variable;
+
 import com.example.imap.R;
 
 import android.app.Activity;
@@ -62,7 +65,7 @@ public class SignupActivity extends Activity {
 	 {
 		  public void onClick(View v)
 		 {
-			  facenum = (facenum + 1) % 8;
+			  facenum = (facenum + 1) % Variable.faceNum;
 			  view_face.setImageResource(LoginActivity.picId[facenum]);
 		 }
 	 };
@@ -79,35 +82,53 @@ public class SignupActivity extends Activity {
 				  Toast.makeText(SignupActivity.this, "用户名、密码不能为空！", 
 			                 Toast.LENGTH_SHORT).show(); 
 			  else if(!password.equals(password2))
-			  {
 				  Toast.makeText(SignupActivity.this, "两次输入密码不同！", 
+			                 Toast.LENGTH_SHORT).show();
+			  else if (username.length() < 4 || username.length() > 20)
+				  Toast.makeText(SignupActivity.this, "用户名在4~20位！", 
 			                 Toast.LENGTH_SHORT).show(); 
-			  }
+			  else if (!LoginActivity.checkString(username))
+				  Toast.makeText(SignupActivity.this, "用户名只能为字母数字下划线！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else if (password.length() < 6 || password.length() > 14)
+				  Toast.makeText(SignupActivity.this, "密码在6~14位！", 
+			                 Toast.LENGTH_SHORT).show(); 
+			  else if (!LoginActivity.checkString(password))
+				  Toast.makeText(SignupActivity.this, "密码只能为字母数字下划线！", 
+			                 Toast.LENGTH_SHORT).show(); 
 			  else
 			  {
-				  //TODO:发送注册信息，判断用户名是否已经存在
-				  //NetThread.url = "http://" + username + "/cgi-bin/handler.py";
-				  //NetThread netThread = new NetThread(password, -1, -1, -1);
-
-				  SharedPreferences sp = SignupActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-				  Editor editor = sp.edit();
-				  editor.putString("username", username);
-				  editor.putString("password", password);
-				  editor.putInt("face", facenum);
-				  editor.commit();
+				  NetThread netthread = new NetThread(username, password);
+				  netthread.makeParam(Variable.signup, facenum + "");				  
+				  int returnCode = netthread.beginDeal();
 				  
-				  Intent intent = new Intent();
-				  intent.setClass(SignupActivity.this, LoginActivity.class);
-				  /*
-				  Bundle bundle = new Bundle();
-				  bundle.putString("KEY_USERNAME", username);
-				  bundle.putString("KEY_PASSWORD", password);
-				  intent.putExtras(bundle);
-				  */
-				  startActivity(intent);
-				  Toast.makeText(SignupActivity.this, username+"注册成功！", 
-			                 Toast.LENGTH_SHORT).show(); 
-				  SignupActivity.this.finish();
+				  if (returnCode == 0)
+				  {
+					  SharedPreferences sp = SignupActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+					  Editor editor = sp.edit();
+					  editor.putString("username", username);
+					  editor.putString("password", password);
+					  editor.putInt("face", facenum);
+					  editor.commit();
+					  
+					  Intent intent = new Intent();
+					  intent.setClass(SignupActivity.this, LoginActivity.class);
+					 
+					  startActivity(intent);
+					  Toast.makeText(SignupActivity.this, username + " 注册成功！", 
+				                 Toast.LENGTH_SHORT).show(); 
+					  SignupActivity.this.finish();
+				  }
+				  else if (returnCode == -1)
+				  {
+					  Toast.makeText(SignupActivity.this, "网络错误！", 
+				                 Toast.LENGTH_SHORT).show();
+				  }
+				  else
+				  {
+					  Toast.makeText(SignupActivity.this, Variable.errorCode[returnCode] + "！", 
+				                 Toast.LENGTH_SHORT).show();
+				  }
 			  }
 		 }
 	 };
