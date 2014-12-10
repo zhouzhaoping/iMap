@@ -251,7 +251,7 @@ public class OneRecorderActivity extends Activity {
 				if(msg.what==0x12){
 				
 					bar.setProgress(((int)media.getCurrentPosition()));
-					System.out.println(bar.getProgress());
+					//System.out.println(bar.getProgress());
 				}
 			};
 		};

@@ -2,6 +2,7 @@ package com.example.imap;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -182,6 +183,14 @@ public class MainActivity extends Activity {
 	BitmapDescriptor mCurrentMarker;
 	public GeofenceClient mGeofenceClient = null;
 
+
+
+	
+	
+	
+	
+	
+	
 	/******** 14-12-05 xj ********************************************/
 	/*
 	 * public class AddGeofenceListener implements
@@ -201,109 +210,7 @@ public class MainActivity extends Activity {
 	 * /**************************************************************
 	 */
 
-	/**
-	 * 定位SDK监听函数
-	 */
-	public class MyLocationListenner implements BDLocationListener {
-
-		@Override
-		public void onReceiveLocation(BDLocation location) {
-			// map view 销毁后不在处理新接收的位置
-			if (location == null || mMapView == null)
-				return;
-			MyLocationData locData = new MyLocationData.Builder()
-					.accuracy(location.getRadius())
-					// 此处设置开发者获取到的方向信息，顺时针0-360
-					.direction(mXDirection).latitude(location.getLatitude())
-					.longitude(location.getLongitude()).build();
-			mBaiduMap.setMyLocationData(locData);
-			if (isFirstLoc) {
-				isFirstLoc = false;
-				LatLng ll = new LatLng(location.getLatitude(),
-						location.getLongitude());
-				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
-				mBaiduMap.animateMapStatus(u);
-			}
-			// 经纬度
-			mCurrentLantitude = location.getLatitude();
-			mCurrentLongitude = location.getLongitude();
-			mCurrentAccracy = location.getRadius();
-			// System.out.println(location.getLatitude());
-			// System.out.println(location.getLongitude());
-			location.getLatitude();
-			location.getLongitude();
-
-			// ///
-			if (location == null)
-				return;
-			StringBuffer sb = new StringBuffer(256);
-			sb.append("time : ");
-			sb.append(location.getTime());
-			sb.append("\nerror code : ");
-			sb.append(location.getLocType());
-			sb.append("\nlatitude : ");
-			sb.append(location.getLatitude());
-			sb.append("\nlontitude : ");
-			sb.append(location.getLongitude());
-			sb.append("\nradius : ");
-			sb.append(location.getRadius());
-			if (location.getLocType() == BDLocation.TypeGpsLocation) {
-				sb.append("\nspeed : ");
-				sb.append(location.getSpeed());
-				sb.append("\nsatellite : ");
-				sb.append(location.getSatelliteNumber());
-			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
-				sb.append("\naddr : ");
-				sb.append(location.getAddrStr());
-			}
-
-			 Location location_temp = new Location("GPS");//测试用的
-			 location_temp.setLatitude(location.getLatitude());
-			 location_temp.setLongitude(location.getLongitude());
-			 updateView(location_temp);
-			// logMsg(sb.toString());
-			// ///
-		}
-
-		public void onReceivePoi(BDLocation poiLocation) {
-		}
-	}
-
-	// 测试用的函数updateView
-	public void updateView(Location newLocation) {
-		if (newLocation != null) {
-			StringBuilder sb = new StringBuilder();
-			sb.append("经度 \n");
-			sb.append(newLocation.getLongitude());
-			sb.append("\n纬度 \n");
-			sb.append(newLocation.getLatitude());
-			sb.append("\n select:\n");
-			sb.append(select_button);
-			show.setText(sb.toString());
-		} else {
-			show.setText("");
-		}
-	}
-
-	/********************************************************************/
-
-	public void init() {
-		// TODO 自动生成的方法存根
-		// 添加景点坐标于markers
-		BitmapDescriptor ooa = BitmapDescriptorFactory
-				.fromResource(R.drawable.icon);
-		LatLng llA = new LatLng(39.996987, 116.313082);
-		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
-				.zIndex(9).draggable(true);
-		marker1 = (Marker) (mBaiduMap.addOverlay(option));
-		markers.add(marker1);
-		markers.add((Marker) mBaiduMap.addOverlay(
-				new MarkerOptions()
-				.position(new LatLng(39.995633, 116.313145))
-				.icon(ooa)
-				.zIndex(9).draggable(true)
-				));
-	}
+	
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -602,6 +509,96 @@ public class MainActivity extends Activity {
 		final TextView Tip = (TextView) findViewById(R.id.textview_tip);
 		final Builder alert_viewpoint = new AlertDialog.Builder(this);
 		final Builder alert_recorder = new AlertDialog.Builder(this);
+	
+		alert_recorder.setCancelable(false);
+		alert_recorder.setIcon(R.drawable.huatong);
+		alert_recorder.setTitle("录音结束");
+		
+		//添加标签，生成和voice同名的文档记录	
+		
+		
+		
+		
+		alert_recorder.setPositiveButton("播放"
+		, new DialogInterface.OnClickListener() {
+			@Override
+			public void onClick(DialogInterface dialog, 
+					int which) {
+				
+				// 播放语音
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this,
+						OneRecorderActivity.class);
+				
+				startActivity(intent);
+				try { 
+					Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
+					field.setAccessible(true); 
+					field.set(dialog, false); 
+					} catch (Exception e) { 
+					e.printStackTrace(); 
+					} 
+			 
+				
+			}
+		});
+		alert_recorder.setNeutralButton("确定",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,
+							int which) {
+						
+						MediaPlayer player = new MediaPlayer();
+						File file = new File(Environment
+								.getExternalStorageDirectory(), "myvoice/voice.amr");
+						try {
+							player.setDataSource(file.getAbsolutePath());
+						} catch (IllegalArgumentException e) {
+							e.printStackTrace();
+						} catch (SecurityException e) {
+							e.printStackTrace();
+						} catch (IllegalStateException e) {
+							e.printStackTrace();
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+						
+						try { 
+							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
+							field.setAccessible(true); 
+							field.set(dialog, true); 
+							} catch (Exception e) { 
+							e.printStackTrace(); 
+							} 
+					}
+					
+				});
+		alert_recorder.setNegativeButton("取消",
+				new DialogInterface.OnClickListener() {
+					@Override
+					public void onClick(DialogInterface dialog,
+							int which) {
+						// 取消，不做操作
+						try { 
+							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
+							field.setAccessible(true); 
+							field.set(dialog, true); 
+							} catch (Exception e) { 
+							e.printStackTrace(); 
+							} 
+					}
+				});
+		alert_recorder.create();
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 		// 添加景点
 		// 地图长按时间监听注册
 		OnMapLongClickListener listener_view = new OnMapLongClickListener() {
@@ -617,8 +614,12 @@ public class MainActivity extends Activity {
 					return;
 				select_button = -1;
 				button_viewpoint.setImageResource(R.drawable.viewpoint);
+				//恢复按钮
 				Tip.setVisibility(View.GONE);
-
+				button_person.setEnabled(true);
+				button_huatong.setEnabled(true);
+				button_paihang.setEnabled(true);
+				button_settings.setEnabled(true);
 				// 显示弹窗
 				alert_viewpoint.setIcon(R.drawable.viewpoint);
 				alert_viewpoint.setTitle("添加景点");
@@ -659,9 +660,13 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 0;
 				button_viewpoint.setImageResource(R.drawable.viewing);
-
+				//将按钮设置成不可按
 				Tip.setVisibility(View.VISIBLE);
-
+				button_person.setEnabled(false);
+				button_huatong.setEnabled(false);
+				button_paihang.setEnabled(false);
+				button_settings.setEnabled(false);
+				
 			}
 		});
 
@@ -681,15 +686,20 @@ public class MainActivity extends Activity {
 				// 对地图上所有marker 标亮
 				sure_choose_marker = 0;
 				lightallmarkers();
+				button_person.setEnabled(false);
+				button_viewpoint.setEnabled(false);
+				button_paihang.setEnabled(false);
+				button_settings.setEnabled(false);
 				
 			}
 		});
 
 		// 录音按钮监听
-		recordBt = (Button) findViewById(R.id.bt_recorder);
-		playBt = (ImageButton) findViewById(R.id.bt_play);
+		//recordBt = (Button) findViewById(R.id.bt_recorder);
+		//playBt = (ImageButton) findViewById(R.id.bt_play);
 		bar = (ProgressBar) findViewById(R.id.progressBar1);
 		timeText = (TextView) findViewById(R.id.time);
+	
 		button_huatong.setOnTouchListener(new OnTouchListener() {
 
 					@Override
@@ -729,8 +739,9 @@ public class MainActivity extends Activity {
 								recorder.stop();
 								voiceValue = 0.0;
 								sure_choose_marker = 0;
-								if (recodeTime < MIX_TIME) {
-									//showWarnToast();
+								//if (recodeTime < MIX_TIME) {
+								if(recodeTime <MAX_TIME)	{
+								//showWarnToast();
 									//recordBt.setText("按住录音");
 									RECODE_STATE = RECORD_NO;
 								} else {
@@ -739,62 +750,11 @@ public class MainActivity extends Activity {
 									//开始弹出对话框,对话框里有播放，确定，取消按钮，
 									//然后将select=-1，sure_choose_marker = 0;话筒图片还原
 									// 显示弹窗
-									alert_recorder.setCancelable(false);
-									alert_recorder.setIcon(R.drawable.huatong);
-									alert_recorder.setTitle("录音结束");
+									final TableLayout labeLayout = (TableLayout) getLayoutInflater()
+											.inflate(R.layout.label, null);
+									alert_recorder.setView(labeLayout);
 									alert_recorder.setMessage("录音时间：" + ((int)recodeTime));
-									//添加标签，生成和voice同名的文档记录	
-									
-									
-									
-									
-									
-									alert_recorder.setPositiveButton("播放"
-									, new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(DialogInterface dialog, 
-												int which) {
-											// 播放语音
-											Intent intent = new Intent();
-											intent.setClass(MainActivity.this,
-													OneRecorderActivity.class);
-											startActivity(intent);
-											alert_recorder.create().show();
-										}
-									});
-									alert_recorder.setNeutralButton("确定",
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog,
-														int which) {
-													
-													MediaPlayer player = new MediaPlayer();
-													File file = new File(Environment
-															.getExternalStorageDirectory(), "myvoice/voice.amr");
-													try {
-														player.setDataSource(file.getAbsolutePath());
-													} catch (IllegalArgumentException e) {
-														e.printStackTrace();
-													} catch (SecurityException e) {
-														e.printStackTrace();
-													} catch (IllegalStateException e) {
-														e.printStackTrace();
-													} catch (IOException e) {
-														e.printStackTrace();
-													}
-												}
-											});
-									alert_recorder.setNegativeButton("取消",
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog,
-														int which) {
-													// 取消，不做操作
-												}
-											});
-									
-									
-									alert_recorder.create().show();
+									alert_recorder.show();
 									
 									//参数还原
 									select_button = -1;
@@ -805,7 +765,10 @@ public class MainActivity extends Activity {
 												.fromResource(R.drawable.icon));
 									}
 									button_huatong.setImageResource(R.drawable.huatong);
-									
+									button_person.setEnabled(true);
+									button_viewpoint.setEnabled(true);
+									button_paihang.setEnabled(true);
+									button_settings.setEnabled(true);
 									//////////////////////////////////////////////////
 								
 									//timeText.setText("录音时间：" + ((int)recodeTime));
@@ -821,6 +784,7 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 3;
 				// 跳转到排行activity
+				
 			}
 		});
 
@@ -944,7 +908,115 @@ public class MainActivity extends Activity {
 	
 	
 	
-	
+	/**
+	 * 定位SDK监听函数
+	 */
+	public class MyLocationListenner implements BDLocationListener {
+
+		@Override
+		public void onReceiveLocation(BDLocation location) {
+			// map view 销毁后不在处理新接收的位置
+			if (location == null || mMapView == null)
+				return;
+			MyLocationData locData = new MyLocationData.Builder()
+					.accuracy(location.getRadius())
+					// 此处设置开发者获取到的方向信息，顺时针0-360
+					.direction(mXDirection).latitude(location.getLatitude())
+					.longitude(location.getLongitude()).build();
+			mBaiduMap.setMyLocationData(locData);
+			if (isFirstLoc) {
+				isFirstLoc = false;
+				LatLng ll = new LatLng(location.getLatitude(),
+						location.getLongitude());
+				MapStatusUpdate u = MapStatusUpdateFactory.newLatLng(ll);
+				mBaiduMap.animateMapStatus(u);
+			}
+			// 经纬度
+			mCurrentLantitude = location.getLatitude();
+			mCurrentLongitude = location.getLongitude();
+			mCurrentAccracy = location.getRadius();
+			// System.out.println(location.getLatitude());
+			// System.out.println(location.getLongitude());
+			location.getLatitude();
+			location.getLongitude();
+
+			// ///
+			if (location == null)
+				return;
+			StringBuffer sb = new StringBuffer(256);
+			sb.append("time : ");
+			sb.append(location.getTime());
+			sb.append("\nerror code : ");
+			sb.append(location.getLocType());
+			sb.append("\nlatitude : ");
+			sb.append(location.getLatitude());
+			sb.append("\nlontitude : ");
+			sb.append(location.getLongitude());
+			sb.append("\nradius : ");
+			sb.append(location.getRadius());
+			if (location.getLocType() == BDLocation.TypeGpsLocation) {
+				sb.append("\nspeed : ");
+				sb.append(location.getSpeed());
+				sb.append("\nsatellite : ");
+				sb.append(location.getSatelliteNumber());
+			} else if (location.getLocType() == BDLocation.TypeNetWorkLocation) {
+				sb.append("\naddr : ");
+				sb.append(location.getAddrStr());
+			}
+
+			 Location location_temp = new Location("GPS");//测试用的
+			 location_temp.setLatitude(location.getLatitude());
+			 location_temp.setLongitude(location.getLongitude());
+			 updateView(location_temp);
+			// logMsg(sb.toString());
+			// ///
+		}
+
+		public void onReceivePoi(BDLocation poiLocation) {
+		}
+	}
+
+	// 测试用的函数updateView
+	public void updateView(Location newLocation) {
+		if (newLocation != null) {
+			StringBuilder sb = new StringBuilder();
+			sb.append("经度 \n");
+			sb.append(newLocation.getLongitude());
+			sb.append("\n纬度 \n");
+			sb.append(newLocation.getLatitude());
+			sb.append("\n select:\n");
+			sb.append(select_button);
+			show.setText(sb.toString());
+		} else {
+			show.setText("");
+		}
+	}
+
+	/********************************************************************/
+
+	public void init() {
+		// TODO 自动生成的方法存根
+		// 添加景点坐标于markers
+		BitmapDescriptor ooa = BitmapDescriptorFactory
+				.fromResource(R.drawable.icon);
+		LatLng llA = new LatLng(39.996987, 116.313082);
+		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+				.zIndex(9).draggable(true);
+		marker1 = (Marker) (mBaiduMap.addOverlay(option));
+		markers.add(marker1);
+		markers.add((Marker) mBaiduMap.addOverlay(
+				new MarkerOptions()
+				.position(new LatLng(39.995633, 116.313145))
+				.icon(ooa)
+				.zIndex(9).draggable(true)
+				));
+		markers.add((Marker) mBaiduMap.addOverlay(
+				new MarkerOptions()
+				.position(new LatLng(39.992372, 116.318086))
+				.icon(ooa)
+				.zIndex(9).draggable(true)
+				));
+	}	
 	
 	
 	
