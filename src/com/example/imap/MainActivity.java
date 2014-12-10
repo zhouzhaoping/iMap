@@ -347,16 +347,11 @@ public class MainActivity extends Activity {
 					{
 						if (marker == markers.get(i)) {
 							builder.setIcon(R.drawable.tools);
-<<<<<<< Updated upstream
+
 							builder.setTitle(viewspotlist.get(i).getName());
 							builder.setMessage(viewspotlist.get(i).getDescription());
 							final int j = i;
-=======
-							builder.setTitle("选择语音");
-							//builder.setMessage("呵呵");
-							builder.setSingleChoiceItems(items, 1, null);
-							builder.setMultiChoiceItems(items, new boolean[]{false , true }, null);
->>>>>>> Stashed changes
+
 							builder.setPositiveButton("更多",
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog,
@@ -1004,7 +999,7 @@ public class MainActivity extends Activity {
 		// 添加景点坐标于markers
 		BitmapDescriptor ooa = BitmapDescriptorFactory
 				.fromResource(R.drawable.icon);
-<<<<<<< Updated upstream
+
 		
 		//LatLng llA = new LatLng(39.996987, 116.313082);
 		//OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
@@ -1050,34 +1045,10 @@ public class MainActivity extends Activity {
 		                 Toast.LENGTH_SHORT).show();
 		}
 	}
-=======
-		LatLng llA = new LatLng(39.996987, 116.313082);
-		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
-				.zIndex(9).draggable(true);
-		marker1 = (Marker) (mBaiduMap.addOverlay(option));
-		markers.add(marker1);
-		markers.add((Marker) mBaiduMap.addOverlay(
-				new MarkerOptions()
-				.position(new LatLng(39.995633, 116.313145))
-				.icon(ooa)
-				.zIndex(9).draggable(true)
-				));
-	
-		markers.add((Marker) mBaiduMap.addOverlay(
-				new MarkerOptions()
-				.position(new LatLng(39.992372, 116.318086))
-				.icon(ooa)
-				.zIndex(9).draggable(true)
-				));
-	}	
+
 	
 	
 	
-	
-	
-	
-	
->>>>>>> Stashed changes
 	
 	
 	/** 显示正在录音的图标 */
