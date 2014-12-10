@@ -27,6 +27,7 @@ public class NetThread
 		password = p;
 		url = "http://123.57.38.118/soft_project/";
 		param = new JSONObject();
+		System.out.println(userName + ":" + password);
 	}
 	
 	public void makeParam(String[] args, String ...realIn)
@@ -43,11 +44,12 @@ public class NetThread
 		for (int i = 1; i < args.length; ++i)
 		{
 			try {
-				param.put(args[i], realIn[i]);
+				param.put(args[i], realIn[i-1]);
 			} catch (JSONException e) {
 				e.printStackTrace();
 			}
 		}
+		System.out.println(url + ":" + param.toString());
 	}
 	
 	public int beginDeal()
@@ -68,11 +70,13 @@ public class NetThread
 	public Runnable connect = new Runnable(){
 		@Override
 		public void run(){
-			System.out.println("hehhe");
+			System.out.println("running");
 			try{
 				HttpClient client = new DefaultHttpClient();
 				HttpPost request = new HttpPost(url);
 				//request.setHeader("Content-Type", "application/x-www-form-urlencoded; charset=utf-8");
+				
+				System.out.println(param.toString());
 				
 				// 绑定到请求 Entry
 				StringEntity se = new StringEntity(param.toString(), "utf-8"); 
@@ -83,6 +87,9 @@ public class NetThread
 
 				// 得到应答的字符串，这也是一个 JSON 格式保存的数据
 				retSrc = EntityUtils.toString(httpResponse.getEntity());
+
+				System.out.println("|" + retSrc + "|");
+				
 			} catch (Exception e) {
 				Log.d("myerror", "Oops!");
 				e.printStackTrace();

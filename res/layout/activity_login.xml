@@ -31,7 +31,8 @@
         android:layout_height="wrap_content"
         android:text="@string/login_label_username"
         android:textSize="20sp" 
-        android:textColor="#111111"/>
+        android:textColor="@color/black"
+        android:background="#7DFFFFFF"/>
 
     <EditText
 		android:id="@+id/username_edit"
@@ -59,7 +60,8 @@
         android:layout_height="wrap_content"
         android:text="@string/login_label_password" 
         android:textSize="20sp" 
-        android:textColor="#111111"/>
+        android:textColor="@color/black" 
+        android:background="#7DFFFFFF"/>
 
     <EditText
         android:id="@+id/password_edit"
