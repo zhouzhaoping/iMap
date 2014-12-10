@@ -347,9 +347,16 @@ public class MainActivity extends Activity {
 					{
 						if (marker == markers.get(i)) {
 							builder.setIcon(R.drawable.tools);
+<<<<<<< Updated upstream
 							builder.setTitle(viewspotlist.get(i).getName());
 							builder.setMessage(viewspotlist.get(i).getDescription());
 							final int j = i;
+=======
+							builder.setTitle("选择语音");
+							//builder.setMessage("呵呵");
+							builder.setSingleChoiceItems(items, 1, null);
+							builder.setMultiChoiceItems(items, new boolean[]{false , true }, null);
+>>>>>>> Stashed changes
 							builder.setPositiveButton("更多",
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog,
@@ -527,14 +534,7 @@ public class MainActivity extends Activity {
 		final AlertDialog.Builder alert_recorder = new AlertDialog.Builder(this);
 	
 
-		
-		
-		
-		
-		
-		
-		
-		
+
 		
 		// 添加景点
 		// 地图长按时间监听注册
@@ -746,150 +746,6 @@ public class MainActivity extends Activity {
 									RECODE_STATE = RECORD_NO;
 								} else {
 									
-									
-									//开始弹出对话框,对话框里有播放，确定，取消按钮，
-									//然后将select=-1，sure_choose_marker = 0;话筒图片还原
-									// 显示弹窗
-									final TableLayout labeLayout = (TableLayout) getLayoutInflater()
-											.inflate(R.layout.label, null);
-									alert_recorder.setView(labeLayout);
-									alert_recorder.setMessage("录音时间：" + ((int)recodeTime));
-									
-									
-									////////////////////////////////////////////////////////////
-									
-									alert_recorder.setCancelable(false);
-									alert_recorder.setIcon(R.drawable.huatong);
-									alert_recorder.setTitle("录音结束");
-									
-									
-									
-									alert_recorder.setSingleChoiceItems(items, 1,  new DialogInterface.OnClickListener()
-									{
-										@Override
-										public void onClick(DialogInterface dialog, int which)
-										{
-											System.out.println("++++++++++++++++++++which: "+ which);
-										}
-									});
-									
-									
-									alert_recorder.setPositiveButton("播放"
-									, new DialogInterface.OnClickListener() {
-										@Override
-										public void onClick(DialogInterface dialog, 
-												int which) {
-											
-											//设置点击后对话框不删除
-											try { 
-												Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
-												field.setAccessible(true); 
-												field.set(dialog, false); 
-												} catch (Exception e) { 
-												e.printStackTrace(); 
-												} 
-											// 播放语音
-											Intent intent = new Intent();
-											intent.putExtra("view_point_sure_to_update", view_point_sure_to_update);
-											intent.putExtra("timeString", timeString);
-											intent.setClass(MainActivity.this,
-													OneRecorderActivity.class);
-											
-											startActivity(intent);
-											
-										 
-											
-										}
-									});
-									alert_recorder.setNeutralButton("确定",
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog,
-														int which) {
-													
-													MediaPlayer player = new MediaPlayer();
-													//SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-													File file = new File(Environment
-															.getExternalStorageDirectory(),
-															"myvoice/voice_"+view_point_sure_to_update+"_"+ 
-															timeString+
-															".amr");
-													try {
-														player.setDataSource(file.getAbsolutePath());
-													} catch (IllegalArgumentException e) {
-														e.printStackTrace();
-													} catch (SecurityException e) {
-														e.printStackTrace();
-													} catch (IllegalStateException e) {
-														e.printStackTrace();
-													} catch (IOException e) {
-														e.printStackTrace();
-													}
-													
-													try { 
-														Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
-														field.setAccessible(true); 
-														field.set(dialog, true); 
-														} catch (Exception e) { 
-														e.printStackTrace(); 
-														} 
-													
-													//添加标签，生成和voice同名的文档记录	
-													File file_txt = new File(Environment
-															.getExternalStorageDirectory(), "myvoice/voice_"+
-													view_point_sure_to_update+"_"+timeString+".txt");
-													//write_file();
-												
-													EditText log_name = (EditText) labeLayout.findViewById(R.id.log_name);
-													EditText log_content = (EditText) labeLayout.findViewById(R.id.log_content);
-													 
-													  try{
-														     BufferedWriter writer = new BufferedWriter(new FileWriter(file_txt));
-
-														     writer.write(log_name.getText().toString()+"\n");
-														     writer.write(log_content.getText().toString()+"\n");
-														     writer.close();
-
-														}catch(Exception e){
-
-														     }
-													
-													
-													
-													
-												}
-												
-												
-												
-												
-											});
-									alert_recorder.setNegativeButton("取消",
-											new DialogInterface.OnClickListener() {
-												@Override
-												public void onClick(DialogInterface dialog,
-														int which) {
-													// 取消，不做操作
-													try { 
-														Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
-														field.setAccessible(true); 
-														field.set(dialog, true); 
-														} catch (Exception e) { 
-														e.printStackTrace(); 
-														} 
-												}
-											});
-									alert_recorder.create().show();
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
-									
 									////////////////////////////////////////////////////////////
 									
 									
@@ -907,7 +763,14 @@ public class MainActivity extends Activity {
 									button_paihang.setEnabled(true);
 									button_settings.setEnabled(true);
 									//////////////////////////////////////////////////
-								
+									Intent intent = new Intent();
+									intent.putExtra("view_point_sure_to_update", view_point_sure_to_update);
+									intent.putExtra("timeString", timeString);
+									intent.putExtra("recodeTime", recodeTime);
+									intent.setClass(MainActivity.this,
+											Huatong_dialog.class);
+									
+									startActivity(intent);
 									//timeText.setText("录音时间：" + ((int)recodeTime));
 								}
 							}
@@ -1141,6 +1004,7 @@ public class MainActivity extends Activity {
 		// 添加景点坐标于markers
 		BitmapDescriptor ooa = BitmapDescriptorFactory
 				.fromResource(R.drawable.icon);
+<<<<<<< Updated upstream
 		
 		//LatLng llA = new LatLng(39.996987, 116.313082);
 		//OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
@@ -1186,6 +1050,34 @@ public class MainActivity extends Activity {
 		                 Toast.LENGTH_SHORT).show();
 		}
 	}
+=======
+		LatLng llA = new LatLng(39.996987, 116.313082);
+		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+				.zIndex(9).draggable(true);
+		marker1 = (Marker) (mBaiduMap.addOverlay(option));
+		markers.add(marker1);
+		markers.add((Marker) mBaiduMap.addOverlay(
+				new MarkerOptions()
+				.position(new LatLng(39.995633, 116.313145))
+				.icon(ooa)
+				.zIndex(9).draggable(true)
+				));
+	
+		markers.add((Marker) mBaiduMap.addOverlay(
+				new MarkerOptions()
+				.position(new LatLng(39.992372, 116.318086))
+				.icon(ooa)
+				.zIndex(9).draggable(true)
+				));
+	}	
+	
+	
+	
+	
+	
+	
+	
+>>>>>>> Stashed changes
 	
 	
 	/** 显示正在录音的图标 */

@@ -1,0 +1,85 @@
+<?xml version="1.0" encoding="utf-8"?>
+<TableLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:android1="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    >
+
+     <RadioGroup
+        android1:id="@+id/sex"
+        android1:layout_width="wrap_content"
+        android1:layout_height="wrap_content" >
+
+        <RadioButton
+            android1:id="@+id/radio0"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:checked="true"
+            android1:text="男生" />
+
+        <RadioButton
+            android1:id="@+id/radio1"
+            android1:layout_width="wrap_content"
+            android1:layout_height="wrap_content"
+            android1:text="女生" />
+
+      
+    </RadioGroup>
+
+    <CheckBox
+        android:id="@+id/chinese"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="中文" />
+
+    <CheckBox
+        android:id="@+id/english"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="英文" />
+
+     <TextView
+        android:id="@+id/speak"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="语音名称"
+        android:textSize="18sp" />
+    <EditText
+        android:id="@+id/speak_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请输入语音名称"
+        android:textSize="18sp" />
+
+     <TextView
+        android:id="@+id/speak_brief"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="语音简介"
+        android:textSize="18sp" />
+    <EditText
+        android:id="@+id/speak_brief_input"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="请输入语音的简短介绍"
+        android:textSize="18sp" />
+
+    <Button
+        android:id="@+id/sure"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="确定" />
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="取消" />
+    <Button
+        android:id="@+id/play"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="播放" />
+    
+
+   
+</TableLayout>

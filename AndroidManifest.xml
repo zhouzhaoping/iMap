@@ -69,6 +69,7 @@
 		 <activity android:name="com.example.imap.AlertReceiver"></activity>
         <activity android:name="com.example.imap.OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
         <activity android:name="com.musiclist.imap.MusicListActivity"></activity>
+        <activity android:name="com.example.imap.Huatong_dialog"  android:theme="@style/MyDialogStyle"></activity>
 
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
