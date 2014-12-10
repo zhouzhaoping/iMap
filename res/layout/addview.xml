@@ -14,6 +14,7 @@
 	/>
 <!-- 输入用户名的文本框 -->
 <EditText
+    android:id="@+id/add_viewpoint_name"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:hint="请填写景点名字"
@@ -28,8 +29,9 @@
 	android:text="申请理由"
 	android:textSize="10pt"	
 	/>
-<!-- 输入电话号码的文本框 -->		
+	
 <EditText
+    android:id="@+id/add_viewpoint_reason"
 	android:layout_width="fill_parent"
 	android:layout_height="wrap_content"
 	android:hint="请填写您的申请理由"

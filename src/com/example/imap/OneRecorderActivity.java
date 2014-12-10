@@ -5,11 +5,17 @@ import java.io.IOException;
 
 
 
+
+
+
 import com.example.util.MyRecorder;
 import com.example.util.ParseTimeUtil;
 
+import android.R.integer;
+import android.R.string;
 import android.app.Activity;
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
@@ -92,13 +98,18 @@ public class OneRecorderActivity extends Activity {
 		bar = (ProgressBar) findViewById(R.id.progressBar1);
 		timeText = (TextView) findViewById(R.id.time);
 
+			Intent intent = this.getIntent();
+			Bundle bundle = intent.getExtras(); 
+			int view = bundle.getInt("view_point_sure_to_update");
+			String time = bundle.getString("timeString");
+			
 		
 				// 如果不是正在播放
 				if (!playState) {
 					// 实例化MediaPlayer对象
 					media = new MediaPlayer();
 					File file = new File(Environment
-							.getExternalStorageDirectory(), "myvoice/voice.amr");
+							.getExternalStorageDirectory(), "myvoice/voice_"+view+"_"+time+".amr");
 					try {
 						// 设置播放资源
 						media.setDataSource(file.getAbsolutePath());
@@ -149,79 +160,8 @@ public class OneRecorderActivity extends Activity {
 
 	
 
-	/** 显示正在录音的图标 */
-	private void showVoiceDialog() {
-		dialog = new Dialog(OneRecorderActivity.this, R.style.MyDialogStyle);
-		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);
-		dialog.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-				WindowManager.LayoutParams.FLAG_FULLSCREEN);
-		dialog.setContentView(R.layout.talk_layout);
-		dialog_image = (ImageButton) dialog.findViewById(R.id.talk_log);
-		dialog.show();
-	}
-
-	/** 录音时间太短时Toast显示 */
-	void showWarnToast() {
-		Toast toast = new Toast(OneRecorderActivity.this);
-		LinearLayout linearLayout = new LinearLayout(OneRecorderActivity.this);
-		linearLayout.setOrientation(LinearLayout.VERTICAL);
-		linearLayout.setPadding(20, 20, 20, 20);
-
-		// 定义一个ImageView
-		ImageView imageView = new ImageView(OneRecorderActivity.this);
-		imageView.setImageResource(R.drawable.icon_chat_talk_no); // 图标
-
-		TextView mTv = new TextView(OneRecorderActivity.this);
-		mTv.setText("时间太短   录音失败");
-		mTv.setTextSize(14);
-		mTv.setTextColor(Color.WHITE);// 字体颜色
-		// mTv.setPadding(0, 10, 0, 0);
-
-		// 将ImageView和ToastView合并到Layout中
-		linearLayout.addView(imageView);
-		linearLayout.addView(mTv);
-		linearLayout.setGravity(Gravity.CENTER);// 内容居中
-		linearLayout.setBackgroundResource(R.drawable.record_bg);// 设置自定义toast的背景
-
-		toast.setView(linearLayout);
-		toast.setGravity(Gravity.CENTER, 0, 0);// 起点位置为中间 100为向下移100dp
-		toast.show();
-	}
-
-	// 录音Dialog图片随声音大小切换
-	void setDialogImage() {
 	
-		
-		if (voiceValue < 200.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_01);
-		}else if (voiceValue > 200.0 && voiceValue < 400) {
-			dialog_image.setImageResource(R.drawable.record_animate_02);
-		}else if (voiceValue > 400.0 && voiceValue < 800) {
-			dialog_image.setImageResource(R.drawable.record_animate_03);
-		}else if (voiceValue > 800.0 && voiceValue < 1600) {
-			dialog_image.setImageResource(R.drawable.record_animate_04);
-		}else if (voiceValue > 1600.0 && voiceValue < 3200) {
-			dialog_image.setImageResource(R.drawable.record_animate_05);
-		}else if (voiceValue > 3200.0 && voiceValue < 5000) {
-			dialog_image.setImageResource(R.drawable.record_animate_06);
-		}else if (voiceValue > 5000.0 && voiceValue < 7000) {
-			dialog_image.setImageResource(R.drawable.record_animate_07);
-		}else if (voiceValue > 7000.0 && voiceValue < 10000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_08);
-		}else if (voiceValue > 10000.0 && voiceValue < 14000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_09);
-		}else if (voiceValue > 14000.0 && voiceValue < 17000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_10);
-		}else if (voiceValue > 17000.0 && voiceValue < 20000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_11);
-		}else if (voiceValue > 20000.0 && voiceValue < 24000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_12);
-		}else if (voiceValue > 24000.0 && voiceValue < 28000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_13);
-		}else if (voiceValue > 28000.0) {
-			dialog_image.setImageResource(R.drawable.record_animate_14);
-		}
-	}
+	
 	
 	/**进度条线程*/
 	private void barUpdate(){
@@ -258,76 +198,5 @@ public class OneRecorderActivity extends Activity {
 	};
 	
 	
-	/** 录音计时线程 */
-	private void myThread() {
-		timeThread = new Thread(ImageThread);
-		timeThread.start();
-	}
-
-	/** 录音线程 */
-	private Runnable ImageThread = new Runnable() {
-
-		@Override
-		public void run() {
-			recodeTime = 0.0f;
-			// 如果是正在录音状态
-			while (RECODE_STATE == RECORD_ING) {
-				if (recodeTime >= MAX_TIME && MAX_TIME != 0) {
-					handler.sendEmptyMessage(0x10);
-				} else {
-					try {
-						Thread.sleep(200);
-
-						recodeTime += 0.2;
-						if (RECODE_STATE == RECORD_ING) {
-							voiceValue = recorder.getAmplitude();
-							handler.sendEmptyMessage(0x11);
-						}
-					} catch (InterruptedException e) {
-						e.printStackTrace();
-					}
-
-				}
-			}
-
-		}
-
-		Handler handler = new Handler() {
-			public void handleMessage(android.os.Message msg) {
-				switch (msg.what) {
-				case 0x10:
-					// 录音超过15秒自动停止,录音状态设为语音完成
-					if (RECODE_STATE == RECORD_ING) {
-						RECODE_STATE = RECODE_ED;
-						// 如果录音图标正在显示的话,关闭显示图标
-						if (dialog.isShowing()) {
-							dialog.dismiss();
-						}
-
-						// 停止录音
-						recorder.stop();
-						voiceValue = 0.0;
-
-						// 如果录音时长小于1秒，显示录音失败的图标
-						if (recodeTime < 1.0) {
-							showWarnToast();
-							timeText.setText("");
-							recordBt.setText("按住录音");
-							RECODE_STATE = RECORD_NO;
-						} else {
-							recordBt.setText("按住录音");
-							timeText.setText("录音时间:" + ((int) recodeTime));
-						}
-					}
-					break;
-
-				case 0x11:
-					timeText.setText("");
-					recordBt.setText("正在录音");
-					setDialogImage();
-					break;
-				}
-			};
-		};
-	};
+	
 }

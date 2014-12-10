@@ -3,6 +3,7 @@ package com.example.util;
 import java.io.File;
 import java.io.IOException;
 
+import android.R.integer;
 import android.media.MediaRecorder;
 import android.os.Environment;
 
