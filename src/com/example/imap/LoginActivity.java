@@ -1,5 +1,7 @@
 package com.example.imap;
 
+import org.json.JSONException;
+
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
@@ -99,6 +101,14 @@ public class LoginActivity extends Activity {
 					  Editor editor = sp.edit();
 					  editor.putString("username", username);
 					  editor.putString("password", password);
+					  int facei;
+						try {
+							facei = netthread.getReturn().getInt("facePic");
+						} catch (JSONException e) {
+							facei = 0;
+							e.printStackTrace();
+						}
+					  editor.putInt("face", facei);
 					  editor.commit();
 					  
 					  Intent intent = new Intent();

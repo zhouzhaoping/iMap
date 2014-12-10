@@ -1,13 +1,22 @@
 package imap.nettools;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
+
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.model.LatLng;
 
 import android.util.Log;
 
@@ -17,7 +26,7 @@ public class NetThread
 	String password;
 	String url;
 	
-	JSONObject param;
+	JSONObject param, returnJson;
 	
 	String retSrc;
 	
@@ -58,14 +67,56 @@ public class NetThread
 			Thread t = new Thread(connect);
 			t.start();
 			t.join();
-			JSONObject object = new JSONObject(retSrc);
-			return object.getInt("status");
+			returnJson = new JSONObject(retSrc);
+			return returnJson.getInt("status");
 		} catch (Exception e) {
 			e.printStackTrace();
 			return -1;
 		}
 	}
 	
+	public JSONObject getReturn()
+	{
+		return returnJson;
+	}
+	
+	public List<ViewSpotData> getSpotsList()
+	{
+		List<ViewSpotData> list = new ArrayList<ViewSpotData>();
+		
+		try {
+			JSONArray viewSpotList = returnJson.getJSONArray("viewSpotList");
+			for (int i = 0; i < viewSpotList.length(); ++i)
+			{
+				JSONObject obj = viewSpotList.getJSONObject(i);
+				ViewSpotData vsd = new ViewSpotData(obj);
+				list.add(vsd);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return list;
+	}
+	
+	public List<MusicItemData> getPopularList()
+	{
+		List<MusicItemData> list = new ArrayList<MusicItemData>();
+		
+		try {
+			JSONArray viewSpotList = returnJson.getJSONArray("popular");
+			for (int i = 0; i < viewSpotList.length(); ++i)
+			{
+				JSONObject obj = viewSpotList.getJSONObject(i);	
+				MusicItemData vsd = new MusicItemData(obj);
+				list.add(vsd);
+			}
+		} catch (JSONException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}			
+		return list;
+	}
 	
 	public Runnable connect = new Runnable(){
 		@Override

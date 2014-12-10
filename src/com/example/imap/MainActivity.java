@@ -1,5 +1,9 @@
 package com.example.imap;
 
+import imap.nettools.NetThread;
+import imap.nettools.Variable;
+import imap.nettools.ViewSpotData;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileOutputStream;
@@ -13,6 +17,10 @@ import java.util.List;
 
 import javax.crypto.spec.IvParameterSpec;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
 import android.R.integer;
 import android.animation.StateListAnimator;
 import android.app.Activity;
@@ -23,6 +31,8 @@ import android.app.PendingIntent;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.content.pm.LabeledIntent;
 import android.graphics.Color;
 import android.graphics.drawable.Drawable;
@@ -138,6 +148,7 @@ public class MainActivity extends Activity {
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
+	List<ViewSpotData> viewspotlist;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	ArrayList<Intent> intents = new ArrayList<Intent>();
 	ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
@@ -307,6 +318,7 @@ public class MainActivity extends Activity {
 		initOritationListener();
 		myOrientationListener.start();
 		/****** 14-12-03 xj**点击景点，显示语音 **********************************************/
+		
 		//
 		/*
 		 * BitmapDescriptor ooa = BitmapDescriptorFactory
@@ -335,14 +347,16 @@ public class MainActivity extends Activity {
 					{
 						if (marker == markers.get(i)) {
 							builder.setIcon(R.drawable.tools);
-							builder.setTitle("选择语音");
-							builder.setMessage("none");
+							builder.setTitle(viewspotlist.get(i).getName());
+							builder.setMessage(viewspotlist.get(i).getDescription());
+							final int j = i;
 							builder.setPositiveButton("更多",
 									new DialogInterface.OnClickListener() {
 										public void onClick(DialogInterface dialog,
 												int which) {
 											
 											Intent intent = new Intent();
+											intent.putExtra("id", viewspotlist.get(j).getId());
 											intent.setClass(MainActivity.this,
 													com.musiclist.imap.MusicListActivity.class);
 
@@ -531,7 +545,7 @@ public class MainActivity extends Activity {
 			 * @param point
 			 *            长按的地理坐标
 			 */
-			public void onMapLongClick(LatLng point) {
+			public void onMapLongClick(final LatLng point) {
 
 				if (select_button != 0)
 					return;
@@ -557,12 +571,68 @@ public class MainActivity extends Activity {
 				, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						// 发送增加景点请求，使用point传地址
+						
+						//设置点击后对话框不删除
+						try { 
+							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
+							field.setAccessible(true); 
+							field.set(dialog, false); 
+							} catch (Exception e) { 
+							e.printStackTrace(); 
+							} 
+						
+						SharedPreferences sp = MainActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+						 String username = sp.getString("username", "");
+						 String password = sp.getString("password", "");
+						 
 						EditText add_viewpoint_name = (EditText) loginForm.findViewById(R.id.add_viewpoint_name);
 						EditText add_viewpoint_reason = (EditText) loginForm.findViewById(R.id.add_viewpoint_reason);
 						String add_name = add_viewpoint_name.getText().toString();
-						String add_reason = add_viewpoint_name.getText().toString();
+						String add_reason = add_viewpoint_reason.getText().toString();
+						String add_latitude = point.latitude + "";
+						String add_longtitude = point.longitude + "";
 						
+						if (add_name.isEmpty() || add_reason.isEmpty())
+							Toast.makeText(MainActivity.this, "景点名、理由不能为空！",
+									Toast.LENGTH_SHORT).show(); 
+						else if (add_name.length() > 20)
+							Toast.makeText(MainActivity.this, "经景点名在20个字以内！",
+									Toast.LENGTH_SHORT).show(); 
+						else if (add_reason.length() > 200)
+							Toast.makeText(MainActivity.this, "理由在6~14位！",
+									Toast.LENGTH_SHORT).show();
+						else if (add_latitude.isEmpty() || add_longtitude.isEmpty())
+							Toast.makeText(MainActivity.this, "获取经纬度失败！",
+									Toast.LENGTH_SHORT).show();
+						else
+						{				  
+							NetThread netthread = new NetThread(username, password);
+							netthread.makeParam(Variable.applySpot, add_name, add_reason, add_longtitude, add_latitude);
+							int returnCode = netthread.beginDeal();
+							if (returnCode == 0)
+							  {
+								  Toast.makeText(MainActivity.this, add_name + " 申请已发出，我们会在一个工作日内处理！", 
+							                 Toast.LENGTH_SHORT).show(); 								  
+								
+								try { 
+									Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
+									field.setAccessible(true); 
+									field.set(dialog, true); 
+									} catch (Exception e) { 
+									e.printStackTrace(); 
+									} 
+							  }
+							  else if (returnCode == -1)
+							  {
+								  Toast.makeText(MainActivity.this, "网络错误！", 
+							                 Toast.LENGTH_SHORT).show();
+							  }
+							  else
+							  {
+								  Toast.makeText(MainActivity.this, Variable.errorCode[returnCode] + "！", 
+							                 Toast.LENGTH_SHORT).show();
+							  }
+						}
 					}
 				});
 
@@ -1071,31 +1141,51 @@ public class MainActivity extends Activity {
 		// 添加景点坐标于markers
 		BitmapDescriptor ooa = BitmapDescriptorFactory
 				.fromResource(R.drawable.icon);
-		LatLng llA = new LatLng(39.996987, 116.313082);
-		OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
-				.zIndex(9).draggable(true);
-		marker1 = (Marker) (mBaiduMap.addOverlay(option));
-		markers.add(marker1);
-		markers.add((Marker) mBaiduMap.addOverlay(
-				new MarkerOptions()
-				.position(new LatLng(39.995633, 116.313145))
-				.icon(ooa)
-				.zIndex(9).draggable(true)
-				));
-		markers.add((Marker) mBaiduMap.addOverlay(
-				new MarkerOptions()
-				.position(new LatLng(39.992372, 116.318086))
-				.icon(ooa)
-				.zIndex(9).draggable(true)
-				));
-	}	
-	
-	
-	
-	
-	
-	
-	
+		
+		//LatLng llA = new LatLng(39.996987, 116.313082);
+		//OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+		//		.zIndex(9).draggable(true);
+		//marker1 = (Marker) (mBaiduMap.addOverlay(option));
+		
+		Toast.makeText(MainActivity.this, "正在载入景点。。。。。。", 
+                Toast.LENGTH_SHORT).show(); 
+		
+		SharedPreferences sp = MainActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+		 String username = sp.getString("username", "");
+		 String password = sp.getString("password", "");
+		 
+		NetThread netthread = new NetThread(username, password);
+		netthread.makeParam(Variable.updateSpot, 0 + "");
+		int returnCode = netthread.beginDeal();
+		
+		if (returnCode == 0)
+		{			 
+			viewspotlist = netthread.getSpotsList();
+			for (int i = 0; i < viewspotlist.size(); ++i)
+			{
+				markers.add((Marker) mBaiduMap.addOverlay(
+						new MarkerOptions()
+						.position(new LatLng(viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude()))
+						.icon(ooa)
+						.zIndex(9).draggable(true)
+						));
+				if (viewspotlist.get(i).getVisible() == 0)
+					markers.get(i).setVisible(false);
+			}
+			  Toast.makeText(MainActivity.this, "景点载入成功！", 
+		                 Toast.LENGTH_SHORT).show(); 
+		}
+		else if (returnCode == -1)
+		{
+			  Toast.makeText(MainActivity.this, "网络错误！", 
+		                 Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(MainActivity.this, Variable.errorCode[returnCode] + "！", 
+		                 Toast.LENGTH_SHORT).show();
+		}
+	}
 	
 	
 	/** 显示正在录音的图标 */

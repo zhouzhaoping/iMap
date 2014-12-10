@@ -1,6 +1,9 @@
 package com.musiclist.imap;
 
+import imap.nettools.MusicItemData;
+
 import java.util.ArrayList;
+import java.util.List;
 
 import com.example.imap.R;
 
@@ -99,9 +102,9 @@ public class PopularFragment extends Fragment {
 		String name[] = {"张三", "小黑", "傻逼", "禽兽", "风清", "呵呵", "鄙人", "人人人", "法克", "诗人"};
 		String lastContent[] = {"未名湖是个好地方", "柳树和湖面相得益彰", "人有点少哈", "我爱上了这里", "我来介绍一些历史", "突然就有感而发了", "春天，好地方", "记得一年前的今天，这里。。", "it's very good", "最美不过未名"};
 		String postTime[] = {"下午 18:00", "下午 18:00", "下午 17:40", "下午 17:00", "下午 16:22", "下午 16:11", "下午 15:08", "下午 15:01", "下午 14:50", "下午 14:00", "中午 12:00"};
-		
+			
 		ArrayList<MusicItem> musicItemList = new ArrayList<MusicItem>();
-		
+				
 		for (int i = 0; i < name.length; ++i)
 		{
 			MusicItem mi = new MusicItem();
