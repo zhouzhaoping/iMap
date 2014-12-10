@@ -35,6 +35,10 @@
 <uses-permission android:name="android.permission.MOUNT_UNMOUNT_FILESYSTEMS"></uses-permission>
 <!--允许应用读取低级别的系统日志文件 -->
 <uses-permission android:name="android.permission.READ_LOGS"></uses-permission>
+<!-- 授权获取定位信息 -->
+<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+<!-- 用于录音权限 -->
+<uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
     <application
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
@@ -55,12 +59,14 @@
             android:name="com.example.imap.MainActivity"
             android:label="@string/app_name" >
         </activity>
+
         <activity android:name="com.example.imap.LoginActivity"></activity>
         <activity android:name="com.example.imap.SignupActivity"></activity>
-        <activity android:name="com.example.imap.MusicActivity"></activity>
         <activity android:name="com.example.imap.OfflineDemo"></activity>
+		 <activity android:name="com.example.imap.AlertReceiver"></activity>
+        <activity android:name="com.example.imap.OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
         <activity android:name="com.musiclist.imap.MusicListActivity"></activity>
-        
+
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
         android:value="ZMCmaLj67MTXyAAot3z2Z8im" />  
