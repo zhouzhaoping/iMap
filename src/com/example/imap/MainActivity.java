@@ -342,7 +342,7 @@ public class MainActivity extends Activity {
 									// 这里添加默认语音
 									Intent intent = new Intent();
 									intent.setClass(MainActivity.this,
-											MusicActivity.class);
+											com.musiclist.imap.MusicListActivity.class);
 
 									startActivity(intent);
 								}
