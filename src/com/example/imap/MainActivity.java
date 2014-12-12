@@ -1026,7 +1026,7 @@ public class MainActivity extends Activity {
 						new MarkerOptions()
 						.position(new LatLng(viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude()))
 						.icon(ooa)
-						.zIndex(9).draggable(true)
+						.zIndex(9).draggable(false)
 						));
 				if (viewspotlist.get(i).getVisible() == 0)
 					markers.get(i).setVisible(false);
