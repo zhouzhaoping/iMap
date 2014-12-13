@@ -17,6 +17,9 @@ import java.util.List;
 
 import javax.crypto.spec.IvParameterSpec;
 
+
+
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -28,6 +31,8 @@ import android.app.AlertDialog;
 import android.app.Dialog;
 import android.app.AlertDialog.Builder;
 import android.app.PendingIntent;
+import android.app.Service;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
@@ -105,9 +110,12 @@ import com.baidu.location.GeofenceClient.OnRemoveBDGeofencesResultListener;
 import com.example.imap.MyOrientationListener.OnOrientationListener;
 import com.example.util.MyRecorder;
 
+import android.app.AlarmManager;
+
 public class MainActivity extends Activity {
-	
-	String[] items = new String[]{"heel","daf"};
+
+	AlarmManager aManager;
+
 	/** 语音音量显示 */
 	private Dialog dialog;
 
@@ -119,8 +127,8 @@ public class MainActivity extends Activity {
 
 	/** 更新时间的线程 */
 	private Thread timeThread;
-	
-	/**更新进度条的线程*/
+
+	/** 更新进度条的线程 */
 	private Thread barThread;
 
 	/** 更新的语音图标 */
@@ -142,7 +150,7 @@ public class MainActivity extends Activity {
 	private static double voiceValue = 0.0; // 麦克风获取的音量值
 
 	private static boolean playState = false; // 播放状态
-/***********************************************************/
+	/***********************************************************/
 	public int select_button = -1;
 	long firstTime = 0;
 	private MapView mMapView;
@@ -158,10 +166,16 @@ public class MainActivity extends Activity {
 	public int radius = 30;
 	public static int alarmCount = 0;
 	/**
-	 * 最新一次的经纬度
+	 * 当前的经纬度
 	 */
 	private double mCurrentLantitude;
 	private double mCurrentLongitude;
+	/**
+	 * 最近记录的经纬度
+	 */
+	private double pre_mCurrentLantitude = 0;
+	private double pre_mCurrentLongitude = 0;
+
 	/**
 	 * 当前的精度
 	 */
@@ -174,12 +188,12 @@ public class MainActivity extends Activity {
 	 * 方向传感器X方向的值
 	 */
 	private int mXDirection;
-	
+
 	/**
 	 * 判断是否边走边听
 	 */
-	 // private MyAppData myAppData_listen; 
-	private static int walk_listen = 1;
+	// private MyAppData myAppData_listen;
+	private static int walk_listen = 0;
 	/**
 	 * 判断是哪个景点确定了上传语音
 	 */
@@ -198,14 +212,6 @@ public class MainActivity extends Activity {
 
 	private String timeString;
 
-
-
-	
-	
-	
-	
-	
-	
 	/******** 14-12-05 xj ********************************************/
 	/*
 	 * public class AddGeofenceListener implements
@@ -224,9 +230,8 @@ public class MainActivity extends Activity {
 	 * 
 	 * /**************************************************************
 	 */
-
 	
-
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -235,14 +240,19 @@ public class MainActivity extends Activity {
 		// 注意该方法要再setContentView方法之前实现
 		SDKInitializer.initialize(getApplicationContext());
 		setContentView(R.layout.activity_main);
-
+		aManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
+		
+		final Intent alerIntent = new Intent(MainActivity.this,
+				WalkListen.class);
+	
 		/*
 		 * 测试实时经纬度用**************************************************************
 		 * ********************
 		 */
 
-		 show = (EditText) findViewById(R.id.show);
-
+		show = (EditText) findViewById(R.id.show);
+		 
+		 
 		/************************************************************************************/
 
 		// 获取地图控件引用
@@ -254,11 +264,16 @@ public class MainActivity extends Activity {
 		// 将数据库中景点坐标放入列表markers中
 		init();
 		mMapView.showZoomControls(false);
+
 		
-		//获取全局变量
-		//myAppData_listen = (MyAppData) getApplication();
+		//将景点放入公共变量中
+		final MyAppData mylatlong = (MyAppData)getApplication();
+		mylatlong.setviewlist(viewspotlist);
+		//List<ViewSpotData> temp;
 		
-		
+		// 获取全局变量
+		// myAppData_listen = (MyAppData) getApplication();
+
 		/******** 14-12-03 xj* 定位功能 ************************************************/
 		// 设置地图缩放级别
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(18.0f);
@@ -294,7 +309,7 @@ public class MainActivity extends Activity {
 			}
 
 		};
-		requestLocButton.setOnClickListener(btnClickListener);//设置监听函数
+		requestLocButton.setOnClickListener(btnClickListener);// 设置监听函数
 		mBaiduMap.setMyLocationConfigeration(new MyLocationConfiguration(
 				mCurrentMode, true, null));
 
@@ -318,7 +333,7 @@ public class MainActivity extends Activity {
 		initOritationListener();
 		myOrientationListener.start();
 		/****** 14-12-03 xj**点击景点，显示语音 **********************************************/
-		
+
 		//
 		/*
 		 * BitmapDescriptor ooa = BitmapDescriptorFactory
@@ -329,37 +344,39 @@ public class MainActivity extends Activity {
 		 */
 		// //////////////////////////////////////////////////////////////////////////////////////////
 		final Builder builder = new AlertDialog.Builder(this);
-		 
+
 		mBaiduMap.setOnMarkerClickListener(new OnMarkerClickListener() {
 			int num = 0;
-			 int pre_marker = -1;
+			int pre_marker = -1;
+
 			public boolean onMarkerClick(final Marker marker) {
-				
-				if(sure_choose_marker == 0)
-				{
+
+				if (sure_choose_marker == 0) {
 					num = 0;
 					pre_marker = -1;
 				}
-				
-				if(select_button == -1)
-				{
-					for(int i = 0 ;i < markers.size();i++)
-					{
+
+				if (select_button == -1) {
+					for (int i = 0; i < markers.size(); i++) {
 						if (marker == markers.get(i)) {
 							builder.setIcon(R.drawable.tools);
 
 							builder.setTitle(viewspotlist.get(i).getName());
-							builder.setMessage(viewspotlist.get(i).getDescription());
+							builder.setMessage(viewspotlist.get(i)
+									.getDescription());
 							final int j = i;
 
 							builder.setPositiveButton("更多",
 									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog,
+										public void onClick(
+												DialogInterface dialog,
 												int which) {
-											
+
 											Intent intent = new Intent();
-											intent.putExtra("id", viewspotlist.get(j).getId());
-											intent.setClass(MainActivity.this,
+											intent.putExtra("id", viewspotlist
+													.get(j).getId());
+											intent.setClass(
+													MainActivity.this,
 													com.musiclist.imap.MusicListActivity.class);
 
 											startActivity(intent);
@@ -367,7 +384,8 @@ public class MainActivity extends Activity {
 									});
 							builder.setNegativeButton("默认",
 									new DialogInterface.OnClickListener() {
-										public void onClick(DialogInterface dialog,
+										public void onClick(
+												DialogInterface dialog,
 												int which) {
 											// 这里添加默认语音
 										}
@@ -376,41 +394,46 @@ public class MainActivity extends Activity {
 						}
 
 					}
-					
+
 				}
-				if(select_button == 2)//短按话筒键，选择录音地点
+				if (select_button == 2)// 短按话筒键，选择录音地点
 				{
-					
-					for(int i = 0 ;i <markers.size();i++)
-					{
-						
-						if(marker == markers.get(i))
-						{
-							if(num == 0)//保证地图上只能选择一个点
+
+					for (int i = 0; i < markers.size(); i++) {
+
+						if (marker == markers.get(i)) {
+							if (num == 0)// 保证地图上只能选择一个点
 							{
-								System.out.println("num: "+num +" pre: "+pre_marker);
-								markers.get(i).setIcon( BitmapDescriptorFactory
-										.fromResource(R.drawable.icon_choosed));
+								System.out.println("num: " + num + " pre: "
+										+ pre_marker);
+								markers.get(i)
+										.setIcon(
+												BitmapDescriptorFactory
+														.fromResource(R.drawable.icon_choosed));
 								view_point_sure_to_update = i;
 								sure_choose_marker = 1;
 								num = 1;
 								pre_marker = i;
-							}
-							else {
-								System.out.println("num: "+num +" pre: "+pre_marker);
-								markers.get(pre_marker).setIcon( BitmapDescriptorFactory
-										.fromResource(R.drawable.icon_choosing));
-								markers.get(i).setIcon( BitmapDescriptorFactory
-										.fromResource(R.drawable.icon_choosed));
+							} else {
+								System.out.println("num: " + num + " pre: "
+										+ pre_marker);
+								markers.get(pre_marker)
+										.setIcon(
+												BitmapDescriptorFactory
+														.fromResource(R.drawable.icon_choosing));
+								markers.get(i)
+										.setIcon(
+												BitmapDescriptorFactory
+														.fromResource(R.drawable.icon_choosed));
 								view_point_sure_to_update = i;
 								pre_marker = i;
 								sure_choose_marker = 1;
 							}
-						
+
 						}
 					}
 				}
-				
+
 				return true;
 			}
 		});
@@ -422,38 +445,36 @@ public class MainActivity extends Activity {
 		 * *********************************
 		 * 参见http://blog.csdn.net/huang_hws/article/details/7327670
 		 */
-		
+
 		// 定位服务常量
-		String locService = Context.LOCATION_SERVICE;
-		// 定位服务管理器实例
-		LocationManager locationManager;
-		locationManager = (LocationManager) getSystemService(locService);
-
-		for (int i = 0; i < markers.size(); i++) {
-			intents.add(new Intent(this, AlertReceiver.class));
-			intents.get(i).putExtra(String.valueOf(i), i);
-			intents.get(i).putExtra("walk_listen", walk_listen);
-			// 由于不是马上触发，所以需要PendingIntent
-			pendingIntents.add(PendingIntent.getBroadcast(this, alarmCount++,
-					intents.get(i), PendingIntent.FLAG_UPDATE_CURRENT));
-			// 添加临近警告
-			// 参照http://blog.csdn.net/flowingflying/article/details/38871219
-			locationManager.addProximityAlert(
-					markers.get(i).getPosition().latitude, markers.get(i)
-							.getPosition().longitude, radius, -1,
-					pendingIntents.get(i));
-		}
-
-		// Intent intent1 = new Intent(this, AlertReceiver.class);
-		// intent1.putExtra("intent1", "intent1");
-		// 由于不是马上触发，所以需要PendingIntent
-		// PendingIntent pi1 = PendingIntent.getBroadcast(this, alarmCount++,
-		// intent1,
-		// PendingIntent.FLAG_UPDATE_CURRENT);
-		// 添加临近警告 参照http://blog.csdn.net/flowingflying/article/details/38871219
-		// locationManager.addProximityAlert(marker1.getPosition().latitude,
-		// marker1.getPosition().longitude, radius, -1, pi1);
-		/*** end *********************************************************************************/
+		/*
+		 * String locService = Context.LOCATION_SERVICE; // 定位服务管理器实例
+		 * LocationManager locationManager; locationManager = (LocationManager)
+		 * getSystemService(locService);
+		 * 
+		 * for (int i = 0; i < markers.size(); i++) { intents.add(new
+		 * Intent(this, AlertReceiver.class));
+		 * intents.get(i).putExtra(String.valueOf(i), i);
+		 * intents.get(i).putExtra("walk_listen", walk_listen); //
+		 * 由于不是马上触发，所以需要PendingIntent
+		 * pendingIntents.add(PendingIntent.getBroadcast(this, alarmCount++,
+		 * intents.get(i), PendingIntent.FLAG_UPDATE_CURRENT)); // 添加临近警告 //
+		 * 参照http://blog.csdn.net/flowingflying/article/details/38871219
+		 * locationManager.addProximityAlert(
+		 * markers.get(i).getPosition().latitude, markers.get(i)
+		 * .getPosition().longitude, radius, -1, pendingIntents.get(i)); }
+		 * 
+		 * // Intent intent1 = new Intent(this, AlertReceiver.class); //
+		 * intent1.putExtra("intent1", "intent1"); // 由于不是马上触发，所以需要PendingIntent
+		 * // PendingIntent pi1 = PendingIntent.getBroadcast(this, alarmCount++,
+		 * // intent1, // PendingIntent.FLAG_UPDATE_CURRENT); // 添加临近警告
+		 * 参照http://blog.csdn.net/flowingflying/article/details/38871219 //
+		 * locationManager.addProximityAlert(marker1.getPosition().latitude, //
+		 * marker1.getPosition().longitude, radius, -1, pi1); /*** end
+		 * **********
+		 * ************************************************************
+		 * **********
+		 */
 
 		/************************** 14-12-04 xj下面要开始添加地理围栏 ********************************/
 		// final Builder temp = new AlertDialog.Builder(this);
@@ -485,37 +506,57 @@ public class MainActivity extends Activity {
 		 * removeBDGeofences(fences, new // RemoveFenceListener());
 		 */
 
-		/*******14-12-07 xj 为边走边听添加判断*************************************************************/
+		/******* 14-12-07 xj 为边走边听添加判断 *************************************************************/
+
 		final ImageButton button_listen = (ImageButton) findViewById(R.id.button_listen);
+		
+		final PendingIntent alermpi = PendingIntent.getService(
+				MainActivity.this, 0, alerIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		
 		button_listen.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
-			
-				if(walk_listen == 1)
-				{
+
+				if (walk_listen == 1) {
 					walk_listen = 0;
-					System.out.println("walk_listen: "+walk_listen);
+					System.out.println("walk_listen: " + walk_listen);
 					button_listen.setImageResource(R.drawable.listen_off);
-					//关闭边走边听
-				}
-				else {
+					// 关闭边走边听
+					
+				//	mylatlong.setmylabellat(mCurrentLantitude);
+				//	mylatlong.setmylabellong(mCurrentLongitude);
+					mylatlong.setwalk_listen(walk_listen);
+
+					aManager.set(AlarmManager.RTC, System.currentTimeMillis(), alermpi);
+					aManager.cancel(alermpi);
+					
+					//stopService(alerIntent);	
+				} else {
 					walk_listen = 1;
-					System.out.println("walk_listen: "+walk_listen);
+					System.out.println("walk_listen: " + walk_listen);
 					button_listen.setImageResource(R.drawable.listen);
-					//开启边走边听
+					// 开启边走边听
+					// if(当前经纬度和最近一次记录的经纬度相差一定距离)
+					if (true) 
+					{
+						
+						// System.out.println(mCurrentLantitude+"+"+mCurrentLongitude);
+						
+						//mylatlong.setmylabellat(mCurrentLantitude);
+						//mylatlong.setmylabellong(mCurrentLongitude);
+						mylatlong.setwalk_listen(walk_listen);
+						
+						aManager.setRepeating(AlarmManager.RTC, System.currentTimeMillis(), 5000,
+								alermpi);
+					}
+
 				}
 				// 跳转到设置activity
 			}
 		});
 		/********************************************************************/
-		
-		
-		
-		
-		
+
 		/********************************************************************/
-		
-		
-		
 
 		/********** 14-12-03 xj* 添加下面5个按钮的选项提示 ***********************/
 
@@ -527,10 +568,7 @@ public class MainActivity extends Activity {
 		final TextView Tip = (TextView) findViewById(R.id.textview_tip);
 		final Builder alert_viewpoint = new AlertDialog.Builder(this);
 		final AlertDialog.Builder alert_recorder = new AlertDialog.Builder(this);
-	
 
-
-		
 		// 添加景点
 		// 地图长按时间监听注册
 		OnMapLongClickListener listener_view = new OnMapLongClickListener() {
@@ -546,7 +584,7 @@ public class MainActivity extends Activity {
 					return;
 				select_button = -1;
 				button_viewpoint.setImageResource(R.drawable.viewpoint);
-				//恢复按钮
+				// 恢复按钮
 				Tip.setVisibility(View.GONE);
 				button_person.setEnabled(true);
 				button_huatong.setEnabled(true);
@@ -566,67 +604,74 @@ public class MainActivity extends Activity {
 				, new DialogInterface.OnClickListener() {
 					@Override
 					public void onClick(DialogInterface dialog, int which) {
-						
-						//设置点击后对话框不删除
-						try { 
-							Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
-							field.setAccessible(true); 
-							field.set(dialog, false); 
-							} catch (Exception e) { 
-							e.printStackTrace(); 
-							} 
-						
-						SharedPreferences sp = MainActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-						 String username = sp.getString("username", "");
-						 String password = sp.getString("password", "");
-						 
-						EditText add_viewpoint_name = (EditText) loginForm.findViewById(R.id.add_viewpoint_name);
-						EditText add_viewpoint_reason = (EditText) loginForm.findViewById(R.id.add_viewpoint_reason);
-						String add_name = add_viewpoint_name.getText().toString();
-						String add_reason = add_viewpoint_reason.getText().toString();
+
+						// 设置点击后对话框不删除
+						try {
+							Field field = dialog.getClass().getSuperclass()
+									.getDeclaredField("mShowing");
+							field.setAccessible(true);
+							field.set(dialog, false);
+						} catch (Exception e) {
+							e.printStackTrace();
+						}
+
+						SharedPreferences sp = MainActivity.this
+								.getSharedPreferences("imap", MODE_PRIVATE);
+						String username = sp.getString("username", "");
+						String password = sp.getString("password", "");
+
+						EditText add_viewpoint_name = (EditText) loginForm
+								.findViewById(R.id.add_viewpoint_name);
+						EditText add_viewpoint_reason = (EditText) loginForm
+								.findViewById(R.id.add_viewpoint_reason);
+						String add_name = add_viewpoint_name.getText()
+								.toString();
+						String add_reason = add_viewpoint_reason.getText()
+								.toString();
 						String add_latitude = point.latitude + "";
 						String add_longtitude = point.longitude + "";
-						
+
 						if (add_name.isEmpty() || add_reason.isEmpty())
 							Toast.makeText(MainActivity.this, "景点名、理由不能为空！",
-									Toast.LENGTH_SHORT).show(); 
+									Toast.LENGTH_SHORT).show();
 						else if (add_name.length() > 20)
 							Toast.makeText(MainActivity.this, "经景点名在20个字以内！",
-									Toast.LENGTH_SHORT).show(); 
+									Toast.LENGTH_SHORT).show();
 						else if (add_reason.length() > 200)
 							Toast.makeText(MainActivity.this, "理由在6~14位！",
 									Toast.LENGTH_SHORT).show();
-						else if (add_latitude.isEmpty() || add_longtitude.isEmpty())
+						else if (add_latitude.isEmpty()
+								|| add_longtitude.isEmpty())
 							Toast.makeText(MainActivity.this, "获取经纬度失败！",
 									Toast.LENGTH_SHORT).show();
-						else
-						{				  
-							NetThread netthread = new NetThread(username, password);
-							netthread.makeParam(Variable.applySpot, add_name, add_reason, add_longtitude, add_latitude);
+						else {
+							NetThread netthread = new NetThread(username,
+									password);
+							netthread.makeParam(Variable.applySpot, add_name,
+									add_reason, add_longtitude, add_latitude);
 							int returnCode = netthread.beginDeal();
-							if (returnCode == 0)
-							  {
-								  Toast.makeText(MainActivity.this, add_name + " 申请已发出，我们会在一个工作日内处理！", 
-							                 Toast.LENGTH_SHORT).show(); 								  
-								
-								try { 
-									Field field = dialog.getClass().getSuperclass().getDeclaredField("mShowing"); 
-									field.setAccessible(true); 
-									field.set(dialog, true); 
-									} catch (Exception e) { 
-									e.printStackTrace(); 
-									} 
-							  }
-							  else if (returnCode == -1)
-							  {
-								  Toast.makeText(MainActivity.this, "网络错误！", 
-							                 Toast.LENGTH_SHORT).show();
-							  }
-							  else
-							  {
-								  Toast.makeText(MainActivity.this, Variable.errorCode[returnCode] + "！", 
-							                 Toast.LENGTH_SHORT).show();
-							  }
+							if (returnCode == 0) {
+								Toast.makeText(MainActivity.this,
+										add_name + " 申请已发出，我们会在一个工作日内处理！",
+										Toast.LENGTH_SHORT).show();
+
+								try {
+									Field field = dialog.getClass()
+											.getSuperclass()
+											.getDeclaredField("mShowing");
+									field.setAccessible(true);
+									field.set(dialog, true);
+								} catch (Exception e) {
+									e.printStackTrace();
+								}
+							} else if (returnCode == -1) {
+								Toast.makeText(MainActivity.this, "网络错误！",
+										Toast.LENGTH_SHORT).show();
+							} else {
+								Toast.makeText(MainActivity.this,
+										Variable.errorCode[returnCode] + "！",
+										Toast.LENGTH_SHORT).show();
+							}
 						}
 					}
 				});
@@ -653,13 +698,13 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 0;
 				button_viewpoint.setImageResource(R.drawable.viewing);
-				//将按钮设置成不可按
+				// 将按钮设置成不可按
 				Tip.setVisibility(View.VISIBLE);
 				button_person.setEnabled(false);
 				button_huatong.setEnabled(false);
 				button_paihang.setEnabled(false);
 				button_settings.setEnabled(false);
-				
+
 			}
 		});
 
@@ -683,103 +728,103 @@ public class MainActivity extends Activity {
 				button_viewpoint.setEnabled(false);
 				button_paihang.setEnabled(false);
 				button_settings.setEnabled(false);
-				
+
 			}
 		});
 
 		// 录音按钮监听
-		
+
 		bar = (ProgressBar) findViewById(R.id.progressBar1);
-		
-	
+
 		button_huatong.setOnTouchListener(new OnTouchListener() {
 
-					@Override
-					public boolean onTouch(View v, MotionEvent event) {
+			@Override
+			public boolean onTouch(View v, MotionEvent event) {
 
-						if(sure_choose_marker != 1)
-							return false;
-						
-						switch (event.getAction()) {
-						case MotionEvent.ACTION_DOWN:// 按下
-							// 如果当前不是正在录音状态，开始录音
-							button_huatong.setImageResource(R.drawable.huatong2);
-							if (RECODE_STATE != RECORD_ING) {
-								SimpleDateFormat sDateFormat = new SimpleDateFormat("yyyyMMddhhmmss");
-								timeString = sDateFormat.format(new java.util.Date());
-								recorder = new MyRecorder("voice_"+view_point_sure_to_update+"_"+ 
-										timeString);
-								RECODE_STATE = RECORD_ING;
-								// 显示录音情况
-								showVoiceDialog();
-								// 开始录音
-								recorder.start();
-								//timeText.setVisibility(View.VISIBLE);
-								bar.setVisibility(View.GONE);
-								// 计时线程
-								myThread();
-							}
-							break;
+				if (sure_choose_marker != 1)
+					return false;
 
-						case MotionEvent.ACTION_UP:// 离开
-							// 如果是正在录音
-							if (RECODE_STATE == RECORD_ING) {
-								RECODE_STATE = RECODE_ED;
-								// 如果录音图标正在显示,关闭
-								if (dialog.isShowing()) {
-									dialog.dismiss();
-								}
-
-								// 停止录音
-								recorder.stop();
-								voiceValue = 0.0;
-								sure_choose_marker = 0;
-								//if (recodeTime < MIX_TIME) {
-								if(recodeTime <MAX_TIME)	{
-								//showWarnToast();
-									//recordBt.setText("按住录音");
-									RECODE_STATE = RECORD_NO;
-								} else {
-									
-									////////////////////////////////////////////////////////////
-									
-									
-									//参数还原
-									select_button = -1;
-									sure_choose_marker = 0;
-									for(int i =0;i<markers.size();i++)
-									{
-										markers.get(i).setIcon( BitmapDescriptorFactory
-												.fromResource(R.drawable.icon));
-									}
-									button_huatong.setImageResource(R.drawable.huatong);
-									button_person.setEnabled(true);
-									button_viewpoint.setEnabled(true);
-									button_paihang.setEnabled(true);
-									button_settings.setEnabled(true);
-									//////////////////////////////////////////////////
-									Intent intent = new Intent();
-									intent.putExtra("view_point_sure_to_update", view_point_sure_to_update);
-									intent.putExtra("timeString", timeString);
-									intent.putExtra("recodeTime", recodeTime);
-									intent.setClass(MainActivity.this,
-											Huatong_dialog.class);
-									
-									startActivity(intent);
-									//timeText.setText("录音时间：" + ((int)recodeTime));
-								}
-							}
-							break;
-						}
-						return false;
+				switch (event.getAction()) {
+				case MotionEvent.ACTION_DOWN:// 按下
+					// 如果当前不是正在录音状态，开始录音
+					button_huatong.setImageResource(R.drawable.huatong2);
+					if (RECODE_STATE != RECORD_ING) {
+						SimpleDateFormat sDateFormat = new SimpleDateFormat(
+								"yyyyMMddhhmmss");
+						timeString = sDateFormat.format(new java.util.Date());
+						recorder = new MyRecorder("voice_"
+								+ view_point_sure_to_update + "_" + timeString);
+						RECODE_STATE = RECORD_ING;
+						// 显示录音情况
+						showVoiceDialog();
+						// 开始录音
+						recorder.start();
+						// timeText.setVisibility(View.VISIBLE);
+						bar.setVisibility(View.GONE);
+						// 计时线程
+						myThread();
 					}
-				});
+					break;
+
+				case MotionEvent.ACTION_UP:// 离开
+					// 如果是正在录音
+					if (RECODE_STATE == RECORD_ING) {
+						RECODE_STATE = RECODE_ED;
+						// 如果录音图标正在显示,关闭
+						if (dialog.isShowing()) {
+							dialog.dismiss();
+						}
+
+						// 停止录音
+						recorder.stop();
+						voiceValue = 0.0;
+						sure_choose_marker = 0;
+						// if (recodeTime < MIX_TIME) {
+						if (recodeTime < MAX_TIME) {
+							// showWarnToast();
+							// recordBt.setText("按住录音");
+							RECODE_STATE = RECORD_NO;
+						} else {
+
+							// //////////////////////////////////////////////////////////
+
+							// 参数还原
+							select_button = -1;
+							sure_choose_marker = 0;
+							for (int i = 0; i < markers.size(); i++) {
+								markers.get(i).setIcon(
+										BitmapDescriptorFactory
+												.fromResource(R.drawable.icon));
+							}
+							button_huatong.setImageResource(R.drawable.huatong);
+							button_person.setEnabled(true);
+							button_viewpoint.setEnabled(true);
+							button_paihang.setEnabled(true);
+							button_settings.setEnabled(true);
+							// ////////////////////////////////////////////////
+							Intent intent = new Intent();
+							intent.putExtra("view_point_sure_to_update",
+									view_point_sure_to_update);
+							intent.putExtra("timeString", timeString);
+							intent.putExtra("recodeTime", recodeTime);
+							intent.setClass(MainActivity.this,
+									Huatong_dialog.class);
+
+							startActivity(intent);
+							// timeText.setText("录音时间：" + ((int)recodeTime));
+						}
+					}
+					break;
+				}
+				return false;
+			}
+		});
 
 		button_paihang.setOnClickListener(new View.OnClickListener() {
 			public void onClick(View v) {
 				select_button = 3;
 				// 跳转到排行activity
-				
+
 			}
 		});
 
@@ -789,8 +834,7 @@ public class MainActivity extends Activity {
 				// 跳转到设置activity
 				// 这里跳转到下载地图列表
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this,
-						OfflineDemo.class);
+				intent.setClass(MainActivity.this, OfflineDemo.class);
 				startActivity(intent);
 			}
 		});
@@ -816,22 +860,21 @@ public class MainActivity extends Activity {
 								.latitude(mCurrentLantitude)
 								.longitude(mCurrentLongitude).build();
 						// 设置定位数据
-						mBaiduMap.setMyLocationData(locData);					
+						mBaiduMap.setMyLocationData(locData);
 						MyLocationConfiguration config = new MyLocationConfiguration(
-								mCurrentMode, true, null);			
+								mCurrentMode, true, null);
 						mBaiduMap.setMyLocationConfigeration(config);
 
 					}
 				});
-		
-	
+
 	}
-	public void lightallmarkers()
-	{
-		for(int i= 0; i< markers.size() ;i++)
-		{
-			markers.get(i).setIcon( BitmapDescriptorFactory
-					.fromResource(R.drawable.icon_choosing));
+
+	public void lightallmarkers() {
+		for (int i = 0; i < markers.size(); i++) {
+			markers.get(i).setIcon(
+					BitmapDescriptorFactory
+							.fromResource(R.drawable.icon_choosing));
 		}
 	}
 
@@ -873,6 +916,11 @@ public class MainActivity extends Activity {
 		mBaiduMap.setMyLocationEnabled(false);
 		mMapView.onDestroy();
 		mMapView = null;
+	//	aManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
+	//	Intent i = new Intent(MainActivity.this, WalkListen.class);
+	//	PendingIntent pi_d = PendingIntent.getActivity(MainActivity.this, 0, i,
+	//			PendingIntent.FLAG_UPDATE_CURRENT);
+	//	aManager.cancel(pi_d);
 		super.onDestroy();
 	}
 
@@ -894,20 +942,25 @@ public class MainActivity extends Activity {
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
 			long secondTime = System.currentTimeMillis();
-			if (secondTime - firstTime > 1600) {// 如果两次按键时间间隔大于1600毫秒，则不退出
-				Toast.makeText(MainActivity.this, "再按一次退出程序...",
+
+			if (walk_listen == 1) {
+				Toast.makeText(MainActivity.this, "请先关闭边走边听功能，然后退出",
 						Toast.LENGTH_SHORT).show();
-				firstTime = secondTime;// 更新firstTime
 				return true;
 			} else {
-				System.exit(0);// 否则退出程序
+				if (secondTime - firstTime > 1600) {// 如果两次按键时间间隔大于1600毫秒，则不退出
+					Toast.makeText(MainActivity.this, "再按一次退出程序...",
+							Toast.LENGTH_SHORT).show();
+					firstTime = secondTime;// 更新firstTime
+					return true;
+				} else {
+					System.exit(0);// 否则退出程序
+				}
 			}
 		}
 		return super.onKeyUp(keyCode, event);
 	}
-	
-	
-	
+
 	/**
 	 * 定位SDK监听函数
 	 */
@@ -935,10 +988,9 @@ public class MainActivity extends Activity {
 			mCurrentLantitude = location.getLatitude();
 			mCurrentLongitude = location.getLongitude();
 			mCurrentAccracy = location.getRadius();
-			// System.out.println(location.getLatitude());
-			// System.out.println(location.getLongitude());
-			location.getLatitude();
-			location.getLongitude();
+			final MyAppData mylatlong = (MyAppData)getApplication();
+			mylatlong.setmylabellat(mCurrentLantitude);
+			mylatlong.setmylabellong(mCurrentLongitude);
 
 			// ///
 			if (location == null)
@@ -963,11 +1015,12 @@ public class MainActivity extends Activity {
 				sb.append("\naddr : ");
 				sb.append(location.getAddrStr());
 			}
-
-			 Location location_temp = new Location("GPS");//测试用的
-			 location_temp.setLatitude(location.getLatitude());
-			 location_temp.setLongitude(location.getLongitude());
-			 updateView(location_temp);
+			mCurrentLantitude = location.getLatitude();
+			mCurrentLongitude = location.getLongitude();
+			Location location_temp = new Location("GPS");// 测试用的
+			location_temp.setLatitude(location.getLatitude());
+			location_temp.setLongitude(location.getLongitude());
+			updateView(location_temp);
 			// logMsg(sb.toString());
 			// ///
 		}
@@ -979,11 +1032,14 @@ public class MainActivity extends Activity {
 	// 测试用的函数updateView
 	public void updateView(Location newLocation) {
 		if (newLocation != null) {
+			final MyAppData mylatlong = (MyAppData)getApplication();
 			StringBuilder sb = new StringBuilder();
 			sb.append("经度 \n");
-			sb.append(newLocation.getLongitude());
+			sb.append(newLocation.getLongitude()+"\n");
+			sb.append(mylatlong.getmylabellong()+"\n");
 			sb.append("\n纬度 \n");
-			sb.append(newLocation.getLatitude());
+			sb.append(newLocation.getLatitude()+"\n");
+			sb.append(mylatlong.getmylabellat()+"\n");
 			sb.append("\n select:\n");
 			sb.append(select_button);
 			show.setText(sb.toString());
@@ -1000,55 +1056,49 @@ public class MainActivity extends Activity {
 		BitmapDescriptor ooa = BitmapDescriptorFactory
 				.fromResource(R.drawable.icon);
 
-		
-		//LatLng llA = new LatLng(39.996987, 116.313082);
-		//OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
-		//		.zIndex(9).draggable(true);
-		//marker1 = (Marker) (mBaiduMap.addOverlay(option));
-		
-		Toast.makeText(MainActivity.this, "正在载入景点。。。。。。", 
-                Toast.LENGTH_SHORT).show(); 
-		
-		SharedPreferences sp = MainActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-		 String username = sp.getString("username", "");
-		 String password = sp.getString("password", "");
-		 
+		// LatLng llA = new LatLng(39.996987, 116.313082);
+		// OverlayOptions option = new MarkerOptions().position(llA).icon(ooa)
+		// .zIndex(9).draggable(true);
+		// marker1 = (Marker) (mBaiduMap.addOverlay(option));
+
+		Toast.makeText(MainActivity.this, "正在载入景点。。。。。。", Toast.LENGTH_SHORT)
+				.show();
+
+		SharedPreferences sp = MainActivity.this.getSharedPreferences("imap",
+				MODE_PRIVATE);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
+
 		NetThread netthread = new NetThread(username, password);
 		netthread.makeParam(Variable.updateSpot, 0 + "");
 		int returnCode = netthread.beginDeal();
-		
-		if (returnCode == 0)
-		{			 
+
+		if (returnCode == 0) {
 			viewspotlist = netthread.getSpotsList();
-			for (int i = 0; i < viewspotlist.size(); ++i)
-			{
-				markers.add((Marker) mBaiduMap.addOverlay(
-						new MarkerOptions()
-						.position(new LatLng(viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude()))
-						.icon(ooa)
-						.zIndex(9).draggable(false)
-						));
+			for (int i = 0; i < viewspotlist.size(); ++i) {
+				markers.add((Marker) mBaiduMap.addOverlay(new MarkerOptions()
+						.position(
+								new LatLng(viewspotlist.get(i).getLatitude(),
+										viewspotlist.get(i).getLongitude()))
+						.icon(ooa).zIndex(9).draggable(false)));
 				if (viewspotlist.get(i).getVisible() == 0)
 					markers.get(i).setVisible(false);
 			}
-			  Toast.makeText(MainActivity.this, "景点载入成功！", 
-		                 Toast.LENGTH_SHORT).show(); 
-		}
-		else if (returnCode == -1)
-		{
-			  Toast.makeText(MainActivity.this, "网络错误！", 
-		                 Toast.LENGTH_SHORT).show();
-		}
-		else
-		{
-			Toast.makeText(MainActivity.this, Variable.errorCode[returnCode] + "！", 
-		                 Toast.LENGTH_SHORT).show();
+			Toast.makeText(MainActivity.this, "景点载入成功！", Toast.LENGTH_SHORT)
+					.show();
+		} else if (returnCode == -1) {
+			Toast.makeText(MainActivity.this, "网络错误！", Toast.LENGTH_SHORT)
+					.show();
+		} else {
+			Toast.makeText(MainActivity.this,
+					Variable.errorCode[returnCode] + "！", Toast.LENGTH_SHORT)
+					.show();
 		}
 	}
 
 	
-	
-	
+
+
 	
 	
 	/** 显示正在录音的图标 */
@@ -1092,42 +1142,38 @@ public class MainActivity extends Activity {
 
 	// 录音Dialog图片随声音大小切换
 	void setDialogImage() {
-	
-		
+
 		if (voiceValue < 200.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_01);
-		}else if (voiceValue > 200.0 && voiceValue < 400) {
+		} else if (voiceValue > 200.0 && voiceValue < 400) {
 			dialog_image.setImageResource(R.drawable.record_animate_02);
-		}else if (voiceValue > 400.0 && voiceValue < 800) {
+		} else if (voiceValue > 400.0 && voiceValue < 800) {
 			dialog_image.setImageResource(R.drawable.record_animate_03);
-		}else if (voiceValue > 800.0 && voiceValue < 1600) {
+		} else if (voiceValue > 800.0 && voiceValue < 1600) {
 			dialog_image.setImageResource(R.drawable.record_animate_04);
-		}else if (voiceValue > 1600.0 && voiceValue < 3200) {
+		} else if (voiceValue > 1600.0 && voiceValue < 3200) {
 			dialog_image.setImageResource(R.drawable.record_animate_05);
-		}else if (voiceValue > 3200.0 && voiceValue < 5000) {
+		} else if (voiceValue > 3200.0 && voiceValue < 5000) {
 			dialog_image.setImageResource(R.drawable.record_animate_06);
-		}else if (voiceValue > 5000.0 && voiceValue < 7000) {
+		} else if (voiceValue > 5000.0 && voiceValue < 7000) {
 			dialog_image.setImageResource(R.drawable.record_animate_07);
-		}else if (voiceValue > 7000.0 && voiceValue < 10000.0) {
+		} else if (voiceValue > 7000.0 && voiceValue < 10000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_08);
-		}else if (voiceValue > 10000.0 && voiceValue < 14000.0) {
+		} else if (voiceValue > 10000.0 && voiceValue < 14000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_09);
-		}else if (voiceValue > 14000.0 && voiceValue < 17000.0) {
+		} else if (voiceValue > 14000.0 && voiceValue < 17000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_10);
-		}else if (voiceValue > 17000.0 && voiceValue < 20000.0) {
+		} else if (voiceValue > 17000.0 && voiceValue < 20000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_11);
-		}else if (voiceValue > 20000.0 && voiceValue < 24000.0) {
+		} else if (voiceValue > 20000.0 && voiceValue < 24000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_12);
-		}else if (voiceValue > 24000.0 && voiceValue < 28000.0) {
+		} else if (voiceValue > 24000.0 && voiceValue < 28000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_13);
-		}else if (voiceValue > 28000.0) {
+		} else if (voiceValue > 28000.0) {
 			dialog_image.setImageResource(R.drawable.record_animate_14);
 		}
 	}
-	
 
-	
-	
 	/** 录音计时线程 */
 	private void myThread() {
 		timeThread = new Thread(ImageThread);
@@ -1181,19 +1227,19 @@ public class MainActivity extends Activity {
 						// 如果录音时长小于1秒，显示录音失败的图标
 						if (recodeTime < 1.0) {
 							showWarnToast();
-							//timeText.setText("");
-							//recordBt.setText("按住录音");
+							// timeText.setText("");
+							// recordBt.setText("按住录音");
 							RECODE_STATE = RECORD_NO;
 						} else {
-							//recordBt.setText("按住录音");
-							//timeText.setText("录音时间:" + ((int) recodeTime));
+							// recordBt.setText("按住录音");
+							// timeText.setText("录音时间:" + ((int) recodeTime));
 						}
 					}
 					break;
 
 				case 0x11:
-					//timeText.setText("");
-					//recordBt.setText("正在录音");
+					// timeText.setText("");
+					// recordBt.setText("正在录音");
 					setDialogImage();
 					break;
 				}
