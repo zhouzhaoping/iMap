@@ -1,5 +1,7 @@
-package com.musiclist.imap;
+package imap.musiclist;
 
+import imap.main.LoginActivity;
+import imap.main.MainActivity;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
@@ -9,8 +11,6 @@ import java.util.List;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.example.imap.LoginActivity;
-import com.example.imap.MainActivity;
 import com.example.imap.R;
 
 import android.content.SharedPreferences;

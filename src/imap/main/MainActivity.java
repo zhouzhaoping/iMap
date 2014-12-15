@@ -1,8 +1,10 @@
-package com.example.imap;
+package imap.main;
 
+import imap.main.MyOrientationListener.OnOrientationListener;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 import imap.nettools.ViewSpotData;
+import imap.util.MyRecorder;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -107,8 +109,7 @@ import com.baidu.location.GeofenceClient;
 import com.baidu.location.GeofenceClient.OnAddBDGeofencesResultListener;
 import com.baidu.location.GeofenceClient.OnGeofenceTriggerListener;
 import com.baidu.location.GeofenceClient.OnRemoveBDGeofencesResultListener;
-import com.example.imap.MyOrientationListener.OnOrientationListener;
-import com.example.util.MyRecorder;
+import com.example.imap.R;
 
 import android.app.AlarmManager;
 
@@ -377,7 +378,7 @@ public class MainActivity extends Activity {
 													.get(j).getId());
 											intent.setClass(
 													MainActivity.this,
-													com.musiclist.imap.MusicListActivity.class);
+													imap.musiclist.MusicListActivity.class);
 
 											startActivity(intent);
 										}

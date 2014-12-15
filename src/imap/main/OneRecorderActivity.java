@@ -1,4 +1,7 @@
-package com.example.imap;
+package imap.main;
+
+import imap.util.MyRecorder;
+import imap.util.ParseTimeUtil;
 
 import java.io.File;
 import java.io.IOException;
@@ -8,8 +11,7 @@ import java.io.IOException;
 
 
 
-import com.example.util.MyRecorder;
-import com.example.util.ParseTimeUtil;
+import com.example.imap.R;
 
 import android.R.integer;
 import android.R.string;

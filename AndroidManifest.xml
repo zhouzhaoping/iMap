@@ -49,9 +49,9 @@
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
         android:theme="@style/AppTheme" 
-         android:name=".MyAppData">
+         android:name="imap.main.MyAppData">
         <activity
-            android:name="com.example.imap.WelcomeActivity"
+            android:name="imap.main.WelcomeActivity"
             android:label="@string/app_name" 
             android:screenOrientation="portrait" >
             <intent-filter>
@@ -62,20 +62,20 @@
         </activity>
         
         <activity
-            android:name="com.example.imap.MainActivity"
+            android:name="imap.main.MainActivity"
             android:label="@string/app_name" >
         </activity>
 
-        <activity android:name="com.example.imap.LoginActivity"></activity>
+        <activity android:name="imap.main.LoginActivity"></activity>
         
-        <activity android:name="com.example.imap.SignupActivity"></activity>
-        <activity android:name="com.example.imap.OfflineDemo"></activity>
-		 <activity android:name="com.example.imap.AlertReceiver"></activity>
-        <activity android:name="com.example.imap.OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
-        <activity android:name="com.musiclist.imap.MusicListActivity"></activity>
-        <activity android:name="com.example.imap.Huatong_dialog"  android:theme="@style/MyDialogStyle"></activity>
+        <activity android:name="imap.main.SignupActivity"></activity>
+        <activity android:name="imap.main.OfflineDemo"></activity>
+		 <activity android:name="imap.main.AlertReceiver"></activity>
+        <activity android:name="imap.main.OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
+        <activity android:name="imap.musiclist.MusicListActivity"></activity>
+        <activity android:name="imap.main.Huatong_dialog"  android:theme="@style/MyDialogStyle"></activity>
 		
-		 <service android:name=".WalkListen" />
+		 <service android:name="imap.main.WalkListen" />
 
         
         <meta-data  

@@ -1,10 +1,12 @@
-package com.example.imap;
+package imap.main;
 
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 import java.lang.reflect.Field;
+
+import com.example.imap.R;
 
 
 

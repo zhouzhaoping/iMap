@@ -1,4 +1,4 @@
-package com.example.imap;
+package imap.main;
 
 import imap.nettools.NetThread;
 import imap.nettools.Variable;

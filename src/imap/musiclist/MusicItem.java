@@ -1,4 +1,4 @@
-package com.musiclist.imap;
+package imap.musiclist;
 
 import imap.nettools.Variable;
 

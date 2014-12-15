@@ -1,4 +1,4 @@
-package com.musiclist.imap;
+package imap.musiclist;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;

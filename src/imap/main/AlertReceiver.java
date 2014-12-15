@@ -1,4 +1,4 @@
-package com.example.imap;
+package imap.main;
 
 import com.baidu.navisdk.ui.routeguide.subview.i;
 

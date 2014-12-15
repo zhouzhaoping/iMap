@@ -1,5 +1,7 @@
 package imap.nettools;
 
+import imap.musiclist.MusicItem;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -17,7 +19,6 @@ import org.json.JSONObject;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
-import com.musiclist.imap.MusicItem;
 
 import android.util.Log;
 

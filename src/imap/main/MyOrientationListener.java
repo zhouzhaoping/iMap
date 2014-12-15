@@ -1,4 +1,4 @@
-package com.example.imap;
+package imap.main;
 
 import android.content.Context;  
 import android.hardware.Sensor;  

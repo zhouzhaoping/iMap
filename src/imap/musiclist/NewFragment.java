@@ -1,4 +1,4 @@
-package com.musiclist.imap;
+package imap.musiclist;
 
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -13,13 +13,13 @@ import android.widget.TextView;
 import android.widget.FrameLayout.LayoutParams;
 
 /**
- * 通讯录Fragment的界面
+ * 发现Fragment的界面
  * 
  * http://blog.csdn.net/guolin_blog/article/details/26365683
  * 
  * @author guolin
  */
-public class FilterFragment extends Fragment {
+public class NewFragment extends Fragment {
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
 			Bundle savedInstanceState) {
@@ -33,7 +33,7 @@ public class FilterFragment extends Fragment {
 		v.setLayoutParams(params);
 		v.setLayoutParams(params);
 		v.setGravity(Gravity.CENTER);
-		v.setText("筛选语音界面");
+		v.setText("最新语音界面");
 		v.setTextSize((int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_SP, 12, dm));
 		fl.addView(v);
 		return fl;

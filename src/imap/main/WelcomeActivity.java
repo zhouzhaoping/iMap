@@ -1,4 +1,4 @@
-package com.example.imap;
+package imap.main;
 
 import java.util.Timer;
 import java.util.TimerTask;
