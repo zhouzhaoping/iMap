@@ -35,7 +35,7 @@ public class LoginActivity extends Activity {
 	 
 	 long firstTime=0;
 	 private ImageView view_face;
-	 static int picId[] = {R.drawable.face0, R.drawable.face1, R.drawable.face2, R.drawable.face3, R.drawable.face4, R.drawable.face5, R.drawable.face6, R.drawable.face7};
+	 
 	 private Button button_login;
 	 private Button button_tosignup;
 	 private EditText view_username;
@@ -59,7 +59,7 @@ public class LoginActivity extends Activity {
 			 view_username.setText(name);
 			 view_password.setText(pw);
 		 }
-		 view_face.setImageResource(picId[facenum]);
+		 view_face.setImageResource(Variable.int2pic(facenum));
 	 }
 	 
 	 private void setListensers() {

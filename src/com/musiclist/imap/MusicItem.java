@@ -1,24 +1,44 @@
 package com.musiclist.imap;
 
+import imap.nettools.Variable;
+
+import org.json.JSONException;
+import org.json.JSONObject;
+
 public class MusicItem {
-	private boolean isVisible;
-	private String musicID;
+	private String id;
 	private String name;
 	private String title;
+	private String description;
 	private String postTime;
-	private String TxPath;
-	private int likeNum;
-	public boolean getVisible() {
-		return isVisible;
+	private int face;
+	private int likesum;
+	
+	public MusicItem()
+	{
+		
 	}
-	public void setVisible(boolean v) {
-		isVisible = v;
+	public MusicItem(JSONObject obj) 
+	{
+		try {
+			id = obj.getString("voiceId");
+			name = obj.getString("name");
+			title = obj.getString("title");
+			description = obj.getString("description");
+			postTime = obj.getString("postTime");
+			face = Variable.int2pic(Integer.parseInt(obj.getString("face")));
+			likesum = Integer.parseInt(obj.getString("likesum"));
+		} catch (JSONException e) {
+			e.printStackTrace();
+		}
+		
 	}
-	public String getMusicId() {
-		return musicID;
+	
+	public String getId() {
+		return id;
 	}
-	public void setMusicId(String ID) {
-		this.musicID = ID;
+	public void setId(String ID) {
+		this.id = ID;
 	}
 	public String getName() {
 		return name;
@@ -32,22 +52,28 @@ public class MusicItem {
 	public void setTitle(String s) {
 		this.title = s;
 	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String d) {
+		this.description = d;
+	}
 	public String getPostTime() {
 		return postTime;
 	}
 	public void setPosttTime(String time) {
 		this.postTime = time;
 	}
-	public String getTxPath() {
-		return TxPath;
+	public int getFace() {
+		return face;
 	}
-	public void setTxPath(String txPath) {
-		TxPath = txPath;
+	public void setFace(int f) {
+		this.face = f;
 	}
-	public int getLikeNum() {
-		return likeNum;
+	public int getLikeSum() {
+		return likesum;
 	}
-	public void setLikeNum(int n) {
-		this.likeNum = n;
+	public void setLikeSum(int n) {
+		this.likesum = n;
 	}	
 }

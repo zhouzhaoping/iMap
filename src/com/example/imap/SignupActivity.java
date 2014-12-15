@@ -66,7 +66,7 @@ public class SignupActivity extends Activity {
 		  public void onClick(View v)
 		 {
 			  facenum = (facenum + 1) % Variable.faceNum;
-			  view_face.setImageResource(LoginActivity.picId[facenum]);
+			  view_face.setImageResource(Variable.int2pic(facenum));
 		 }
 	 };
 	 

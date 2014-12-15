@@ -1022,14 +1022,18 @@ public class MainActivity extends Activity {
 			viewspotlist = netthread.getSpotsList();
 			for (int i = 0; i < viewspotlist.size(); ++i)
 			{
-				markers.add((Marker) mBaiduMap.addOverlay(
+				Marker mark = (Marker) mBaiduMap.addOverlay(
 						new MarkerOptions()
 						.position(new LatLng(viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude()))
 						.icon(ooa)
-						.zIndex(9).draggable(true)
-						));
+						.zIndex(9).draggable(false)
+						);
+				markers.add(mark);
 				if (viewspotlist.get(i).getVisible() == 0)
-					markers.get(i).setVisible(false);
+				{
+					//System.out.println(viewspotlist.get(i).getName() + " " + viewspotlist.get(i).getVisible());
+					mark.setVisible(false);
+				}
 			}
 			  Toast.makeText(MainActivity.this, "景点载入成功！", 
 		                 Toast.LENGTH_SHORT).show(); 

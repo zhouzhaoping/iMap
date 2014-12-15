@@ -49,7 +49,9 @@
 	android:layout_height="wrap_content" 
 	android:editable="false"
 	android:cursorVisible="false"
+	android:visibility="gone"
 	/>
+ 
     </TableRow> 
 
     

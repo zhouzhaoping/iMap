@@ -17,6 +17,7 @@ import org.json.JSONObject;
 import com.baidu.mapapi.map.Marker;
 import com.baidu.mapapi.map.MarkerOptions;
 import com.baidu.mapapi.model.LatLng;
+import com.musiclist.imap.MusicItem;
 
 import android.util.Log;
 
@@ -99,16 +100,16 @@ public class NetThread
 		return list;
 	}
 	
-	public List<MusicItemData> getPopularList()
+	public ArrayList<MusicItem> getPopularList()
 	{
-		List<MusicItemData> list = new ArrayList<MusicItemData>();
+		ArrayList<MusicItem> list = new ArrayList<MusicItem>();
 		
 		try {
 			JSONArray viewSpotList = returnJson.getJSONArray("popular");
 			for (int i = 0; i < viewSpotList.length(); ++i)
 			{
 				JSONObject obj = viewSpotList.getJSONObject(i);	
-				MusicItemData vsd = new MusicItemData(obj);
+				MusicItem vsd = new MusicItem(obj);
 				list.add(vsd);
 			}
 		} catch (JSONException e) {

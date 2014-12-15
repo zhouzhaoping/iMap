@@ -26,6 +26,7 @@ public class ViewSpotData
 				parent = Integer.parseInt(obj.getString("parent"));
 			else 
 				parent = -1;
+			//System.out.println(name + " " + visible);
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

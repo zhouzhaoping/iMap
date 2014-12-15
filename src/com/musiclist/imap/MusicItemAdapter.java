@@ -1,5 +1,7 @@
 package com.musiclist.imap;
 
+import imap.nettools.Variable;
+
 import java.util.ArrayList;
 
 import com.example.imap.R;
@@ -49,10 +51,11 @@ public class MusicItemAdapter extends BaseAdapter {
 		if(view==null){
 			h = new H();
 			view = LayoutInflater.from(context).inflate(R.layout.musiclist_item, parent, false);
-			h.pic = (ImageView)view.findViewById(R.id.l1);
+			h.pic = (ImageView)view.findViewById(R.id.facepic);
 			h.name = (TextView)view.findViewById(R.id.name);
 			h.time = (TextView)view.findViewById(R.id.time);
-			h.lastmsg = (TextView)view.findViewById(R.id.lastmsg);
+			h.title = (TextView)view.findViewById(R.id.title);
+			h.description = (TextView)view.findViewById(R.id.description);
 			h.play = (ImageButton)view.findViewById(R.id.button_play);
 			h.like = (ImageButton)view.findViewById(R.id.button_like);
 			h.report = (ImageButton)view.findViewById(R.id.button_report);
@@ -62,13 +65,14 @@ public class MusicItemAdapter extends BaseAdapter {
 			h = (H)view.getTag();
 		}
 		
-		h.pic.setImageResource(Integer.parseInt(hh.getTxPath()));
+		h.pic.setImageResource(hh.getFace());
 		h.name.setText(hh.getName());
 		h.time.setText(hh.getPostTime());
-		h.lastmsg.setText(hh.getTitle());
-		h.play.setTag(position);
-		h.like.setTag(position);
-		h.report.setTag(position);
+		h.title.setText(hh.getTitle());
+		h.description.setText(hh.getDescription());
+		h.play.setTag(hh.getId());
+		h.like.setTag(hh.getId());
+		h.report.setTag(hh.getId());
 		h.play.setOnClickListener(new ImageButton.OnClickListener()
 		{
 			@Override
@@ -102,7 +106,8 @@ public class MusicItemAdapter extends BaseAdapter {
 		ImageView pic;
 		TextView name;
 		TextView time;
-		TextView lastmsg;
+		TextView title;
+		TextView description;
 		ImageButton play;
 		ImageButton like;
 		ImageButton report; 

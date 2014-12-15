@@ -1,5 +1,7 @@
 package imap.nettools;
 
+import com.example.imap.R;
+
 //数据库字段
 public final class Variable
 {
@@ -22,4 +24,9 @@ public final class Variable
 		"已经举报过"};
 	
 	public static int faceNum = 8;
+	public static int picId[] = {R.drawable.face0, R.drawable.face1, R.drawable.face2, R.drawable.face3, R.drawable.face4, R.drawable.face5, R.drawable.face6, R.drawable.face7};
+	public static int int2pic(int picn)
+	{
+		return (picId[picn % faceNum]);
+	}
 }
