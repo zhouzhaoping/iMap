@@ -36,7 +36,7 @@
 	android:layout_height="wrap_content"
 	android:hint="请填写您的申请理由"
 	android:selectAllOnFocus="true"
-	android:phoneNumber="true"
+	
 	/>
 </TableRow>
 
