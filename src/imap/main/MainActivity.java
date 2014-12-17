@@ -360,7 +360,7 @@ public class MainActivity extends Activity {
 				if (select_button == -1) {
 					for (int i = 0; i < markers.size(); i++) {
 						if (marker == markers.get(i)) {
-							builder.setIcon(R.drawable.tools);
+							builder.setIcon(R.drawable.viewpoint);
 
 							builder.setTitle(viewspotlist.get(i).getName());
 							builder.setMessage(viewspotlist.get(i)
@@ -580,7 +580,7 @@ public class MainActivity extends Activity {
 			 *            长按的地理坐标
 			 */
 			public void onMapLongClick(final LatLng point) {
-
+				//System.out.println("select:" + select_button);
 				if (select_button != 0)
 					return;
 				select_button = -1;
