@@ -825,7 +825,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 3;
 				// 跳转到排行activity
-
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, imap.rank.RankListActivity.class);
+				startActivity(intent);
 			}
 		});
 
@@ -833,7 +835,6 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 4;
 				// 跳转到设置activity
-				// 这里跳转到下载地图列表
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, imap.setting.SettingActivity.class);
 				startActivity(intent);

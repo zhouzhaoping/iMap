@@ -29,4 +29,11 @@ public final class Variable
 	{
 		return (picId[picn % faceNum]);
 	}
+	
+	public static int numNum = 10;
+	public static int numId[] = {R.drawable.num1, R.drawable.num2, R.drawable.num3, R.drawable.num4, R.drawable.num5, R.drawable.num6, R.drawable.num7, R.drawable.num8, R.drawable.num9, R.drawable.num10};
+	public static int int2num(int numn)
+	{
+		return (numId[numn % numNum]);
+	}
 }

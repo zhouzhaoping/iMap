@@ -18,40 +18,15 @@ import android.view.Menu;
 import android.view.ViewConfiguration;
 import android.view.Window;
 
-
-/**
- * 高仿微信的主界面
- * 
- * http://blog.csdn.net/guolin_blog/article/details/26365683
- * 
- * @author guolin
- */
 public class MusicListActivity extends FragmentActivity {
 
-	/**
-	 * 聊天界面的Fragment
-	 */
-	private PopularFragment chatFragment;
-
-	/**
-	 * 发现界面的Fragment
-	 */
-	private NewFragment foundFragment;
-
-	/**
-	 * 通讯录界面的Fragment
-	 */
-	private FilterFragment contactsFragment;
-
-	/**
-	 * PagerSlidingTabStrip的实例
-	 */
 	private PagerSlidingTabStrip tabs;
+	
+	private PopularFragment popularFragment;
+	private NewFragment newFragment;
+	private FilterFragment filterFragment;
 
-	/**
-	 * 获取当前屏幕的密度
-	 */
-	private DisplayMetrics dm;
+	private DisplayMetrics dm;//获取当前屏幕的密度
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -113,20 +88,20 @@ public class MusicListActivity extends FragmentActivity {
 		public Fragment getItem(int position) {
 			switch (position) {
 			case 0:
-				if (chatFragment == null) {
-					chatFragment = new PopularFragment();
+				if (popularFragment == null) {
+					popularFragment = new PopularFragment();
 				}
-				return chatFragment;
+				return popularFragment;
 			case 1:
-				if (foundFragment == null) {
-					foundFragment = new NewFragment();
+				if (newFragment == null) {
+					newFragment = new NewFragment();
 				}
-				return foundFragment;
+				return newFragment;
 			case 2:
-				if (contactsFragment == null) {
-					contactsFragment = new FilterFragment();
+				if (filterFragment == null) {
+					filterFragment = new FilterFragment();
 				}
-				return contactsFragment;
+				return filterFragment;
 			default:
 				return null;
 			}
