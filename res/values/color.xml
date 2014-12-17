@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
      
+    <color name="setting_bg">#fff0f3f6</color>
+    <color name="shape_line">#ffcccccc</color>
+    <color name="button_selected">#ff419de4</color>
+
     <color name="background_tab_pressed">#6633B5E5</color>
 
     <color name="white">#FFFFFF</color><!--白色 -->

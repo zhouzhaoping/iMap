@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout 
+    android:orientation="vertical" 
+    android:background="@color/setting_bg" 
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent" 
+    xmlns:android="http://schemas.android.com/apk/res/android">
+  
+    <ScrollView 
+        android:scrollbarThumbVertical="@drawable/scrollbar_handle_vertical" 
+        android:focusable="true" 
+        android:focusableInTouchMode="true" 
+        android:visibility="visible" 
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" >    
+        <LinearLayout 
+            android:orientation="vertical" 
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content">     
+            
+            <LinearLayout 
+                style="@style/leba_bg_layout">                      
+                <LinearLayout 
+                    style="@style/leba_bg_top_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="边走边听范围" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+                
+                <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+                 
+                <LinearLayout 
+                    style="@style/leba_bg_bottom_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="默认语音风格" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>                             
+            </LinearLayout>
+            
+             <LinearLayout 
+                style="@style/leba_bg_layout">                      
+                <LinearLayout 
+                    style="@style/leba_bg_top_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="只在wifi环境下载语音" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+                
+                <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+                 
+                <LinearLayout 
+                    android:id="@+id/mapdownload"
+                    style="@style/leba_bg_bottom_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="离线地图下载" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>                             
+            </LinearLayout>
+            
+              <LinearLayout 
+                style="@style/leba_bg_layout">                      
+                <LinearLayout 
+                    style="@style/leba_bg_top_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="皮肤" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+                
+                <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+                 
+                <LinearLayout 
+                    style="@style/leba_bg_bottom_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="界面语言" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>                             
+            </LinearLayout>
+            
+               <LinearLayout 
+                style="@style/leba_bg_layout">                      
+                <LinearLayout 
+                    android:id="@+id/help"
+                    style="@style/leba_bg_top_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="帮助" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+                
+                <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+                 
+                <LinearLayout 
+                    android:id="@+id/about"
+                    style="@style/leba_bg_bottom_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="关于imap" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>                             
+            </LinearLayout>
+           
+             <!-- 
+            <LinearLayout 
+                style="@style/leba_bg_layout">            
+                <LinearLayout 
+                    style="@style/leba_bg_single_layout">                
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="界面显示" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+            </LinearLayout>
+             
+          
+           
+            <LinearLayout 
+                style="@style/leba_bg_layout">     
+                <LinearLayout 
+                    style="@style/leba_bg_top_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="声音" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>
+                
+                <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+
+                 <LinearLayout 
+                 	 style="@style/leba_bg_mid_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="震动提示" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                 </LinearLayout>
+                
+                 <View android:background="@drawable/leba_shape_line" android:layout_width="fill_parent" android:layout_height="1.0px" />
+                       
+                <LinearLayout 
+                    style="@style/leba_bg_bottom_layout">
+                    <TextView android:textSize="16.0dip" android:textColor="#ff333333" android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginLeft="12.0dip" android:text="消息提示" android:layout_weight="1.0" />
+                    <ImageView android:layout_width="wrap_content" android:layout_height="wrap_content" android:layout_marginRight="12.0dip" android:src="@drawable/setting_arrow"/>
+                </LinearLayout>                             
+            </LinearLayout>
+                -->
+        </LinearLayout>     
+    </ScrollView>
+    
+</LinearLayout>
+

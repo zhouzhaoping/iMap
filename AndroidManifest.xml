@@ -76,6 +76,9 @@
         <activity android:name="imap.main.Huatong_dialog"  android:theme="@style/MyDialogStyle"></activity>
 		
 		 <service android:name="imap.main.WalkListen" />
+		 <activity android:name="imap.setting.SettingActivity"></activity>
+		 <activity android:name="imap.setting.HelpActivity"></activity>
+		 <activity android:name="imap.setting.AboutActivity"></activity>
 
         
         <meta-data  

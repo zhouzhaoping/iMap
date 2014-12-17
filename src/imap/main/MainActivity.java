@@ -835,7 +835,7 @@ public class MainActivity extends Activity {
 				// 跳转到设置activity
 				// 这里跳转到下载地图列表
 				Intent intent = new Intent();
-				intent.setClass(MainActivity.this, OfflineDemo.class);
+				intent.setClass(MainActivity.this, imap.setting.SettingActivity.class);
 				startActivity(intent);
 			}
 		});
