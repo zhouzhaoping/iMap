@@ -23,8 +23,8 @@ public class RankItem {
 			name = obj.getString("name");
 			//title = obj.getString("title");
 			face = Variable.int2pic(Integer.parseInt(obj.getString("face")));
-			num = Integer.parseInt(obj.getString("num"));
-			likesum = Variable.int2num(Integer.parseInt(obj.getString("likesum")));
+			likesum = Integer.parseInt(obj.getString("likesum"));
+			num = Variable.int2num(Integer.parseInt(obj.getString("num")));
 			voicesum = Integer.parseInt(obj.getString("voicesum"));
 			//title = "上传" + voicesum + "个语音，获得总点赞数" +likesum;
 		} catch (JSONException e) {

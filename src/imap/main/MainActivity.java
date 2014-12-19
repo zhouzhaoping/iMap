@@ -713,6 +713,9 @@ public class MainActivity extends Activity {
 			public void onClick(View v) {
 				select_button = 1;
 				// 跳转到个人activity
+				Intent intent = new Intent();
+				intent.setClass(MainActivity.this, imap.me.MeActivity.class);
+				startActivity(intent);
 			}
 		});
 		// 话筒短按，地图上所有图标发亮，然后选择一个开始录音

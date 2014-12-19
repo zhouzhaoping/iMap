@@ -81,7 +81,7 @@
 		 <activity android:name="imap.setting.AboutActivity"></activity>
 		 
 		 <activity android:name="imap.rank.RankListActivity"></activity>
-
+		<activity android:name="imap.me.MeActivity"></activity>
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  

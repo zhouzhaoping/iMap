@@ -22,8 +22,8 @@ public class MusicListActivity extends FragmentActivity {
 
 	private PagerSlidingTabStrip tabs;
 	
-	private PopularFragment popularFragment;
-	private NewFragment newFragment;
+	private MusicListFragment popularFragment;
+	private MusicListFragment newFragment;
 	private FilterFragment filterFragment;
 
 	private DisplayMetrics dm;//获取当前屏幕的密度
@@ -89,12 +89,12 @@ public class MusicListActivity extends FragmentActivity {
 			switch (position) {
 			case 0:
 				if (popularFragment == null) {
-					popularFragment = new PopularFragment();
+					popularFragment = new MusicListFragment(0);
 				}
 				return popularFragment;
 			case 1:
 				if (newFragment == null) {
-					newFragment = new NewFragment();
+					newFragment = new MusicListFragment(1);
 				}
 				return newFragment;
 			case 2:

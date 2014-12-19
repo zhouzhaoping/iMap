@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:descendantFocusability="blocksDescendants"  >
+   <TextView
+         android:id="@+id/time"
+		android:layout_alignParentRight="true" 
+		 android:layout_width="wrap_content"
+         	  android:layout_height="wrap_content"
+         android:text="时间"
+          android:padding="2dip"
+         	  android:textSize="15dip"
+         	  android:singleLine="true"
+         	  android:textColor="@color/black"/>
+    <TextView
+          android:id="@+id/name"
+          android:layout_width="match_parent"
+         	  android:layout_height="wrap_content"
+         	  android:text="标题标题党"
+         	  android:padding="2dip"
+         	  android:textSize="15dip"
+         	  android:singleLine="true"
+         	  android:textColor="@color/black"/>
+</RelativeLayout>

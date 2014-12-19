@@ -30,10 +30,15 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.FrameLayout.LayoutParams;
 
-public class PopularFragment extends Fragment {
-	
+public class MusicListFragment extends Fragment {
+	int type;
 	ListView listview;
 	TextView preview;
+	
+	public MusicListFragment(int t)
+	{
+		type = t;
+	}
 	
 	@Override
 	public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -105,6 +110,9 @@ public class PopularFragment extends Fragment {
 	
 	private ArrayList<MusicItem> getData()
 	{
+		if (type == 0 || type == 1)
+			System.out.println("music " + type + " in!");
+		
 		// TODO：用数据库中的数据替代
 		//String txPath[] = {R.drawable.face0+"", R.drawable.face1+"", R.drawable.face2+"", R.drawable.face3+"", R.drawable.face4+"", R.drawable.face5+"", R.drawable.face6+"", R.drawable.face7+""};
 		String name[] = {"张三", "小黑", "傻逼", "禽兽", "风清", "呵呵", "鄙人", "人人人", "法克", "诗人"};
