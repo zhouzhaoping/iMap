@@ -41,8 +41,7 @@
 <uses-permission android:name="android.permission.RECORD_AUDIO"></uses-permission>
 <!-- 允许模拟位置的权限 -->
   <uses-permission android:name="android.permission.ACCESS_MOCK_LOCATION"/>
-  	<!-- 授予用户修改壁纸的权限 -->
-	<uses-permission android:name="android.permission.SET_WALLPAPER" />
+
 	
     <application
         android:allowBackup="true"
@@ -85,7 +84,7 @@
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
-        android:value="DkU69Zn5c6LxN2gLfBOn9Ndm" />  
+        android:value="ZMCmaLj67MTXyAAot3z2Z8im" />  
        <!--  DkU69Zn5c6LxN2gLfBOn9Ndm 爪机用  ZMCmaLj67MTXyAAot3z2Z8im 邢捷用-->
         
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">

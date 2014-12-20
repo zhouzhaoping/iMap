@@ -831,6 +831,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, imap.rank.RankListActivity.class);
 				startActivity(intent);
+				select_button = -1;
 			}
 		});
 
@@ -841,6 +842,7 @@ public class MainActivity extends Activity {
 				Intent intent = new Intent();
 				intent.setClass(MainActivity.this, imap.setting.SettingActivity.class);
 				startActivity(intent);
+				select_button = -1;
 			}
 		});
 	}
