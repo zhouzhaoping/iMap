@@ -1,12 +1,16 @@
 package imap.me;
 
+import imap.main.LoginActivity;
+import imap.main.SignupActivity;
 import imap.musiclist.PagerSlidingTabStrip;
+import imap.nettools.Variable;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 
 import com.example.imap.R;
 
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -17,12 +21,26 @@ import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Menu;
+import android.view.View;
 import android.view.ViewConfiguration;
 import android.view.Window;
+import android.widget.Button;
+import android.widget.ImageButton;
+import android.widget.ImageView;
+import android.widget.TextView;
+import android.widget.Toast;
 
 public class MeActivity extends FragmentActivity {
 
+	private ViewPager pager;
 	private PagerSlidingTabStrip tabs;
+	
+	private ImageView facepic;
+	private TextView name;
+	private TextView voicesum;
+	private TextView likesum;
+	private TextView signinsum;
+	private ImageButton edit;
 	
 	private MeListFragment uploadFragment;
 	private MeListFragment unuploadFragment;
@@ -34,15 +52,45 @@ public class MeActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_me);
-		setOverflowShowingAlways();
+		
+		findViews();
+		showResults();
+		setListensers();
+	}
+
+	private void findViews() {
 		dm = getResources().getDisplayMetrics();
-		ViewPager pager = (ViewPager) findViewById(R.id.pager);
+		pager = (ViewPager) findViewById(R.id.pager);
 		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
+		
+		facepic = (ImageView) findViewById(R.id.facepic);
+		name = (TextView) findViewById(R.id.name);
+		voicesum = (TextView) findViewById(R.id.voicesum);
+		likesum = (TextView) findViewById(R.id.likesum);
+		signinsum = (TextView) findViewById(R.id.signinsum);
+		edit = (ImageButton) findViewById(R.id.edit);
+	}
+	
+	private void showResults() {
+		// TODO 从数据库查询数据
+		SharedPreferences sp = MeActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+		//String pw = sp.getString("password", "");
+		int facenum = sp.getInt("face", 0);
+		facepic.setImageResource(Variable.int2pic(facenum));
+		name.setText("姓名："  + sp.getString("username", ""));
+		voicesum.setText("上传语音：" + 100);
+		likesum.setText("获得点赞：" + 1000);
+		signinsum.setText("签到景点：" + 999);
+	}
+	
+	private void setListensers() {
 		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 		tabs.setViewPager(pager);
 		setTabsValue();
+		
+		edit.setOnClickListener(editListener);
 	}
-
+	
 	/**
 	 * 对PagerSlidingTabStrip的各项属性进行赋值。
 	 */
@@ -111,38 +159,12 @@ public class MeActivity extends FragmentActivity {
 
 	}
 
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
-		if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
-			if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
-				try {
-					Method m = menu.getClass().getDeclaredMethod(
-							"setOptionalIconsVisible", Boolean.TYPE);
-					m.setAccessible(true);
-					m.invoke(menu, true);
-				} catch (Exception e) {
-				}
-			}
-		}
-		return super.onMenuOpened(featureId, menu);
-	}
-
-	private void setOverflowShowingAlways() {
-		try {
-			ViewConfiguration config = ViewConfiguration.get(this);
-			Field menuKeyField = ViewConfiguration.class
-					.getDeclaredField("sHasPermanentMenuKey");
-			menuKeyField.setAccessible(true);
-			menuKeyField.setBoolean(config, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
+	private Button.OnClickListener editListener = new Button.OnClickListener()
+	 {
+		  public void onClick(View v)
+		 {
+			  Toast.makeText(MeActivity.this, "进入修改个人信息界面！", 
+		                 Toast.LENGTH_SHORT).show();
+		 }
+	 };
 }
