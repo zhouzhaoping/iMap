@@ -3,6 +3,7 @@ package imap.main;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 import imap.nettools.ViewSpotData;
+import imap.setting.SettingActivity;
 
 import java.io.File;
 import java.io.IOException;
@@ -15,6 +16,7 @@ import com.baidu.platform.comapi.map.w;
 
 import android.R.integer;
 import android.app.Service;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.media.MediaPlayer;
@@ -50,11 +52,15 @@ public class WalkListen extends Service {
 			preLantitude = mylatlong.getpre_mylabellat();
 			preLongitude = mylatlong.getmylabellong();
 			walk_listen = mylatlong.getwalk_listen();
-
-			Toast.makeText(
-					WalkListen.this,
-					mCurrentLantitude + " " + mCurrentLongitude + " "
-							+ walk_listen, Toast.LENGTH_SHORT).show();
+			
+			SharedPreferences sp = getSharedPreferences("imap", MODE_PRIVATE);
+			radius = Variable.ranges[sp.getInt("range", 1)];
+			
+			Toast.makeText(WalkListen.this, "" + radius, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(
+				//	WalkListen.this,
+					//mCurrentLantitude + " " + mCurrentLongitude + " "
+						//	+ walk_listen, Toast.LENGTH_SHORT).show();
 
 			System.out.println("您好：：" + flags + "  " + startId);
 
@@ -100,6 +106,7 @@ public class WalkListen extends Service {
 				}
 			//	mylatlong.setnear_listen_view_index(0);
 			//	System.out.println("index"+ index);
+				
 				if(min < radius)
 				{
 					if(mylatlong.getnear_listen_view_index() != index)
@@ -203,7 +210,6 @@ public class WalkListen extends Service {
         return Math.sqrt((a * a + b * b));  
  
     }  
-
 }
 
 /*

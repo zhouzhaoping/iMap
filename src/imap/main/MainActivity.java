@@ -213,24 +213,6 @@ public class MainActivity extends Activity {
 
 	private String timeString;
 
-	/******** 14-12-05 xj ********************************************/
-	/*
-	 * public class AddGeofenceListener implements
-	 * OnAddBDGeofencesResultListener {
-	 * 
-	 * @Override public void onAddBDGeofencesResult(int statusCode, String
-	 * geofenceRequestId) { if (statusCode == BDLocationStatusCodes.SUCCESS) {
-	 * mGeofenceClient.start(); // 围栏创建成功 } } }
-	 * 
-	 * public class RemoveFenceListener implements
-	 * OnRemoveBDGeofencesResultListener {
-	 * 
-	 * @Override public void onRemoveBDGeofencesByRequestIdsResult(int
-	 * statusCode, String[] geofenceRequestIds) { if (statusCode ==
-	 * BDLocationStatusCodes.SUCCESS) { // 围栏删除成功 } } }
-	 * 
-	 * /**************************************************************
-	 */
 	
 	
 	@Override
@@ -439,74 +421,7 @@ public class MainActivity extends Activity {
 			}
 		});
 
-		/****************************************************************/
-
-		/*
-		 * 为每个marker添加一个临近警告地理围栏*************************************************
-		 * *********************************
-		 * 参见http://blog.csdn.net/huang_hws/article/details/7327670
-		 */
-
-		// 定位服务常量
-		/*
-		 * String locService = Context.LOCATION_SERVICE; // 定位服务管理器实例
-		 * LocationManager locationManager; locationManager = (LocationManager)
-		 * getSystemService(locService);
-		 * 
-		 * for (int i = 0; i < markers.size(); i++) { intents.add(new
-		 * Intent(this, AlertReceiver.class));
-		 * intents.get(i).putExtra(String.valueOf(i), i);
-		 * intents.get(i).putExtra("walk_listen", walk_listen); //
-		 * 由于不是马上触发，所以需要PendingIntent
-		 * pendingIntents.add(PendingIntent.getBroadcast(this, alarmCount++,
-		 * intents.get(i), PendingIntent.FLAG_UPDATE_CURRENT)); // 添加临近警告 //
-		 * 参照http://blog.csdn.net/flowingflying/article/details/38871219
-		 * locationManager.addProximityAlert(
-		 * markers.get(i).getPosition().latitude, markers.get(i)
-		 * .getPosition().longitude, radius, -1, pendingIntents.get(i)); }
-		 * 
-		 * // Intent intent1 = new Intent(this, AlertReceiver.class); //
-		 * intent1.putExtra("intent1", "intent1"); // 由于不是马上触发，所以需要PendingIntent
-		 * // PendingIntent pi1 = PendingIntent.getBroadcast(this, alarmCount++,
-		 * // intent1, // PendingIntent.FLAG_UPDATE_CURRENT); // 添加临近警告
-		 * 参照http://blog.csdn.net/flowingflying/article/details/38871219 //
-		 * locationManager.addProximityAlert(marker1.getPosition().latitude, //
-		 * marker1.getPosition().longitude, radius, -1, pi1); /*** end
-		 * **********
-		 * ************************************************************
-		 * **********
-		 */
-
-		/************************** 14-12-04 xj下面要开始添加地理围栏 ********************************/
-		// final Builder temp = new AlertDialog.Builder(this);
-		/*
-		 * class GeofenceEnterLister implements OnGeofenceTriggerListener {
-		 * 
-		 * @Override public void onGeofenceTrigger(String geofenceRequestId) {
-		 * // 进入围栏，围栏Id = geofenceRequestId System.out .println(
-		 * "进入围栏了**********************************************************");
-		 * 
-		 * temp.setTitle("biabia"); temp.setMessage("haaha");
-		 * temp.create().show(); }
-		 * 
-		 * @Override public void onGeofenceExit(String geofenceRequestId) { //
-		 * 退出围栏，围栏Id = geofenceRequestId }
-		 * 
-		 * } mGeofenceClient = new GeofenceClient(getApplicationContext()); //
-		 * 注册并开启围栏扫描服务 mGeofenceClient .registerGeofenceTriggerListener(new
-		 * GeofenceEnterLister()); // mGeofenceClient.start();
-		 * 
-		 * BDGeofence fence = new BDGeofence.Builder() .setGeofenceId("markera")
-		 * .setCircularRegion(markera.getAnchorX(), markera.getAnchorY(),
-		 * 40).setExpirationDruation(14400 * 20)
-		 * .setCoordType("bd09ll").build();
-		 * 
-		 * // 添加一个围栏： mGeofenceClient.addBDGeofence(fence, new
-		 * AddGeofenceListener()); // 删除，指定要删除围栏的名字列表 List<String> fences = new
-		 * ArrayList<String>(); fences.add("markera"); // mGeofenceClient.
-		 * removeBDGeofences(fences, new // RemoveFenceListener());
-		 */
-
+		
 		/******* 14-12-07 xj 为边走边听添加判断 *************************************************************/
 
 		final ImageButton button_listen = (ImageButton) findViewById(R.id.button_listen);
