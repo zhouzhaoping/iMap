@@ -12,13 +12,13 @@ public class ParseTimeUtil {
 		int hh = mi * 60;
 		int dd = hh * 24;
 
-		   long day = ms / dd;
+		long day = ms / dd;
 		long hour = (ms - day * dd) / hh;
 		long minute = (ms - day * dd - hour * hh) / mi;
 		long second = (ms - day * dd - hour * hh - minute * mi) / ss;
 		long milliSecond = ms - day * dd - hour * hh - minute * mi - second * ss;
 
-		   String strDay = day < 10 ? "0" + day : "" + day;
+		String strDay = day < 10 ? "0" + day : "" + day;
 		String strHour = hour < 10 ? "0" + hour : "" + hour;
 		String strMinute = minute < 10 ? "0" + minute : "" + minute;
 		String strSecond = second < 10 ? "0" + second : "" + second;
@@ -28,7 +28,8 @@ public class ParseTimeUtil {
 
 		}
 
-
-
-
+	public static String delta(String str) {
+		// 返回时间差才对
+		return null;
+	}
 }

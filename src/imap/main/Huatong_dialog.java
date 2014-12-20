@@ -70,13 +70,13 @@ public class Huatong_dialog extends Activity {
 							new FileWriter(file_txt));
 					//添加选择框的值
 					RadioButton sexRadioButton = (RadioButton)findViewById(sexRadioGroup.getCheckedRadioButtonId());
+					writer.write(editText_name.getText().toString() + "\n");
+					writer.write(editText_brief.getText().toString()+ "\n");
 					writer.write(sexRadioButton.getText().toString()+ "\n");
 					if(checkBoxlanguage_c.isChecked())
 						writer.write(checkBoxlanguage_c.getText().toString()+ "\n");
 					if(checkBoxlanguage_e.isChecked())
 						writer.write(checkBoxlanguage_e.getText().toString()+ "\n");
-					writer.write(editText_name.getText().toString() + "\n");
-					writer.write(editText_brief.getText().toString()+ "\n");
 					
 					writer.close();
 
@@ -91,6 +91,12 @@ public class Huatong_dialog extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
+				File file_amr = new File(Environment
+						.getExternalStorageDirectory(),
+						"myvoice/voice_" + view_point_sure_to_update
+								+ "_" + timeString + ".amr");
+				if (file_amr.exists())
+					file_amr.delete();
 				finish();
 			}
 		});

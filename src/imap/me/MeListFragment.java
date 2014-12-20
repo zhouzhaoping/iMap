@@ -2,6 +2,7 @@ package imap.me;
 
 import imap.nettools.Variable;
 
+import java.io.File;
 import java.util.ArrayList;
 import com.example.imap.R;
 import android.os.Bundle;
@@ -9,12 +10,16 @@ import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 
 public class MeListFragment extends Fragment {
 	
 	ListView listview;
 	int type;
+	
+	TextView preview;
 	
 	public MeListFragment(int i) {
 		type = i;
@@ -38,6 +43,7 @@ public class MeListFragment extends Fragment {
 	private void findViews(View rootView)
 	{		
 		listview = (ListView) rootView.findViewById(R.id.listView_popilar);
+		preview = null;
 	}
 	
 	private void showResults() 
@@ -47,6 +53,23 @@ public class MeListFragment extends Fragment {
 			UnUploadItemAdapter mia = new UnUploadItemAdapter(getActivity(), getData1());
 			listview.setAdapter(mia);
 			listview.setCacheColorHint(0);
+			listview.setOnItemClickListener(new ListView.OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					System.out.println(position + " is press! is press! is press! is press!");
+					TextView detail = (TextView) view.findViewById(R.id.description);
+					if (preview != null)
+						preview.setVisibility(View.GONE);
+					if (preview != detail)	
+					{
+						detail.setVisibility(View.VISIBLE);
+						preview = detail;
+					}
+					else
+						preview = null;
+				}
+			});
 		}
 		else if (type == 1)
 		{
@@ -64,16 +87,23 @@ public class MeListFragment extends Fragment {
 	
 	private ArrayList<UnUploadItem> getData1()
 	{
-		// TODO：用数据库中的数据替代
 		ArrayList<UnUploadItem> unUpItemList = new ArrayList<UnUploadItem>();
 		
-		String title[] = {"未名湖是个好地方", "柳树和湖面相得益彰", "人有点少哈", "我爱上了这里", "我来介绍一些历史", "突然就有感而发了", "春天，好地方", "记得一年前的今天，这里。。", "it's very good", "最美不过未名"};
-		for (int i = 0; i < title.length; ++i)
+		File dir = new File(Variable.voicepath);                 //新建文件实例
+		if (dir.exists())
 		{
-			UnUploadItem mi = new UnUploadItem();
-			mi.setTitle(title[i]);
-			unUpItemList.add(mi);
+			File[] list = dir.listFiles();       
+			for(int i = 0; i < list.length; i++)
+			{
+				String name = list[i].getName();
+				if (name.endsWith(".amr"))
+				{
+					UnUploadItem mi = new UnUploadItem(name.substring(0, name.length() - 4));
+					unUpItemList.add(mi);
+				}
+			}
 		}
+		
 		return unUpItemList;
 	} 
 	
