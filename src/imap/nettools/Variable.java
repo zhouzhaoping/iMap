@@ -37,6 +37,6 @@ public final class Variable
 		return (numId[numn % numNum]);
 	}
 	
-	public static int[] ranges = {20, 40, 60, 80, 100};
+	public static double[] ranges = {20, 40, 60, 80, 100};
 	public static String[] areas = {"20米", "40米", "60米", "80米", "100米"};
 }
