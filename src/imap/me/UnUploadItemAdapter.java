@@ -84,7 +84,7 @@ public class UnUploadItemAdapter extends BaseAdapter {
 		
 		h.file1 = hh.getPath();
 		h.file2 = hh.getPath2();
-		h.spotid = hh.getSpotId() + "";
+		h.spotid = MainActivity.viewspotlist.get(hh.getSpotId()).getId() + "";
 		
 		h.title.setText(hh.getTitle());
 		h.spotname.setText(MainActivity.viewspotlist.get(hh.getSpotId()).getName());

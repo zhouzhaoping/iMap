@@ -33,7 +33,7 @@ public class WalkListen extends Service {
 	double preLantitude;
 	double preLongitude;
 	int walk_listen;
-	List<ViewSpotData> viewspotlist;
+	//List<ViewSpotData> viewspotlist;
 	/** MediaPlayer */
 	private static MediaPlayer media;
 
@@ -45,7 +45,7 @@ public class WalkListen extends Service {
 	public int onStartCommand(Intent intent, int flags, int startId) {
 		
 			MyAppData mylatlong = (MyAppData) getApplication();
-			viewspotlist = mylatlong.getviewlist();
+			//viewspotlist = mylatlong.getviewlist();
 			
 			mCurrentLantitude = mylatlong.getmylabellat();
 			mCurrentLongitude = mylatlong.getmylabellong();
@@ -92,11 +92,11 @@ public class WalkListen extends Service {
 				mylatlong.setpre_mylabellong(mCurrentLongitude);
 				double min = 99999;
 				int index = -1;
-				for(int i = 0 ;i < viewspotlist.size();i++)
+				for(int i = 0 ;i < MainActivity.viewspotlist.size();i++)
 				{
 					double temp = distance(mCurrentLantitude, mCurrentLongitude, 
-							viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude());
-					System.out.println(viewspotlist.get(i).getLatitude()+" "+ viewspotlist.get(i).getLongitude());
+							MainActivity.viewspotlist.get(i).getLatitude(), MainActivity.viewspotlist.get(i).getLongitude());
+					System.out.println(MainActivity.viewspotlist.get(i).getLatitude()+" "+ MainActivity.viewspotlist.get(i).getLongitude());
 					System.out.println(i +" "+ temp);
 					if(min >temp)// 当前坐标与景点i之间的距离 修改数值1
 					{

@@ -158,10 +158,10 @@ public class MainActivity extends Activity {
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
 	public static List<ViewSpotData> viewspotlist;
-	ArrayList<Marker> markers = new ArrayList<Marker>();
+	//ArrayList<Marker> markers = new ArrayList<Marker>();
 	ArrayList<Intent> intents = new ArrayList<Intent>();
 	ArrayList<PendingIntent> pendingIntents = new ArrayList<>();
-	Marker marker1;
+	//Marker marker1;
 	int sure_choose_marker = 0;
 	EditText show;
 	public int radius = 30;
@@ -251,7 +251,7 @@ public class MainActivity extends Activity {
 		
 		//将景点放入公共变量中
 		final MyAppData mylatlong = (MyAppData)getApplication();
-		mylatlong.setviewlist(viewspotlist);
+		//mylatlong.setviewlist(viewspotlist);
 		//List<ViewSpotData> temp;
 		
 		// 获取全局变量
@@ -340,8 +340,9 @@ public class MainActivity extends Activity {
 				}
 
 				if (select_button == -1) {
-					for (int i = 0; i < markers.size(); i++) {
-						if (marker == markers.get(i)) {
+					for (int i = 0; i < viewspotlist.size(); i++) {
+						if (marker == viewspotlist.get(i).getMarker()) {
+							System.out.println(i + " -> " + viewspotlist.get(i).getId());
 							builder.setIcon(R.drawable.viewpoint);
 
 							builder.setTitle(viewspotlist.get(i).getName());
@@ -371,6 +372,7 @@ public class MainActivity extends Activity {
 												DialogInterface dialog,
 												int which) {
 											// 这里添加默认语音
+											//viewspotlist.get(j).getId()
 										}
 									});
 							builder.create().show();
@@ -382,14 +384,14 @@ public class MainActivity extends Activity {
 				if (select_button == 2)// 短按话筒键，选择录音地点
 				{
 
-					for (int i = 0; i < markers.size(); i++) {
+					for (int i = 0; i < viewspotlist.size(); i++) {
 
-						if (marker == markers.get(i)) {
+						if (marker == viewspotlist.get(i).getMarker()) {
 							if (num == 0)// 保证地图上只能选择一个点
 							{
 								System.out.println("num: " + num + " pre: "
 										+ pre_marker);
-								markers.get(i)
+								viewspotlist.get(i).getMarker()
 										.setIcon(
 												BitmapDescriptorFactory
 														.fromResource(R.drawable.icon_choosed));
@@ -400,11 +402,11 @@ public class MainActivity extends Activity {
 							} else {
 								System.out.println("num: " + num + " pre: "
 										+ pre_marker);
-								markers.get(pre_marker)
+								viewspotlist.get(pre_marker).getMarker()
 										.setIcon(
 												BitmapDescriptorFactory
 														.fromResource(R.drawable.icon_choosing));
-								markers.get(i)
+								viewspotlist.get(i).getMarker()
 										.setIcon(
 												BitmapDescriptorFactory
 														.fromResource(R.drawable.icon_choosed));
@@ -672,8 +674,10 @@ public class MainActivity extends Activity {
 						SimpleDateFormat sDateFormat = new SimpleDateFormat(
 								"yyyyMMddhhmmss");
 						timeString = sDateFormat.format(new java.util.Date());
+						//语音文件地址
 						recorder = new MyRecorder("voice_"
-								+ view_point_sure_to_update + "_" + timeString);
+								+ view_point_sure_to_update
+								+ "_" + timeString);
 						RECODE_STATE = RECORD_ING;
 						// 显示录音情况
 						showVoiceDialog();
@@ -711,8 +715,8 @@ public class MainActivity extends Activity {
 							// 参数还原
 							select_button = -1;
 							sure_choose_marker = 0;
-							for (int i = 0; i < markers.size(); i++) {
-								markers.get(i).setIcon(
+							for (int i = 0; i < viewspotlist.size(); i++) {
+								viewspotlist.get(i).getMarker().setIcon(
 										BitmapDescriptorFactory
 												.fromResource(R.drawable.icon));
 							}
@@ -723,8 +727,7 @@ public class MainActivity extends Activity {
 							button_settings.setEnabled(true);
 							// ////////////////////////////////////////////////
 							Intent intent = new Intent();
-							intent.putExtra("view_point_sure_to_update",
-									view_point_sure_to_update);
+							intent.putExtra("view_point_sure_to_update", view_point_sure_to_update);
 							intent.putExtra("timeString", timeString);
 							intent.putExtra("recodeTime", recodeTime);
 							intent.setClass(MainActivity.this,
@@ -794,8 +797,8 @@ public class MainActivity extends Activity {
 	}
 
 	public void lightallmarkers() {
-		for (int i = 0; i < markers.size(); i++) {
-			markers.get(i).setIcon(
+		for (int i = 0; i < viewspotlist.size(); i++) {
+			viewspotlist.get(i).getMarker().setIcon(
 					BitmapDescriptorFactory
 							.fromResource(R.drawable.icon_choosing));
 		}
@@ -1001,18 +1004,20 @@ public class MainActivity extends Activity {
 			
 			for (int i = 0; i < viewspotlist.size(); ++i)
 			{
+				
 				Marker mark = (Marker) mBaiduMap.addOverlay(
 						new MarkerOptions()
 						.position(new LatLng(viewspotlist.get(i).getLatitude(), viewspotlist.get(i).getLongitude()))
 						.icon(ooa)
 						.zIndex(9).draggable(false)
 						);
-				markers.add(mark);
+				viewspotlist.get(i).setMarker(mark);
+				//markers.add(mark);
 			
 				if (viewspotlist.get(i).getVisible() == 0)
 				{
 					//System.out.println(viewspotlist.get(i).getName() + " " + viewspotlist.get(i).getVisible());
-					mark.setVisible(false);
+					viewspotlist.get(i).getMarker().setVisible(false);
 				}
 			}
 			Toast.makeText(MainActivity.this, "景点载入成功！", Toast.LENGTH_SHORT)

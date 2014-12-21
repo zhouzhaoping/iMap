@@ -61,6 +61,7 @@ public class Huatong_dialog extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
+				//标签文件地址
 				File file_txt = new File(Environment
 						.getExternalStorageDirectory(),
 						"myvoice/voice_" + view_point_sure_to_update

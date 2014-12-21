@@ -28,7 +28,7 @@ public final class Variable
 	public static String errorCode[] = {"成功", "身份验证失败", "数据库连接错误", "标号不合法", "用户名已注册", 
 		"还未完全更新", "语音不属于该用户", "语音已经不存在", "不能对自己的语音进行点赞", "已经点过赞", 
 		"已经举报过", "上传语音格式不正确", "上传失败", "下载失败", "景点不存在",
-		"表示已经签到过"};
+		"已经签到过", "不能举报自己的语音"};
 	
 	public static int faceNum = 8;
 	public static int picId[] = {R.drawable.face0, R.drawable.face1, R.drawable.face2, R.drawable.face3, R.drawable.face4, R.drawable.face5, R.drawable.face6, R.drawable.face7};

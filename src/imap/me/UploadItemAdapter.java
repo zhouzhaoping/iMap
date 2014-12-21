@@ -79,8 +79,14 @@ public class UploadItemAdapter extends BaseAdapter {
 
 		h.title.setText(hh.getTitle());
 		h.likesum.setText(hh.getLikeSum() + "赞");
-		h.spotname.setText(MainActivity.viewspotlist.get(hh.getSpotid())
-				.getName());
+		for (int i = 0; i < MainActivity.viewspotlist.size(); ++i)
+		{
+			if (MainActivity.viewspotlist.get(i).getId() == hh.getSpotid())
+			{
+				h.spotname.setText(MainActivity.viewspotlist.get(i).getName());
+				break;
+			}
+		}
 		h.time.setText(hh.getTime());
 		h.description.setText(hh.getDescription());
 		h.play.setTag(hh.getId());

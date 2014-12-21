@@ -82,7 +82,7 @@ public class MusicItemAdapter extends BaseAdapter {
 		
 		h.play.setTag(hh.getId());
 		h.like.setTag(hh.getId());
-		h.report.setTag(hh.getId());
+		h.report.setTag(h);
 		
 		h.play.setOnClickListener(new ImageButton.OnClickListener()
 		{
@@ -150,7 +150,7 @@ public class MusicItemAdapter extends BaseAdapter {
 								int returnCode = netthread.beginDeal();
 				
 								if (returnCode == 0) {
-									Toast.makeText(context, "举报成功！", Toast.LENGTH_SHORT)
+									Toast.makeText(context, "举报成功！等待处理~", Toast.LENGTH_SHORT)
 											.show();
 								} else if (returnCode == -1) {
 									Toast.makeText(context, "网络错误！", Toast.LENGTH_SHORT).show();

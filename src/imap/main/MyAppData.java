@@ -15,7 +15,7 @@ public class MyAppData extends Application{
     private double pre_mylabellat ;   
     private double pre_mylabellong ; 
     private int walk_listen;
-    List<ViewSpotData> viewspotlist;
+    //List<ViewSpotData> viewspotlist;
     private int near_listen_view_index;//最近播放的一次默认语音所在的景点的编号
     
     
@@ -58,7 +58,7 @@ public class MyAppData extends Application{
     public void setwalk_listen(int s){ 
         this.walk_listen = s; 
     } 
-    
+    /*
     public void setviewlist(List<ViewSpotData> s)
     {
     	this.viewspotlist = s;
@@ -66,7 +66,7 @@ public class MyAppData extends Application{
     public List<ViewSpotData> getviewlist()
     {
     	return viewspotlist;
-    }
+    }*/
     @Override 
     public void onCreate() { 
         // TODO Auto-generated method stub 

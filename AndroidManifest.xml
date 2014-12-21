@@ -84,7 +84,7 @@
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
-        android:value="ZMCmaLj67MTXyAAot3z2Z8im" />  
+        android:value="DkU69Zn5c6LxN2gLfBOn9Ndm" />  
        <!--  DkU69Zn5c6LxN2gLfBOn9Ndm 爪机用  ZMCmaLj67MTXyAAot3z2Z8im 邢捷用-->
         
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">

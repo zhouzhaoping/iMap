@@ -3,6 +3,10 @@ package imap.nettools;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import com.baidu.mapapi.map.Marker;
+import com.baidu.mapapi.map.MarkerOptions;
+import com.baidu.mapapi.model.LatLng;
+
 public class ViewSpotData
 {
 	int id;
@@ -12,6 +16,8 @@ public class ViewSpotData
 	double latitude;
 	int visible;
 	int parent;
+	
+	Marker marker;
 	
 	public ViewSpotData(JSONObject obj) 
 	{
@@ -33,6 +39,14 @@ public class ViewSpotData
 		
 	}
 	
+	public Marker getMarker()
+	{
+		return marker;
+	}
+	public void setMarker(Marker m)
+	{
+		marker = m;
+	}
 	public int getId()
 	{
 		return id;
