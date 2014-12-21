@@ -63,6 +63,7 @@ public class MusicItemAdapter extends BaseAdapter {
 			h.time = (TextView)view.findViewById(R.id.time);
 			h.title = (TextView)view.findViewById(R.id.title);
 			h.description = (TextView)view.findViewById(R.id.description);
+			h.likesum = (TextView)view.findViewById(R.id.likesum);
 			h.play = (ImageButton)view.findViewById(R.id.button_play);
 			h.like = (ImageButton)view.findViewById(R.id.button_like);
 			h.report = (ImageButton)view.findViewById(R.id.button_report);
@@ -79,6 +80,7 @@ public class MusicItemAdapter extends BaseAdapter {
 		h.time.setText(hh.getPostTime());
 		h.title.setText(hh.getTitle());
 		h.description.setText(hh.getDescription());
+		h.likesum.setText(hh.getLikeSum()+"赞");
 		
 		h.play.setTag(hh.getId());
 		h.like.setTag(hh.getId());
@@ -174,6 +176,7 @@ public class MusicItemAdapter extends BaseAdapter {
 		TextView time;
 		TextView title;
 		TextView description;
+		TextView likesum;
 		ImageButton play;
 		ImageButton like;
 		ImageButton report; 

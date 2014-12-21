@@ -672,7 +672,7 @@ public class MainActivity extends Activity {
 					button_huatong.setImageResource(R.drawable.huatong2);
 					if (RECODE_STATE != RECORD_ING) {
 						SimpleDateFormat sDateFormat = new SimpleDateFormat(
-								"yyyyMMddhhmmss");
+								"yyyyMMddHHmmss");
 						timeString = sDateFormat.format(new java.util.Date());
 						//语音文件地址
 						recorder = new MyRecorder("voice_"
