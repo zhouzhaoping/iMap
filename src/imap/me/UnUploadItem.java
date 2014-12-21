@@ -6,11 +6,6 @@ import java.util.Scanner;
 
 import imap.nettools.Variable;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import android.os.Environment;
-
 public class UnUploadItem {
 	
 	private String path;

@@ -1,12 +1,19 @@
 package imap.musiclist;
 
+import imap.nettools.NetThread;
 import imap.nettools.Variable;
+import imap.storage.VoiceCache;
 
+import java.io.FileOutputStream;
 import java.util.ArrayList;
 
 import com.example.imap.R;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.SharedPreferences;
+import android.media.MediaPlayer;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -65,21 +72,37 @@ public class MusicItemAdapter extends BaseAdapter {
 			h = (H)view.getTag();
 		}
 		
+		h.id = hh.getId();
+		
 		h.pic.setImageResource(hh.getFace());
 		h.name.setText(hh.getName());
 		h.time.setText(hh.getPostTime());
 		h.title.setText(hh.getTitle());
 		h.description.setText(hh.getDescription());
+		
 		h.play.setTag(hh.getId());
 		h.like.setTag(hh.getId());
 		h.report.setTag(hh.getId());
+		
 		h.play.setOnClickListener(new ImageButton.OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
-				//Log.v("点击", "播放"+v.getTag());
-				System.out.println("play play play play play " + v.getTag());
+				String str = (String) v.getTag();
+				str = VoiceCache.getVoiceById(context, str);
+				
+				if (str != null)
+				{
+					try {
+						MediaPlayer player = new MediaPlayer();
+						player.setDataSource(str);
+						player.prepare();
+						player.start();
+					} catch (Exception e1) {
+						e1.printStackTrace();
+					}
+				} 
 			}
 		});
 		h.like.setOnClickListener(new ImageButton.OnClickListener()
@@ -87,22 +110,65 @@ public class MusicItemAdapter extends BaseAdapter {
 			@Override
 			public void onClick(View v)
 			{
-				//Log.v("点击", "点赞"+v.getTag());
-				System.out.println("like like like like like " + v.getTag());
+				final String str = (String) v.getTag();
+				SharedPreferences sp = context.getSharedPreferences("imap", 0);
+				String username = sp.getString("username", "");
+				String password = sp.getString("password", "");
+
+				NetThread netthread = new NetThread(username, password);
+				netthread.makeParam(Variable.likeVoice, str);
+				int returnCode = netthread.beginDeal();
+				
+				if (returnCode == 0) {
+					Toast.makeText(context, "点赞成功！", Toast.LENGTH_SHORT).show();
+				} else if (returnCode == -1) {
+					Toast.makeText(context, "网络错误！", Toast.LENGTH_SHORT).show();
+				} else {
+					Toast.makeText(context,
+							Variable.errorCode[returnCode] + "！",
+							Toast.LENGTH_SHORT).show();
+				}
 			}
 		});h.report.setOnClickListener(new ImageButton.OnClickListener()
 		{
 			@Override
 			public void onClick(View v)
 			{
-				//Log.v("点击", "举报"+v.getTag());
-				System.out.println("report report report report report " + v.getTag());
+				final H h = (H) v.getTag();
+				new AlertDialog.Builder(context)
+				.setTitle("确认举报")
+				.setMessage("举报\"" + h.title.getText() + "\"?")
+				.setPositiveButton("是",new DialogInterface.OnClickListener() {
+							public void onClick(DialogInterface dialog, int which) 
+							{
+								SharedPreferences sp = context.getSharedPreferences("imap", 0);
+								String username = sp.getString("username", "");
+								String password = sp.getString("password", "");
+				
+								NetThread netthread = new NetThread(username, password);
+								netthread.makeParam(Variable.reportVoice, h.id);
+								int returnCode = netthread.beginDeal();
+				
+								if (returnCode == 0) {
+									Toast.makeText(context, "举报成功！", Toast.LENGTH_SHORT)
+											.show();
+								} else if (returnCode == -1) {
+									Toast.makeText(context, "网络错误！", Toast.LENGTH_SHORT).show();
+								} else {
+									Toast.makeText(context,
+											Variable.errorCode[returnCode] + "！",
+											Toast.LENGTH_SHORT).show();
+								}
+							}
+				}).setNegativeButton("否", null).show();
 			}
 		});
 		return view;
 	}
 
 	class H{
+		String id;
+		
 		ImageView pic;
 		TextView name;
 		TextView time;

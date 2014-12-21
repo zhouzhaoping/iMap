@@ -157,7 +157,7 @@ public class MainActivity extends Activity {
 	private MapView mMapView;
 	private InfoWindow mInfoWindow;
 	BaiduMap mBaiduMap;
-	List<ViewSpotData> viewspotlist;
+	public static List<ViewSpotData> viewspotlist;
 	ArrayList<Marker> markers = new ArrayList<Marker>();
 	ArrayList<Intent> intents = new ArrayList<Intent>();
 	ArrayList<PendingIntent> pendingIntents = new ArrayList<>();

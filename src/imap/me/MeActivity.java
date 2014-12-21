@@ -3,10 +3,15 @@ package imap.me;
 import imap.main.LoginActivity;
 import imap.main.SignupActivity;
 import imap.musiclist.PagerSlidingTabStrip;
+import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
+import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+
+import org.json.JSONException;
+import org.json.JSONObject;
 
 import com.example.imap.R;
 
@@ -34,25 +39,26 @@ public class MeActivity extends FragmentActivity {
 
 	private ViewPager pager;
 	private PagerSlidingTabStrip tabs;
-	
+
 	private ImageView facepic;
 	private TextView name;
 	private TextView voicesum;
 	private TextView likesum;
 	private TextView signinsum;
 	private ImageButton edit;
-	
+
 	private MeListFragment uploadFragment;
 	private MeListFragment unuploadFragment;
 	private MeListFragment viewspotsFragment;
-	
-	private DisplayMetrics dm;//获取当前屏幕的密度
+
+	private DisplayMetrics dm;// 获取当前屏幕的密度
 
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
+
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_me);
-		
+
 		findViews();
 		showResults();
 		setListensers();
@@ -62,7 +68,7 @@ public class MeActivity extends FragmentActivity {
 		dm = getResources().getDisplayMetrics();
 		pager = (ViewPager) findViewById(R.id.pager);
 		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
-		
+
 		facepic = (ImageView) findViewById(R.id.facepic);
 		name = (TextView) findViewById(R.id.name);
 		voicesum = (TextView) findViewById(R.id.voicesum);
@@ -70,27 +76,54 @@ public class MeActivity extends FragmentActivity {
 		signinsum = (TextView) findViewById(R.id.signinsum);
 		edit = (ImageButton) findViewById(R.id.edit);
 	}
-	
+
 	private void showResults() {
 		// TODO 从数据库查询数据
-		SharedPreferences sp = MeActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
-		//String pw = sp.getString("password", "");
+		SharedPreferences sp = MeActivity.this.getSharedPreferences("imap",
+				MODE_PRIVATE);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
 		int facenum = sp.getInt("face", 0);
+
 		facepic.setImageResource(Variable.int2pic(facenum));
-		name.setText("姓名："  + sp.getString("username", ""));
-		voicesum.setText("上传语音：" + 100);
-		likesum.setText("获得点赞：" + 1000);
-		signinsum.setText("签到景点：" + 999);
+		name.setText("姓名：" + sp.getString("username", ""));
+
+		NetThread netthread = new NetThread(username, password);
+		netthread.makeParam(Variable.myInfo);
+		int returnCode = netthread.beginDeal();
+
+		if (returnCode == 0) {
+			JSONObject obj = netthread.getReturn();
+			try {
+				voicesum.setText("上传语音："
+						+ Integer.parseInt(obj.getString("totalUploads")));
+				likesum.setText("获得点赞："
+						+ Integer.parseInt(obj.getString("totalLikes")));
+				signinsum.setText("签到景点："
+						+ Integer.parseInt(obj.getString("totalMarks")));
+			} catch (NumberFormatException e) {
+				e.printStackTrace();
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		} else if (returnCode == -1) {
+			Toast.makeText(MeActivity.this, "网络错误！获取用户信息失败！",
+					Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(MeActivity.this,
+					Variable.errorCode[returnCode] + "！获取用户信息失败！",
+					Toast.LENGTH_SHORT).show();
+		}
 	}
-	
+
 	private void setListensers() {
 		pager.setAdapter(new MyPagerAdapter(getSupportFragmentManager()));
 		tabs.setViewPager(pager);
 		setTabsValue();
-		
+
 		edit.setOnClickListener(editListener);
 	}
-	
+
 	/**
 	 * 对PagerSlidingTabStrip的各项属性进行赋值。
 	 */
@@ -117,12 +150,12 @@ public class MeActivity extends FragmentActivity {
 	}
 
 	public class MyPagerAdapter extends FragmentPagerAdapter {
-		
+
 		public MyPagerAdapter(FragmentManager fm) {
 			super(fm);
 		}
 
-		private final String[] titles = {"未上传", "已上传", "已签到"};
+		private final String[] titles = { "未上传", "已上传", "已签到" };
 
 		@Override
 		public CharSequence getPageTitle(int position) {
@@ -136,6 +169,7 @@ public class MeActivity extends FragmentActivity {
 
 		@Override
 		public Fragment getItem(int position) {
+			System.out.println(position);
 			switch (position) {
 			case 0:
 				if (uploadFragment == null) {
@@ -159,12 +193,10 @@ public class MeActivity extends FragmentActivity {
 
 	}
 
-	private Button.OnClickListener editListener = new Button.OnClickListener()
-	 {
-		  public void onClick(View v)
-		 {
-			  Toast.makeText(MeActivity.this, "进入修改个人信息界面！", 
-		                 Toast.LENGTH_SHORT).show();
-		 }
-	 };
+	private Button.OnClickListener editListener = new Button.OnClickListener() {
+		public void onClick(View v) {
+			Toast.makeText(MeActivity.this, "进入修改个人信息界面！", Toast.LENGTH_SHORT)
+					.show();
+		}
+	};
 }

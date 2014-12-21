@@ -22,12 +22,12 @@ public class MusicItem {
 	{
 		try {
 			id = obj.getString("voiceId");
-			name = obj.getString("name");
+			name = obj.getString("author");
 			title = obj.getString("title");
 			description = obj.getString("description");
-			postTime = obj.getString("postTime");
-			face = Variable.int2pic(Integer.parseInt(obj.getString("face")));
-			likesum = Integer.parseInt(obj.getString("likesum"));
+			postTime = obj.getString("time");
+			face = Variable.int2pic(Integer.parseInt(obj.getString("facePic")));
+			likesum = Integer.parseInt(obj.getString("likes"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

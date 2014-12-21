@@ -6,7 +6,7 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 public class SpotItem {
-	private String name;
+	private int spotid;
 	private String time;
 	
 	public SpotItem()
@@ -16,24 +16,23 @@ public class SpotItem {
 	public SpotItem(JSONObject obj) 
 	{
 		try {
-			name = obj.getString("name");
+			spotid = Integer.parseInt(obj.getString("viewSpotId"));
 			time = obj.getString("time");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
 		
 	}
-	
-	public String getName() {
-		return name;
-	}
-	public void setName(String s) {
-		this.name = s;
-	}
 	public String getTime() {
 		return time;
 	}
 	public void setTime(String p) {
 		this.time = p;
+	}
+	public int getSpotid() {
+		return spotid;
+	}
+	public void setSpotid(int spotid) {
+		this.spotid = spotid;
 	}
 }

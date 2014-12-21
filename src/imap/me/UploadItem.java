@@ -7,7 +7,10 @@ import org.json.JSONObject;
 
 public class UploadItem {
 	private String id;
+	private int spotid;
 	private String title;
+	private String description;
+	private String time;
 	private int likesum;
 	
 	public UploadItem()
@@ -18,9 +21,11 @@ public class UploadItem {
 	{
 		try {
 			id = obj.getString("voiceId");
+			spotid = Integer.parseInt(obj.getString("viewSpotId"));
 			title = obj.getString("title");
-			likesum = Integer.parseInt(obj.getString("likesum"));
-			//title = "上传" + voicesum + "个语音，获得总点赞数" +likesum;
+			description = obj.getString("description");
+			time = obj.getString("time");
+			likesum = Integer.parseInt(obj.getString("likes"));
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}
@@ -43,5 +48,23 @@ public class UploadItem {
 	}
 	public void setLikeSum(int n) {
 		this.likesum = n;
+	}
+	public int getSpotid() {
+		return spotid;
+	}
+	public void setSpotid(int spotid) {
+		this.spotid = spotid;
+	}
+	public String getDescription() {
+		return description;
+	}
+	public void setDescription(String description) {
+		this.description = description;
+	}
+	public String getTime() {
+		return time;
+	}
+	public void setTime(String time) {
+		this.time = time;
 	}
 }

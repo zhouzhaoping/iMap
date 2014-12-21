@@ -1,5 +1,7 @@
 package imap.rank;
 
+import imap.nettools.Variable;
+
 import java.util.ArrayList;
 
 import com.example.imap.R;
@@ -12,13 +14,13 @@ import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class RankItemAdapter extends BaseAdapter {
+public class PersonRankItemAdapter extends BaseAdapter {
 	private Context context;
-	private ArrayList<RankItem> list = new ArrayList<RankItem>();
+	private ArrayList<PersonRankItem> list = new ArrayList<PersonRankItem>();
 	
-	public RankItemAdapter(Context context,ArrayList<RankItem> list){
+	public PersonRankItemAdapter(Context context,ArrayList<PersonRankItem> arrayList){
 		this.context = context;
-		this.list = list;
+		this.list = arrayList;
 	}
 
 	@Override
@@ -40,7 +42,7 @@ public class RankItemAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View view, ViewGroup parent) {
-		RankItem hh = list.get(position);
+		PersonRankItem hh = list.get(position);
 		H h = null;
 		if(view==null){
 			h = new H();
@@ -55,10 +57,10 @@ public class RankItemAdapter extends BaseAdapter {
 			h = (H)view.getTag();
 		}
 		
-		h.num.setImageResource(hh.getNum());
+		h.num.setImageResource(Variable.int2num(position));
 		h.pic.setImageResource(hh.getFace());
 		h.name.setText(hh.getName());
-		h.title.setText(hh.getTitle());
+		h.title.setText("获得总点赞数" + hh.getLikeSum());
 		
 		return view;
 	}

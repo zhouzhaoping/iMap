@@ -1,6 +1,7 @@
 package imap.me;
 
 import imap.main.LoginActivity;
+import imap.main.MainActivity;
 import imap.main.SignupActivity;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
@@ -80,13 +81,13 @@ public class UnUploadItemAdapter extends BaseAdapter {
 		} else {
 			h = (H) view.getTag();
 		}
-
+		
 		h.file1 = hh.getPath();
 		h.file2 = hh.getPath2();
 		h.spotid = hh.getSpotId() + "";
 		
 		h.title.setText(hh.getTitle());
-		h.spotname.setText("spotid:" + hh.getSpotId());
+		h.spotname.setText(MainActivity.viewspotlist.get(hh.getSpotId()).getName());
 		h.time.setText(hh.getTime());
 		h.description.setText(hh.getDescription());
 		h.play.setTag(h);
@@ -141,24 +142,20 @@ public class UnUploadItemAdapter extends BaseAdapter {
 									String fileaString = new String(filea, "ISO-8859-1");
 									// System.out.println(fileaString);
 									// 写入文件
-									/*
-									 * FileOutputStream fileOutputStream = new FileOutputStream(
-									 * "d:/b.png");
-									 * fileOutputStream.write(fileaString.getBytes("ISO-8859-1"
-									 * )); fileOutputStream.flush(); fileOutputStream.close();
-									 */
+									
+									// FileOutputStream fileOutputStream = new FileOutputStream(h.file2 + "fortext.amr");
+									 //fileOutputStream.write(fileaString.getBytes("ISO-8859-1")); fileOutputStream.flush(); fileOutputStream.close();
 
 									SharedPreferences sp = context.getSharedPreferences("imap", 0);
 									String username = sp.getString("username", "");
 									String password = sp.getString("password", "");
 									
 									NetThread netthread = new NetThread(username, password);
-									netthread.makeParam(Variable.sendVoice, h.spotid, fileaString, h.title.getText().toString(), h.description.getText().toString(), null, null, null);
+									netthread.makeParam(Variable.sendVoice, h.spotid, fileaString, h.title.getText().toString(), h.description.getText().toString(), "0", "0", "0");
 									int returnCode = netthread.beginDeal();
 									
 									if (returnCode == 0)
 									  {
-										/*
 										h.thisview.setVisibility(View.GONE);
 										File file = new File(h.file1);
 										if (file.exists())
@@ -166,8 +163,10 @@ public class UnUploadItemAdapter extends BaseAdapter {
 										file = new File(h.file2);
 										if (file.exists())
 											file.delete();  
-										*/
-										Toast.makeText(context, "语音上传成功！", 
+										
+										//MeActivity.uploadVoicesFresh = true;
+										//MeActivity.uploadFragment = null;
+										Toast.makeText(context, "语音上传成功！请静待处理~", 
 									                 Toast.LENGTH_SHORT).show(); 
 									  }
 									  else if (returnCode == -1)
@@ -199,6 +198,7 @@ public class UnUploadItemAdapter extends BaseAdapter {
 								new DialogInterface.OnClickListener() {
 									public void onClick(DialogInterface dialog,
 											int which) {
+										
 										h.thisview.setVisibility(View.GONE);
 										File file = new File(h.file1);
 										if (file.exists())
@@ -206,6 +206,7 @@ public class UnUploadItemAdapter extends BaseAdapter {
 										file = new File(h.file2);
 										if (file.exists())
 											file.delete();
+										
 										Toast.makeText(context, "删除成功！",
 												Toast.LENGTH_SHORT).show();
 									}

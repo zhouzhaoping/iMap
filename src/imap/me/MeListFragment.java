@@ -1,10 +1,13 @@
 package imap.me;
 
+import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
 import java.io.File;
 import java.util.ArrayList;
 import com.example.imap.R;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
@@ -13,6 +16,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class MeListFragment extends Fragment {
 	
@@ -76,6 +80,23 @@ public class MeListFragment extends Fragment {
 			UploadItemAdapter mia = new UploadItemAdapter(getActivity(), getData2());
 			listview.setAdapter(mia);
 			listview.setCacheColorHint(0);
+			listview.setOnItemClickListener(new ListView.OnItemClickListener(){
+				@Override
+				public void onItemClick(AdapterView<?> parent, View view,
+						int position, long id) {
+					System.out.println(position + " is press! is press! is press! is press!");
+					TextView detail = (TextView) view.findViewById(R.id.description);
+					if (preview != null)
+						preview.setVisibility(View.GONE);
+					if (preview != detail)	
+					{
+						detail.setVisibility(View.VISIBLE);
+						preview = detail;
+					}
+					else
+						preview = null;
+				}
+			});
 		}
 		else if (type == 2)
 		{
@@ -83,60 +104,83 @@ public class MeListFragment extends Fragment {
 			listview.setAdapter(mia);
 			listview.setCacheColorHint(0);
 		}
-	}	
+	}
 	
 	private ArrayList<UnUploadItem> getData1()
 	{
 		ArrayList<UnUploadItem> unUpItemList = new ArrayList<UnUploadItem>();
 		
 		File dir = new File(Variable.voicepath);                 //新建文件实例
-		if (dir.exists())
+		if (dir.exists() && dir.isFile())
+			dir.delete();
+		if (!dir.exists())
+			dir.mkdirs();
+		
+		File[] list = dir.listFiles();       
+		for(int i = 0; i < list.length; i++)
 		{
-			File[] list = dir.listFiles();       
-			for(int i = 0; i < list.length; i++)
+			String name = list[i].getName();
+			if (name.endsWith(".amr"))
 			{
-				String name = list[i].getName();
-				if (name.endsWith(".amr"))
-				{
-					UnUploadItem mi = new UnUploadItem(name.substring(0, name.length() - 4));
-					unUpItemList.add(mi);
-				}
+				UnUploadItem mi = new UnUploadItem(name.substring(0, name.length() - 4));
+				unUpItemList.add(mi);
 			}
 		}
-		
 		return unUpItemList;
 	} 
 	
 	private ArrayList<UploadItem> getData2()
 	{
-		// TODO：用数据库中的数据替代
 		ArrayList<UploadItem> upItemList = new ArrayList<UploadItem>();
 		
-		String title[] = {"未名湖是个好地方", "柳树和湖面相得益彰", "人有点少哈", "我爱上了这里", "我来介绍一些历史", "突然就有感而发了", "春天，好地方", "记得一年前的今天，这里。。", "it's very good", "最美不过未名"};
-		for (int i = 0; i < title.length; ++i)
+		SharedPreferences sp = getActivity().getSharedPreferences("imap", 0);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
+		
+		NetThread netthread = new NetThread(username, password);
+		netthread.makeParam(Variable.myVoice);
+		int returnCode = netthread.beginDeal();
+		
+		if (returnCode == 0)
+		{			 
+			return netthread.getMyVoiceList();
+		}
+		else if (returnCode == -1)
 		{
-			UploadItem mi = new UploadItem();
-			mi.setTitle(title[i]);
-			mi.setLikeSum(100);
-			upItemList.add(mi);
+			  Toast.makeText(getActivity(), "网络错误！", Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(getActivity(), Variable.errorCode[returnCode] + "！", 
+		                 Toast.LENGTH_SHORT).show();
 		}
 		return upItemList;
 	} 
 	
 	private ArrayList<SpotItem> getData3()
 	{
-		// TODO：用数据库中的数据替代
 		ArrayList<SpotItem> spotItemList = new ArrayList<SpotItem>();
 		
-		String name[] = {"北大", "未名湖", "学五", "二教", "北大南门", "清华大学", "五道口", "中关村", "小西门", "西门"};
-		String postTime[] = {"下午 18:00", "下午 18:00", "下午 17:40", "下午 17:00", "下午 16:22", "下午 16:11", "下午 15:08", "下午 15:01", "下午 14:50", "下午 14:00", "中午 12:00"};
+		SharedPreferences sp = getActivity().getSharedPreferences("imap", 0);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
 		
-		for (int i = 0; i < name.length; ++i)
+		NetThread netthread = new NetThread(username, password);
+		netthread.makeParam(Variable.mySign);
+		int returnCode = netthread.beginDeal();
+		
+		if (returnCode == 0)
+		{			 
+			return netthread.getMySignList();
+		}
+		else if (returnCode == -1)
 		{
-			SpotItem mi = new SpotItem();
-			mi.setName(name[i]);
-			mi.setTime(postTime[i]);
-			spotItemList.add(mi);
+			  Toast.makeText(getActivity(), "网络错误！", Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(getActivity(), Variable.errorCode[returnCode] + "！", 
+		                 Toast.LENGTH_SHORT).show();
 		}
 		return spotItemList;
 	} 

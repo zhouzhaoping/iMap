@@ -1,10 +1,8 @@
 package imap.musiclist;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-
 import com.example.imap.R;
 
+import android.content.Intent;
 import android.graphics.Color;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
@@ -14,12 +12,11 @@ import android.support.v4.app.FragmentPagerAdapter;
 import android.support.v4.view.ViewPager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
-import android.view.Menu;
-import android.view.ViewConfiguration;
-import android.view.Window;
 
 public class MusicListActivity extends FragmentActivity {
 
+	String id;
+	
 	private PagerSlidingTabStrip tabs;
 	
 	private MusicListFragment popularFragment;
@@ -32,7 +29,11 @@ public class MusicListActivity extends FragmentActivity {
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_musiclist);
-		setOverflowShowingAlways();
+		
+		Intent intent = this.getIntent();
+		Bundle bundle = intent.getExtras(); 
+		id  = bundle.getInt("id") + "";
+		
 		dm = getResources().getDisplayMetrics();
 		ViewPager pager = (ViewPager) findViewById(R.id.pager);
 		tabs = (PagerSlidingTabStrip) findViewById(R.id.tabs);
@@ -89,12 +90,12 @@ public class MusicListActivity extends FragmentActivity {
 			switch (position) {
 			case 0:
 				if (popularFragment == null) {
-					popularFragment = new MusicListFragment(0);
+					popularFragment = new MusicListFragment(0, id);
 				}
 				return popularFragment;
 			case 1:
 				if (newFragment == null) {
-					newFragment = new MusicListFragment(1);
+					newFragment = new MusicListFragment(1, id);
 				}
 				return newFragment;
 			case 2:
@@ -108,39 +109,4 @@ public class MusicListActivity extends FragmentActivity {
 		}
 
 	}
-
-	@Override
-	public boolean onCreateOptionsMenu(Menu menu) {
-		getMenuInflater().inflate(R.menu.main, menu);
-		return true;
-	}
-
-	@Override
-	public boolean onMenuOpened(int featureId, Menu menu) {
-		if (featureId == Window.FEATURE_ACTION_BAR && menu != null) {
-			if (menu.getClass().getSimpleName().equals("MenuBuilder")) {
-				try {
-					Method m = menu.getClass().getDeclaredMethod(
-							"setOptionalIconsVisible", Boolean.TYPE);
-					m.setAccessible(true);
-					m.invoke(menu, true);
-				} catch (Exception e) {
-				}
-			}
-		}
-		return super.onMenuOpened(featureId, menu);
-	}
-
-	private void setOverflowShowingAlways() {
-		try {
-			ViewConfiguration config = ViewConfiguration.get(this);
-			Field menuKeyField = ViewConfiguration.class
-					.getDeclaredField("sHasPermanentMenuKey");
-			menuKeyField.setAccessible(true);
-			menuKeyField.setBoolean(config, false);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-
 }

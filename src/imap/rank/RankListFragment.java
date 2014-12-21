@@ -1,15 +1,19 @@
 package imap.rank;
 
+import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
 import java.util.ArrayList;
 import com.example.imap.R;
+
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ListView;
+import android.widget.Toast;
 
 public class RankListFragment extends Fragment {
 	
@@ -42,70 +46,73 @@ public class RankListFragment extends Fragment {
 	
 	private void showResults() 
 	{
-		RankItemAdapter mia = new RankItemAdapter(getActivity(), getData());
-		listview.setAdapter(mia);
-		listview.setCacheColorHint(0);
-	}	
-	
-	private ArrayList<RankItem> getData()
-	{
-		// TODO：用数据库中的数据替代
-		ArrayList<RankItem> rankItemList = new ArrayList<RankItem>();
-		
 		if (type == 0)
 		{
-			String name[] = {"张三", "小黑", "傻逼", "禽兽", "风清", "呵呵", "鄙人", "人人人", "法克", "诗人"};
-			for (int i = 0; i < name.length; ++i)
-			{
-				RankItem mi = new RankItem();
-				mi.setFace(Variable.int2pic(i));
-				mi.setNum(Variable.int2num(i));
-				mi.setName(name[i]);
-				mi.setVoiceSum((10 - i) * 10);
-				mi.setLikeSum((10 - i) * 100);
-				mi.setTitle("上传" + mi.getVoiceSum() + "个语音，获得总点赞数" + mi.getLikeSum());
-				rankItemList.add(mi);
-			}
+			PersonRankItemAdapter mia = new PersonRankItemAdapter(getActivity(), getData1());
+			listview.setAdapter(mia);
+			listview.setCacheColorHint(0);
 		}
-		else
-		{
-			String name[] = {"北大", "未名湖", "学五", "二教", "北大南门", "清华大学", "五道口", "中关村", "小西门", "西门"};
-			for (int i = 0; i < name.length; ++i)
-			{
-				RankItem mi = new RankItem();
-				mi.setFace(R.drawable.icon);
-				mi.setNum(Variable.int2num(i));
-				mi.setName(name[i]);
-				mi.setLikeSum((10 - i) * 100);
-				mi.setTitle("总计" + mi.getLikeSum() + "个人签到");
-				rankItemList.add(mi);
-			}
+		else if (type == 1)
+		{	SpotRankItemAdapter mia = new SpotRankItemAdapter(getActivity(), getData2());
+		listview.setAdapter(mia);
+		listview.setCacheColorHint(0);
 		}
-		/*
-		SharedPreferences sp = PopularFragmentActivity.this.getSharedPreferences("imap", MODE_PRIVATE);
+	}	
+	
+	private ArrayList<PersonRankItem> getData1()
+	{
+		ArrayList<PersonRankItem> list = new ArrayList<PersonRankItem>();
+		
+		SharedPreferences sp = getActivity().getSharedPreferences("imap", 0);
 		String username = sp.getString("username", "");
 		String password = sp.getString("password", "");
 		
 		NetThread netthread = new NetThread(username, password);
-		netthread.makeParam(Variable.getVoice, add_name, null, null, null);
+		netthread.makeParam(Variable.personRank);
 		int returnCode = netthread.beginDeal();
-		
 		
 		if (returnCode == 0)
 		{			 
-			return netthread.getPopularList();
+			return netthread.getPersonRankList();
 		}
 		else if (returnCode == -1)
 		{
-			  Toast.makeText(PopularFragmentActivity.this, "网络错误！", 
+			  Toast.makeText(getActivity(), "网络错误！", 
 		                 Toast.LENGTH_SHORT).show();
 		}
 		else
 		{
-			Toast.makeText(PopularFragmentActivity.this, Variable.errorCode[returnCode] + "！", 
+			Toast.makeText(getActivity(), Variable.errorCode[returnCode] + "！", 
 		                 Toast.LENGTH_SHORT).show();
 		}
-		*/
-		return rankItemList;
-	} 
+		return list;
+	}
+	private ArrayList<SpotRankItem> getData2()
+	{
+		ArrayList<SpotRankItem> list = new ArrayList<SpotRankItem>();
+		
+		SharedPreferences sp = getActivity().getSharedPreferences("imap", 0);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
+		
+		NetThread netthread = new NetThread(username, password);
+		netthread.makeParam(Variable.spotRank);
+		int returnCode = netthread.beginDeal();
+		
+		if (returnCode == 0)
+		{			 
+			return netthread.getSpotRankList();
+		}
+		else if (returnCode == -1)
+		{
+			  Toast.makeText(getActivity(), "网络错误！", 
+		                 Toast.LENGTH_SHORT).show();
+		}
+		else
+		{
+			Toast.makeText(getActivity(), Variable.errorCode[returnCode] + "！", 
+		                 Toast.LENGTH_SHORT).show();
+		}
+		return list;
+	}
 }

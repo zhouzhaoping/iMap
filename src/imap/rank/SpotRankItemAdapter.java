@@ -1,6 +1,5 @@
-package imap.me;
+package imap.rank;
 
-import imap.main.MainActivity;
 import imap.nettools.Variable;
 
 import java.util.ArrayList;
@@ -12,15 +11,14 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.BaseAdapter;
-import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-public class SpotItemAdapter extends BaseAdapter {
+public class SpotRankItemAdapter extends BaseAdapter {
 	private Context context;
-	private ArrayList<SpotItem> list = new ArrayList<SpotItem>();
+	private ArrayList<SpotRankItem> list = new ArrayList<SpotRankItem>();
 	
-	public SpotItemAdapter(Context context,ArrayList<SpotItem> list){
+	public SpotRankItemAdapter(Context context,ArrayList<SpotRankItem> list){
 		this.context = context;
 		this.list = list;
 	}
@@ -44,26 +42,32 @@ public class SpotItemAdapter extends BaseAdapter {
 
 	@Override
 	public View getView(int position, View view, ViewGroup parent) {
-		SpotItem hh = list.get(position);
+		SpotRankItem hh = list.get(position);
 		H h = null;
 		if(view==null){
 			h = new H();
-			view = LayoutInflater.from(context).inflate(R.layout.spotlist_item, parent, false);
+			view = LayoutInflater.from(context).inflate(R.layout.ranklist_item, parent, false);
+			h.num = (ImageView)view.findViewById(R.id.num);
+			h.pic = (ImageView)view.findViewById(R.id.facepic);
 			h.name = (TextView)view.findViewById(R.id.name);
-			h.time = (TextView)view.findViewById(R.id.time);
+			h.title = (TextView)view.findViewById(R.id.title);
+			
 			view.setTag(h);
 		}else{
 			h = (H)view.getTag();
 		}
 		
-		h.name.setText(MainActivity.viewspotlist.get(hh.getSpotid()).getName());
-		h.time.setText(hh.getTime());
+		h.num.setImageResource(Variable.int2num(position));
+		h.name.setText(hh.getName());
+		h.title.setText("总计" + hh.getSignsum() + "个游客签到");
 		
 		return view;
 	}
 
-	class H{	
-		TextView name;
-		TextView time; 
+	class H{
+		ImageView pic;
+		ImageView num;
+		TextView name;	
+		TextView title;
 	}
 }
