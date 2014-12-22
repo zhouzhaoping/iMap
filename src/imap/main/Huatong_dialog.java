@@ -17,6 +17,7 @@ import com.example.imap.R;
 
 
 
+
 import android.R.integer;
 import android.app.Activity;
 import android.app.AlertDialog;
@@ -33,6 +34,7 @@ import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TableLayout;
+import android.widget.Toast;
 
 public class Huatong_dialog extends Activity {
 	
@@ -60,9 +62,11 @@ public class Huatong_dialog extends Activity {
 		Button cancelButton  =(Button)findViewById(R.id.cancel);
 		Button playButton  =(Button)findViewById(R.id.play);
 		
-		final String []check_sex = {"未知","男生","女生","混合"};
-		final String []check_language = {"未知","中文","英文","方言"};
-		final String []check_sytle = {"其他","严肃","欢快","搞笑"};
+		
+		
+		final String []check_sex = {"未知","男生","女生","混合","其他"};
+		final String []check_language = {"未知","中文","英文","方言","其他"};
+		final String []check_sytle = {"未知","正式","狂野","欢乐","其他"};
 		
 		uploadButton.setOnClickListener(new View.OnClickListener() {
 			
@@ -95,40 +99,52 @@ public class Huatong_dialog extends Activity {
 					RadioButton sexRadioButton = (RadioButton)findViewById(sexRadioGroup.getCheckedRadioButtonId());
 					RadioButton languageRadioButton = (RadioButton)findViewById(languageRadioGroup.getCheckedRadioButtonId());
 					RadioButton styleRadioButton = (RadioButton)findViewById(styleRadioGroup.getCheckedRadioButtonId());
+					
+					if(editText_name.getText().toString().isEmpty())
+					{
+						 Toast.makeText(Huatong_dialog.this, "语音名称不能为空！", 
+				                 Toast.LENGTH_SHORT).show(); 
+						 return;
+					}
+					if(editText_name.getText().toString().length()> 10)
+					{
+						Toast.makeText(Huatong_dialog.this, "语音名称不能过长！", 
+				                 Toast.LENGTH_SHORT).show(); 
+						return;
+						
+					}
+					if(editText_brief.getText().toString().length()> 80)
+					{
+						Toast.makeText(Huatong_dialog.this, "语音介绍不能过长！", 
+				                 Toast.LENGTH_SHORT).show(); 
+						return;
+					}
 					writer.write(editText_name.getText().toString() + "\n");
 					writer.write(editText_brief.getText().toString()+ "\n");
-					for(int i = 0 ;i<4;i++)
+					
+					for(int i = 0 ;i<5;i++)
 					{
 						if(sexRadioButton.getText().toString().equals(check_sex[i]))
 						{
-							//System.out.println(sexRadioButton.getText().toString() +" "+ check_sex[i]);
 							writer.write(i+ "\n");
 						}
 					}
 					
-					for(int i = 0 ;i<4;i++)
+					for(int i = 0 ;i<5;i++)
 					{
 						if(languageRadioButton.getText().toString().equals(check_language[i]))
 						{
-							//System.out.println(sexRadioButton.getText().toString() +" "+ check_sex[i]);
+							
 							writer.write(i+ "\n");
 						}
 					}
-					for(int i = 0 ;i<4;i++)
+					for(int i = 0 ;i<5;i++)
 					{
 						if(styleRadioButton.getText().toString().equals(check_sytle[i]))
 						{
-							//System.out.println(sexRadioButton.getText().toString() +" "+ check_sex[i]);
 							writer.write(i+ "\n");
 						}
 					}
-					//writer.write(sexRadioButton.getText().toString()+ "\n");
-					
-				/*	if(checkBoxlanguage_c.isChecked())
-						writer.write(checkBoxlanguage_c.getText().toString()+ "\n");
-					if(checkBoxlanguage_e.isChecked())
-						writer.write(checkBoxlanguage_e.getText().toString()+ "\n");
-				*/	
 					writer.close();
 
 				} catch (Exception e) {

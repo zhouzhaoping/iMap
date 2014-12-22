@@ -4,7 +4,12 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent" 
    >
-
+ <TextView
+        android:id="@+id/sex_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="声音"
+        android:textSize="18sp" />
     <RadioGroup
         android:id="@+id/sex"
         android:layout_width="wrap_content"
@@ -12,17 +17,10 @@
         android:orientation="horizontal">
 
         <RadioButton
-            android:id="@+id/radio3"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-          
-            android:text="未知" />
-
-        <RadioButton
             android:id="@+id/radio0"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
+            
             android:text="男生" />
 
         <RadioButton
@@ -36,28 +34,40 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="混合" />
+        <RadioButton
+            android:id="@+id/radio3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          
+            android:text="其他" />
+         <RadioButton
+            android:id="@+id/radio_0"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          	android:visibility="gone"
+          	android:checked = "true"
+            android:text="未知" />
     </RadioGroup>
 
     
-    
+     <TextView
+        android:id="@+id/language_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="语言"
+        android:textSize="18sp" />
      <RadioGroup
         android:id="@+id/language"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
         android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/radio4"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-          
-            android:text="未知" />
+ 
 
         <RadioButton
             android:id="@+id/radio5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
             android:text="中文" />
 
         <RadioButton
@@ -71,40 +81,65 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="方言" />
+        
+         <RadioButton
+            android:id="@+id/radio4"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          
+            android:text="其他" />
+          <RadioButton
+            android:id="@+id/radio_1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          	android:visibility="gone"
+          	android:checked = "true"
+            android:text="未知" />
     </RadioGroup>   
     
-    
+   <TextView
+        android:id="@+id/style_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="风格"
+        android:textSize="18sp" />  
      <RadioGroup
         android:id="@+id/style"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content" 
         android:orientation="horizontal">
 
-        <RadioButton
-            android:id="@+id/radio10"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-          
-            android:text="其他" />
+     
 
         <RadioButton
             android:id="@+id/radio11"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:checked="true"
-            android:text="严肃"/>
+            android:text="正式"/>
 
         <RadioButton
             android:id="@+id/radio12"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="欢快" />
+            android:text="狂野" />
 
         <RadioButton
             android:id="@+id/radio13"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="搞笑" />
+            android:text="欢乐" />
+        <RadioButton
+            android:id="@+id/radio10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="其他" />
+         <RadioButton
+            android:id="@+id/radio_2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          	android:visibility="gone"
+          	android:checked = "true"
+            android:text="未知" />
     </RadioGroup>   
     
     
@@ -143,7 +178,7 @@
         android:id="@+id/speak_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请输入语音名称"
+        android:hint="请输入语音名称"
         android:textSize="18sp" />
 
     <TextView
@@ -157,7 +192,7 @@
         android:id="@+id/speak_brief_input"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="请输入语音的简短介绍"
+        android:hint="请输入少于80字的简短介绍"
         android:textSize="18sp" />
     
     
