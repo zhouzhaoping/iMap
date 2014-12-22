@@ -86,10 +86,15 @@ public class UnUploadItemAdapter extends BaseAdapter {
 		h.file2 = hh.getPath2();
 		h.spotid = MainActivity.viewspotlist.get(hh.getSpotId()).getId() + "";
 		
+		h.gender = hh.getGender();
+		h.language = hh.getLanguage();
+		h.style = hh.getStyle();
+		
 		h.title.setText(hh.getTitle());
 		h.spotname.setText(MainActivity.viewspotlist.get(hh.getSpotId()).getName());
 		h.time.setText(hh.getTime());
 		h.description.setText(hh.getDescription());
+		
 		h.play.setTag(h);
 		h.upload.setTag(h);
 		h.delete.setTag(h);

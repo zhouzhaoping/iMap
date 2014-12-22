@@ -9,6 +9,8 @@ import com.example.imap.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.KeyEvent;
+import android.widget.Toast;
 
 public class WelcomeActivity extends Activity {
 	 public void onCreate(Bundle savedInstanceState) {
@@ -34,4 +36,9 @@ public class WelcomeActivity extends Activity {
 		 };
 		 timer.schedule(task, 1000 * second);//设置这个task在延迟三秒之后自动执行
 	}
+	
+	@Override 
+    public boolean onKeyUp(int keyCode, KeyEvent event) { 
+        return true;
+    } 
 }

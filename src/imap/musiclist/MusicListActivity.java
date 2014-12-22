@@ -23,7 +23,7 @@ public class MusicListActivity extends FragmentActivity {
 	
 	private MusicListFragment popularFragment;
 	private MusicListFragment newFragment;
-	private FilterFragment filterFragment;
+	private MusicListFragment filterFragment;
 
 	private DisplayMetrics dm;//获取当前屏幕的密度
 
@@ -102,7 +102,7 @@ public class MusicListActivity extends FragmentActivity {
 				return newFragment;
 			case 2:
 				if (filterFragment == null) {
-					filterFragment = new FilterFragment();
+					filterFragment = new MusicListFragment(2, id);
 				}
 				return filterFragment;
 			default:

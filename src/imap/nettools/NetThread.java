@@ -46,6 +46,9 @@ public class NetThread {
 	public void makeParam(String[] args, String... realIn) {
 		url = url + args[0] + ".php";
 		
+		if (realIn.length + 1 != args.length)
+			System.out.println("fuck you ass");
+		
 		try {
 			param.put("userName", userName);
 			param.put("password", password);

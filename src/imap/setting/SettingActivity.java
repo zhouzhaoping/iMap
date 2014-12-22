@@ -1,6 +1,7 @@
 package imap.setting;
 
 import imap.main.LoginActivity;
+import imap.main.MainActivity;
 import imap.nettools.Variable;
 
 import org.json.JSONException;
@@ -26,7 +27,7 @@ public class SettingActivity extends Activity {
 	LinearLayout range;
 	TextView rangetext;
 	LinearLayout voicestyle;
-	TextView voicestyletext;
+	static TextView voicestyletext;
 	LinearLayout defaultvoice;
 	TextView defaultvoicetext;
 	
@@ -91,14 +92,21 @@ public class SettingActivity extends Activity {
     private void setListensers()
     {
     	range.setOnClickListener(new RangeRadioClickListener());
-    	voicestyle.setOnClickListener(heheListener);
+    	voicestyle.setOnClickListener(new LinearLayout.OnClickListener(){
+			@Override
+			public void onClick(View v) {
+				  Intent intent = new Intent();
+				  intent.setClass(SettingActivity.this, VoiceStyleActivity.class);
+				  startActivity(intent);
+			}
+    	});
     	defaultvoice.setOnClickListener(new DefaultVoiceRadioClickListener());
     	
+		  
     	mapdownload.setOnClickListener(downloadListener);
     	help.setOnClickListener(helpListener);
     	about.setOnClickListener(aboutListener);
     	
-    	;
     	onlywifi.setOnClickListener(heheListener);
     	skin.setOnClickListener(heheListener);
     	language.setOnClickListener(heheListener);
@@ -208,18 +216,29 @@ public class SettingActivity extends Activity {
     	   }
     	 }
     
-    private String style2String(int g, int l, int s)
+    public static String style2String(int g, int l, int s)
     {
     	String str = "语音偏好设置";
     	if (g + l + s == 0)
     		return str;
-    	str += ":";
+    	str += "：";
     	if (g != 0)
-    		str += "性别(" + Variable.gender[g] + ")";
+    	{
+    		str += Variable.gender[g];
+    		if (g == 4)	str += "性别";
+    		str += " ";
+    	}
     	if (l != 0)
-    		str += "语言(" + Variable.gender[l] + ")";
+    	{
+    		str += Variable.language[l];
+    		if (l == 4)	str += "语言";
+    		str += " ";
+    	}
     	if (s != 0)
-    		str += "性别(" + Variable.gender[s] + ")";
+    	{
+    		str += Variable.style[s];
+    		if (s == 4)	str += "风格";
+    	}
     	return str;
     }
 }

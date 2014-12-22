@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+    
+ <TextView
+        android:id="@+id/sex_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="声音"
+        android:textSize="18sp" />
+    <RadioGroup
+        android:id="@+id/sex"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+
+        <RadioButton
+            android:id="@+id/r11"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="男生" />
+
+        <RadioButton
+            android:id="@+id/r12"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="女生" />
+
+        <RadioButton
+            android:id="@+id/r13"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="混合" />
+        <RadioButton
+            android:id="@+id/r14"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          
+            android:text="其他" />
+         <RadioButton
+            android:id="@+id/r10"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选" />
+         
+    </RadioGroup>
+
+    
+     <TextView
+        android:id="@+id/language_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="语言"
+        android:textSize="18sp" />
+     <RadioGroup
+        android:id="@+id/language"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+
+ 
+
+        <RadioButton
+            android:id="@+id/r21"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="中文" />
+
+        <RadioButton
+            android:id="@+id/r22"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="英文" />
+
+        <RadioButton
+            android:id="@+id/r23"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="方言" />
+        
+         <RadioButton
+            android:id="@+id/r24"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+          
+            android:text="其他" />
+          <RadioButton
+            android:id="@+id/r20"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选" />
+    </RadioGroup>   
+    
+   <TextView
+        android:id="@+id/style_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="风格"
+        android:textSize="18sp" />  
+     <RadioGroup
+        android:id="@+id/style"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" 
+        android:orientation="horizontal">
+
+     
+
+        <RadioButton
+            android:id="@+id/r31"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="正式"/>
+
+        <RadioButton
+            android:id="@+id/r32"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="狂野" />
+
+        <RadioButton
+            android:id="@+id/r33"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="欢乐" />
+        <RadioButton
+            android:id="@+id/r34"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="其他" />
+         <RadioButton
+            android:id="@+id/r30"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="全选" />
+    </RadioGroup>  
+    
+      <Button
+        android:id="@+id/sure"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="保存" />
+</LinearLayout>

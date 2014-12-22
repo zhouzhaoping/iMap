@@ -4,6 +4,7 @@ import imap.main.MyOrientationListener.OnOrientationListener;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 import imap.nettools.ViewSpotData;
+import imap.storage.VoiceCache;
 import imap.util.MyRecorder;
 
 import java.io.BufferedWriter;
@@ -385,7 +386,25 @@ public class MainActivity extends Activity {
 												DialogInterface dialog,
 												int which) {
 											// 这里添加默认语音
-											//viewspotlist.get(j).getId()
+											String filepath = VoiceCache.getDefaultVoiceBySpotId(MainActivity.this, viewspotlist.get(j).getId() + "");
+											//Toast.makeText(MainActivity.this, filepath, Toast.LENGTH_SHORT).show();
+											if (filepath != null)
+											{
+												MediaPlayer player = new MediaPlayer();
+												try {
+													player.setDataSource(filepath);
+													player.prepare();
+													player.start();
+												} catch (IllegalArgumentException e1) {
+													e1.printStackTrace();
+												} catch (SecurityException e1) {
+													e1.printStackTrace();
+												} catch (IllegalStateException e1) {
+													e1.printStackTrace();
+												} catch (IOException e1) {
+													e1.printStackTrace();
+												}
+											}
 										}
 									});
 							builder.create().show();

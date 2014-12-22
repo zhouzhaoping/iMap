@@ -6,6 +6,8 @@ import imap.nettools.Variable;
 import java.io.File;
 import java.io.FileOutputStream;
 
+import org.json.JSONException;
+
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Environment;
@@ -71,6 +73,45 @@ public class VoiceCache
 						Variable.errorCode[returnCode] + "！",
 						Toast.LENGTH_SHORT).show();
 			}
+		}
+		return null;
+	}
+	
+	public static String getDefaultVoiceBySpotId(Context context, String spotid)
+	{
+		SharedPreferences sp = context.getSharedPreferences("imap", 0);
+		String username = sp.getString("username", "");
+		String password = sp.getString("password", "");
+		int defaultn = sp.getInt("default", 0);
+		
+		NetThread netthread = new NetThread(username, password);
+		
+		if (defaultn == 0)
+			netthread.makeParam(Variable.getOfficialVoice, spotid);
+		else if (defaultn == 1)
+		{
+			String gender = sp.getInt("gender", 0) + "";
+			String language = sp.getInt("language", 0) + "";
+			String style = sp.getInt("style", 0) + "";
+			netthread.makeParam(Variable.getRecommendVoice, spotid, gender, language, style);
+		}	
+		else if (defaultn == 2)
+			netthread.makeParam(Variable.getRandomVoice, spotid);
+		
+		int returnCode = netthread.beginDeal();
+		if (returnCode == 0) {
+			try {
+				String voiceId = netthread.getReturn().getString("voiceId");
+				return getVoiceById(context, voiceId);
+			} catch (JSONException e) {
+				e.printStackTrace();
+			}
+		}else if (returnCode == -1) {
+			Toast.makeText(context, "网络错误！", Toast.LENGTH_SHORT).show();
+		} else {
+			Toast.makeText(context,
+					Variable.errorCode[returnCode] + "！",
+					Toast.LENGTH_SHORT).show();
 		}
 		return null;
 	}

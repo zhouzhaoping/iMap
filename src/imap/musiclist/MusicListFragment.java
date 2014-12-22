@@ -88,6 +88,13 @@ public class MusicListFragment extends Fragment {
 			netthread.makeParam(Variable.getHotVoiceFromSpot, id);
 		else if (type == 1)
 			netthread.makeParam(Variable.getNewVoiceFromSpot, id);
+		else if (type == 2)
+		{
+			String gender = sp.getInt("gender", 0) + "";
+			String language = sp.getInt("language", 0) + "";
+			String style = sp.getInt("style", 0) + "";
+			netthread.makeParam(Variable.getFilterVoiceFromSpot, id, gender, language, style);
+		}
 		
 		int returnCode = netthread.beginDeal();
 		
@@ -97,6 +104,8 @@ public class MusicListFragment extends Fragment {
 				return netthread.getVoiceList("hot");
 			else if (type == 1)
 				return netthread.getVoiceList("new");
+			else if (type == 2)
+				return netthread.getVoiceList("recommend");
 			
 		}
 		else if (returnCode == -1)

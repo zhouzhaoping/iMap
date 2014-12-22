@@ -78,6 +78,7 @@
 		 <activity android:name="imap.setting.SettingActivity"></activity>
 		 <activity android:name="imap.setting.HelpActivity"></activity>
 		 <activity android:name="imap.setting.AboutActivity"></activity>
+		 <activity android:name="imap.setting.VoiceStyleActivity"></activity>
 		 
 		 <activity android:name="imap.rank.RankListActivity"></activity>
 		<activity android:name="imap.me.MeActivity"></activity>

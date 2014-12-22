@@ -4,12 +4,15 @@ import imap.nettools.NetThread;
 import imap.nettools.Variable;
 import imap.nettools.ViewSpotData;
 import imap.setting.SettingActivity;
+import imap.storage.VoiceCache;
 
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ThreadPoolExecutor.DiscardOldestPolicy;
+
+import org.json.JSONException;
 
 import com.baidu.platform.comapi.map.m;
 import com.baidu.platform.comapi.map.w;
@@ -19,6 +22,7 @@ import android.app.Service;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.content.SharedPreferences.Editor;
 import android.media.MediaPlayer;
 import android.media.MediaPlayer.OnCompletionListener;
 import android.os.Bundle;
@@ -56,7 +60,7 @@ public class WalkListen extends Service {
 			SharedPreferences sp = getSharedPreferences("imap", MODE_PRIVATE);
 			radius = Variable.ranges[sp.getInt("range", 1)];
 			
-			Toast.makeText(WalkListen.this, "" + radius, Toast.LENGTH_SHORT).show();
+			//Toast.makeText(WalkListen.this, "" + radius, Toast.LENGTH_SHORT).show();
 			//Toast.makeText(
 				//	WalkListen.this,
 					//mCurrentLantitude + " " + mCurrentLongitude + " "
@@ -70,13 +74,13 @@ public class WalkListen extends Service {
 				media.reset();
 				media.release();
 				mylatlong.setpre_mylabellat(-1);
-				mylatlong.setmylabellong(-1);
+				mylatlong.setpre_mylabellong(-1);
 				mylatlong.setnear_listen_view_index(-1);
 				return START_NOT_STICKY;
 			}
 			if (walk_listen == 0 && playState == false) {
 				mylatlong.setpre_mylabellat(-1);
-				mylatlong.setmylabellong(-1);
+				mylatlong.setpre_mylabellong(-1);
 				mylatlong.setnear_listen_view_index(-1);
 				return START_NOT_STICKY;
 			}
@@ -122,8 +126,38 @@ public class WalkListen extends Service {
 						}
 						media = new MediaPlayer();
 						//更改为第i位景点的默认语音
-						File file = new File(Environment.getExternalStorageDirectory(),
-								"myvoice/ccnn.mp3");//默认语音i的地点，或者需要下载的
+						
+						//签到
+						String spotid = MainActivity.viewspotlist.get(index).getId() + "";
+						 String name = sp.getString("username", "");
+						 String pw = sp.getString("password", "");
+						 
+						 NetThread netthread = new NetThread(name, pw);
+						  netthread.makeParam(Variable.markSpot, spotid);
+						  int returnCode = netthread.beginDeal();
+						  
+						  if (returnCode == 0)
+						  {
+							  Toast.makeText(this, "已经在" + MainActivity.viewspotlist.get(index).getName() + "自动签到成功！", 
+						                 Toast.LENGTH_SHORT).show(); 
+						  }
+						  else if (returnCode == -1)
+						  {
+							  Toast.makeText(this, "网络错误！", 
+						                 Toast.LENGTH_SHORT).show();
+						  }
+						  else
+						  {
+							  Toast.makeText(this, Variable.errorCode[returnCode] + "！", 
+						                 Toast.LENGTH_SHORT).show();
+						  }
+						 
+						 // 获取语音
+						String filepath = VoiceCache.getDefaultVoiceBySpotId(this, spotid);
+						if (filepath == null)
+							return START_NOT_STICKY;
+						
+						File file = new File(filepath);//默认语音i的地点，或者需要下载的
 
 						// 设置播放资源
 						try {
