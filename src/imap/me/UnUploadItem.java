@@ -16,6 +16,10 @@ public class UnUploadItem {
 	private String description;
 	private String time;
 	
+	private String gender;
+	private String language;
+	private String style;
+	
 	public UnUploadItem()
 	{
 		
@@ -32,6 +36,9 @@ public class UnUploadItem {
 			Scanner sc = new Scanner(new FileReader(path2));
 			title = sc.nextLine();
 			description = sc.nextLine();
+			gender = sc.nextLine();
+			language = sc.nextLine();
+			style = sc.nextLine();
 		} catch (FileNotFoundException e) {
 			e.printStackTrace();
 		}
@@ -72,5 +79,23 @@ public class UnUploadItem {
 	}
 	public void setTime(String s) {
 		this.time = s;
+	}
+	public String getGender() {
+		return gender;
+	}
+	public void setGender(String gender) {
+		this.gender = gender;
+	}
+	public String getLanguage() {
+		return language;
+	}
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	public String getStyle() {
+		return style;
+	}
+	public void setStyle(String style) {
+		this.style = style;
 	}
 }

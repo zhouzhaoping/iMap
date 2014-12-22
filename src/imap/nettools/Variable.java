@@ -18,8 +18,8 @@ public final class Variable
 	public static String myVoice[] = {"PersonalVoices"};
 	public static String myInfo[] = {"PersonalInfo"};
 	public static String mySign[] = {"PersonalMarks"};
-	public static String getHotVoiceFromSpot[] = {"GetSpotVoicesHot", "viewSpotId", "gender", "language", "style"};
-	public static String getNewVoiceFromSpot[] = {"GetSpotVoicesNew", "viewSpotId", "gender", "language", "style"};
+	public static String getHotVoiceFromSpot[] = {"GetSpotVoicesHot", "viewSpotId"};
+	public static String getNewVoiceFromSpot[] = {"GetSpotVoicesNew", "viewSpotId"};
 	
 	public static String delVoice[] = {"DeleteVoice", "voiceId"};
 	public static String likeVoice[] = {"LikeVoice", "voiceId"};
@@ -28,7 +28,7 @@ public final class Variable
 	public static String errorCode[] = {"成功", "身份验证失败", "数据库连接错误", "标号不合法", "用户名已注册", 
 		"还未完全更新", "语音不属于该用户", "语音已经不存在", "不能对自己的语音进行点赞", "已经点过赞", 
 		"已经举报过", "上传语音格式不正确", "上传失败", "下载失败", "景点不存在",
-		"已经签到过", "不能举报自己的语音"};
+		"已经签到过", "不能举报自己的语音", "该景点无语音", "该景点无官方语音"};
 	
 	public static int faceNum = 8;
 	public static int picId[] = {R.drawable.face0, R.drawable.face1, R.drawable.face2, R.drawable.face3, R.drawable.face4, R.drawable.face5, R.drawable.face6, R.drawable.face7};
@@ -46,6 +46,12 @@ public final class Variable
 	
 	public static double[] ranges = {20, 40, 60, 80, 100};
 	public static String[] areas = {"20米", "40米", "60米", "80米", "100米"};
+	
+	public static String[] gender = {"未知", "男", "女", "混合"};
+	public static String[] language = {"未知", "中文", "英文", "方言", "其他"};
+	public static String[] style = {"未知", "正式", "狂野", "欢乐", "其他"};
+	
+	public static String[] defaultvoice = {"官方", "根据偏好推荐", "随机"};
 	
 	public static String voicepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvoice";	
 	//public static String temppath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvoice/temp";	

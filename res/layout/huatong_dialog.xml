@@ -165,12 +165,18 @@
 android:layout_width="match_parent"
 android:layout_height="match_parent"
 android:orientation="horizontal" >
+        <Button
+        android:id="@+id/upload"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_weight="1"
+        android:text="上传" />
     <Button
         android:id="@+id/sure"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_weight="1"
-        android:text="确定" />
+        android:text="保存" />
 
     <Button
         android:id="@+id/cancel"

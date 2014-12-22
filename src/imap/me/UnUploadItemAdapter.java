@@ -151,7 +151,7 @@ public class UnUploadItemAdapter extends BaseAdapter {
 									String password = sp.getString("password", "");
 									
 									NetThread netthread = new NetThread(username, password);
-									netthread.makeParam(Variable.sendVoice, h.spotid, fileaString, h.title.getText().toString(), h.description.getText().toString(), "0", "0", "0");
+									netthread.makeParam(Variable.sendVoice, h.spotid, fileaString, h.title.getText().toString(), h.description.getText().toString(), h.gender, h.language, h.style);
 									int returnCode = netthread.beginDeal();
 									
 									if (returnCode == 0)
@@ -222,6 +222,10 @@ public class UnUploadItemAdapter extends BaseAdapter {
 		String file2;
 		String spotid;
 
+		String gender;
+		String language;
+		String style;
+		
 		TextView title;
 		TextView spotname;
 		TextView time;

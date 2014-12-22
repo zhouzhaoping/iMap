@@ -85,9 +85,9 @@ public class MusicListFragment extends Fragment {
 		NetThread netthread = new NetThread(username, password);
 		
 		if (type == 0)
-			netthread.makeParam(Variable.getHotVoiceFromSpot, id, "0", "0", "0");
+			netthread.makeParam(Variable.getHotVoiceFromSpot, id);
 		else if (type == 1)
-			netthread.makeParam(Variable.getNewVoiceFromSpot, id, "0", "0", "0");
+			netthread.makeParam(Variable.getNewVoiceFromSpot, id);
 		
 		int returnCode = netthread.beginDeal();
 		

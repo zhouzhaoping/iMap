@@ -55,6 +55,7 @@ public class Huatong_dialog extends Activity {
 		//final CheckBox checkBoxlanguage_e = (CheckBox) findViewById(R.id.english);
 		final EditText editText_name = (EditText) findViewById(R.id.speak_input);
 		final EditText editText_brief = (EditText) findViewById(R.id.speak_brief_input);
+		Button uploadButton  =(Button)findViewById(R.id.upload);	
 		Button sureButton  =(Button)findViewById(R.id.sure);	
 		Button cancelButton  =(Button)findViewById(R.id.cancel);
 		Button playButton  =(Button)findViewById(R.id.play);
@@ -63,6 +64,22 @@ public class Huatong_dialog extends Activity {
 		final String []check_language = {"未知","中文","英文","方言"};
 		final String []check_sytle = {"其他","严肃","欢快","搞笑"};
 		
+		uploadButton.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				editText_name.getText().toString();
+				editText_brief.getText().toString();
+				// TODO 自动生成的方法存根
+				File file_amr = new File(Variable.voicepath,
+						"voice_" + view_point_sure_to_update
+								+ "_" + timeString + ".amr");
+				if (file_amr.exists())
+					file_amr.delete();
+				finish();
+			}
+		});
+
 		sureButton.setOnClickListener(new View.OnClickListener() {
 			
 			@Override
