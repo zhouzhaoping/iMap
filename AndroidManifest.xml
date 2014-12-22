@@ -70,7 +70,7 @@
         <activity android:name="imap.main.SignupActivity"></activity>
         <activity android:name="imap.main.OfflineDemo"></activity>
 		 <activity android:name="imap.main.AlertReceiver"></activity>
-        <activity android:name="imap.main.OneRecorderActivity" android:theme="@style/MyDialogStyle"></activity>
+        <activity android:name="imap.main.OneRecorderActivity" android:theme="@style/MyDialogStyle_luyin"></activity>
         <activity android:name="imap.musiclist.MusicListActivity"></activity>
         <activity android:name="imap.main.Huatong_dialog"  android:theme="@style/MyDialogStyle"></activity>
 		
@@ -84,7 +84,7 @@
         
         <meta-data  
         android:name="com.baidu.lbsapi.API_KEY"  
-        android:value="DkU69Zn5c6LxN2gLfBOn9Ndm" />  
+        android:value="ZMCmaLj67MTXyAAot3z2Z8im" />  
        <!--  DkU69Zn5c6LxN2gLfBOn9Ndm 爪机用  ZMCmaLj67MTXyAAot3z2Z8im 邢捷用-->
         
         <service android:name="com.baidu.location.f" android:enabled="true" android:process=":remote">

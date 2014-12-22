@@ -22,6 +22,7 @@ import javax.crypto.spec.IvParameterSpec;
 
 
 
+
 import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -101,6 +102,7 @@ import com.baidu.mapapi.map.offline.MKOfflineMap;
 import com.baidu.mapapi.map.MyLocationData;
 import com.baidu.mapapi.model.LatLng;
 import com.baidu.navisdk.ui.routeguide.fsm.RouteGuideFSM.IFSMDestStateListener;
+import com.baidu.navisdk.ui.util.TipTool;
 //假如用到位置提醒功能，需要import该类
 //如果使用地理围栏功能，需要import如下类
 import com.baidu.location.BDGeofence;
@@ -214,7 +216,7 @@ public class MainActivity extends Activity {
 	private String timeString;
 
 	
-	
+
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -225,8 +227,7 @@ public class MainActivity extends Activity {
 		setContentView(R.layout.activity_main);
 		aManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 		
-		final Intent alerIntent = new Intent(MainActivity.this,
-				WalkListen.class);
+		
 	
 		/*
 		 * 测试实时经纬度用**************************************************************
@@ -257,6 +258,18 @@ public class MainActivity extends Activity {
 		// 获取全局变量
 		// myAppData_listen = (MyAppData) getApplication();
 
+		
+		
+		final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+		final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
+		final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
+		final ImageButton button_paihang = (ImageButton) findViewById(R.id.button_paihang);
+		final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
+		final TextView Tip = (TextView) findViewById(R.id.textview_tip);
+		final Builder alert_viewpoint = new AlertDialog.Builder(this);
+		final AlertDialog.Builder alert_recorder = new AlertDialog.Builder(this);
+		final Intent alerIntent = new Intent(MainActivity.this,
+				WalkListen.class);
 		/******** 14-12-03 xj* 定位功能 ************************************************/
 		// 设置地图缩放级别
 		MapStatusUpdate u = MapStatusUpdateFactory.zoomTo(18.0f);
@@ -338,7 +351,7 @@ public class MainActivity extends Activity {
 					num = 0;
 					pre_marker = -1;
 				}
-
+				//没有操作时在地图上短按景点操作
 				if (select_button == -1) {
 					for (int i = 0; i < viewspotlist.size(); i++) {
 						if (marker == viewspotlist.get(i).getMarker()) {
@@ -383,7 +396,8 @@ public class MainActivity extends Activity {
 				}
 				if (select_button == 2)// 短按话筒键，选择录音地点
 				{
-
+					
+					Tip.setText("请长按语音键开始录音！");
 					for (int i = 0; i < viewspotlist.size(); i++) {
 
 						if (marker == viewspotlist.get(i).getMarker()) {
@@ -477,15 +491,8 @@ public class MainActivity extends Activity {
 		/********************************************************************/
 
 		/********** 14-12-03 xj* 添加下面5个按钮的选项提示 ***********************/
-
-		final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
-		final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
-		final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
-		final ImageButton button_paihang = (ImageButton) findViewById(R.id.button_paihang);
-		final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
-		final TextView Tip = (TextView) findViewById(R.id.textview_tip);
-		final Builder alert_viewpoint = new AlertDialog.Builder(this);
-		final AlertDialog.Builder alert_recorder = new AlertDialog.Builder(this);
+		
+		
 
 		// 添加景点
 		// 地图长按时间监听注册
@@ -618,6 +625,7 @@ public class MainActivity extends Activity {
 				button_viewpoint.setImageResource(R.drawable.viewing);
 				// 将按钮设置成不可按
 				Tip.setVisibility(View.VISIBLE);
+				Tip.setText("请长按地图确定地点");
 				button_person.setEnabled(false);
 				button_huatong.setEnabled(false);
 				button_paihang.setEnabled(false);
@@ -646,6 +654,8 @@ public class MainActivity extends Activity {
 				// 对地图上所有marker 标亮
 				sure_choose_marker = 0;
 				lightallmarkers();
+				Tip.setVisibility(View.VISIBLE);
+				Tip.setText("请选择地图上的要添加语音的景点");
 				button_person.setEnabled(false);
 				button_viewpoint.setEnabled(false);
 				button_paihang.setEnabled(false);
@@ -670,6 +680,7 @@ public class MainActivity extends Activity {
 				case MotionEvent.ACTION_DOWN:// 按下
 					// 如果当前不是正在录音状态，开始录音
 					button_huatong.setImageResource(R.drawable.huatong2);
+					Tip.setText("正在录音中...");
 					if (RECODE_STATE != RECORD_ING) {
 						SimpleDateFormat sDateFormat = new SimpleDateFormat(
 								"yyyyMMddHHmmss");
@@ -713,6 +724,7 @@ public class MainActivity extends Activity {
 							// //////////////////////////////////////////////////////////
 
 							// 参数还原
+							Tip.setVisibility(View.GONE);
 							select_button = -1;
 							sure_choose_marker = 0;
 							for (int i = 0; i < viewspotlist.size(); i++) {
@@ -842,6 +854,8 @@ public class MainActivity extends Activity {
 		mBaiduMap.setMyLocationEnabled(false);
 		mMapView.onDestroy();
 		mMapView = null;
+		
+		//stopService(alerIntent);
 	//	aManager = (AlarmManager) getSystemService(Service.ALARM_SERVICE);
 	//	Intent i = new Intent(MainActivity.this, WalkListen.class);
 	//	PendingIntent pi_d = PendingIntent.getActivity(MainActivity.this, 0, i,
@@ -867,22 +881,70 @@ public class MainActivity extends Activity {
 	@Override
 	public boolean onKeyUp(int keyCode, KeyEvent event) {
 		if (keyCode == KeyEvent.KEYCODE_BACK) {
-			long secondTime = System.currentTimeMillis();
+			
+			if(select_button == -1)//初始状态
+			{
+				long secondTime = System.currentTimeMillis();
 
-			if (walk_listen == 1) {
-				Toast.makeText(MainActivity.this, "请先关闭边走边听功能，然后退出",
-						Toast.LENGTH_SHORT).show();
-				return true;
-			} else {
-				if (secondTime - firstTime > 1600) {// 如果两次按键时间间隔大于1600毫秒，则不退出
-					Toast.makeText(MainActivity.this, "再按一次退出程序...",
+				if (walk_listen == 1) {
+					Toast.makeText(MainActivity.this, "请先关闭边走边听功能，然后退出",
 							Toast.LENGTH_SHORT).show();
-					firstTime = secondTime;// 更新firstTime
 					return true;
 				} else {
-					System.exit(0);// 否则退出程序
+					if (secondTime - firstTime > 1600) {// 如果两次按键时间间隔大于1600毫秒，则不退出
+						Toast.makeText(MainActivity.this, "再按一次退出程序...",
+								Toast.LENGTH_SHORT).show();
+						firstTime = secondTime;// 更新firstTime
+						return true;
+					} else {
+						System.exit(0);// 否则退出程序
+					}
 				}
 			}
+			
+			if(select_button == 0)//取消添加景点
+			{
+				//还原参数
+				select_button = -1;
+				final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+				final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
+				final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
+				final ImageButton button_paihang = (ImageButton) findViewById(R.id.button_paihang);
+				final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
+				final TextView Tip = (TextView) findViewById(R.id.textview_tip);
+				Tip.setVisibility(View.GONE);
+				button_viewpoint.setImageResource(R.drawable.viewpoint);
+				button_person.setEnabled(true);
+				button_huatong.setEnabled(true);
+				button_paihang.setEnabled(true);
+				button_settings.setEnabled(true);
+				return true;
+			}
+			if(select_button == 2)//取消添加语音操作
+			{
+				
+				select_button = -1;
+				sure_choose_marker = 0;
+				for (int i = 0; i < viewspotlist.size(); i++) {
+					viewspotlist.get(i).getMarker().setIcon(
+							BitmapDescriptorFactory
+									.fromResource(R.drawable.icon));
+				}
+				final ImageButton button_viewpoint = (ImageButton) findViewById(R.id.button_viewpoint);
+				final ImageButton button_person = (ImageButton) findViewById(R.id.button_person);
+				final ImageButton button_huatong = (ImageButton) findViewById(R.id.button_huatong);
+				final ImageButton button_paihang = (ImageButton) findViewById(R.id.button_paihang);
+				final ImageButton button_settings = (ImageButton) findViewById(R.id.button_settings);
+				final TextView Tip = (TextView) findViewById(R.id.textview_tip);
+				Tip.setVisibility(View.GONE);
+				button_huatong.setImageResource(R.drawable.huatong);
+				button_person.setEnabled(true);
+				button_viewpoint.setEnabled(true);
+				button_paihang.setEnabled(true);
+				button_settings.setEnabled(true);
+				return true;
+			}
+			
 		}
 		return super.onKeyUp(keyCode, event);
 	}
