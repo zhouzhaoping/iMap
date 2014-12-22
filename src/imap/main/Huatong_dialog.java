@@ -1,5 +1,7 @@
 package imap.main;
 
+import imap.nettools.Variable;
+
 import java.io.BufferedWriter;
 import java.io.File;
 import java.io.FileWriter;
@@ -60,11 +62,9 @@ public class Huatong_dialog extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO 自动生成的方法存根
 				//标签文件地址
-				File file_txt = new File(Environment
-						.getExternalStorageDirectory(),
-						"myvoice/voice_" + view_point_sure_to_update
+				File file_txt = new File(Variable.voicepath,
+						"voice_" + view_point_sure_to_update
 								+ "_" + timeString + ".txt");
 				try {
 					BufferedWriter writer = new BufferedWriter(
@@ -92,9 +92,8 @@ public class Huatong_dialog extends Activity {
 			@Override
 			public void onClick(View v) {
 				// TODO 自动生成的方法存根
-				File file_amr = new File(Environment
-						.getExternalStorageDirectory(),
-						"myvoice/voice_" + view_point_sure_to_update
+				File file_amr = new File(Variable.voicepath,
+						"voice_" + view_point_sure_to_update
 								+ "_" + timeString + ".amr");
 				if (file_amr.exists())
 					file_amr.delete();
@@ -105,8 +104,6 @@ public class Huatong_dialog extends Activity {
 			
 			@Override
 			public void onClick(View v) {
-				// TODO 自动生成的方法存根
-				
 				// 播放语音
 				Intent intent = new Intent();
 				intent.putExtra("view_point_sure_to_update",

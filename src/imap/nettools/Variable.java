@@ -48,5 +48,5 @@ public final class Variable
 	public static String[] areas = {"20米", "40米", "60米", "80米", "100米"};
 	
 	public static String voicepath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvoice";	
-	public static String temppath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvoice/temp";	
+	//public static String temppath = Environment.getExternalStorageDirectory().getAbsolutePath() + "/myvoice/temp";	
 }

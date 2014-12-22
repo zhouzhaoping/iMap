@@ -1,5 +1,7 @@
 package imap.util;
 
+import imap.nettools.Variable;
+
 import java.io.File;
 import java.io.IOException;
 
@@ -27,8 +29,7 @@ public class MyRecorder {
 		{
 			path += ".amr";
 		}
-		return Environment.getExternalStorageDirectory().getAbsolutePath()
-				+ "/myvoice" + path;
+		return Variable.voicepath + path;
 	}
 	
 	/**开始录音*/
