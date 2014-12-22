@@ -104,37 +104,30 @@ public class Huatong_dialog extends Activity {
 					}
 					writer.write(editText_name.getText().toString() + "\n");
 					writer.write(editText_brief.getText().toString()+ "\n");
-					int x  = 0;
-					for(int i = 0 ;i<4;i++)
+					
+					for(int i = 0 ;i<5;i++)
 					{
 						if(sexRadioButton.getText().toString().equals(check_sex[i]))
 						{
 							writer.write(i+ "\n");
-							x = 1;
 						}
 					}
-					if(x != 1) writer.write("0"+ "\n");
-					x = 0;
-					for(int i = 0 ;i<4;i++)
+					
+					for(int i = 0 ;i<5;i++)
 					{
 						if(languageRadioButton.getText().toString().equals(check_language[i]))
 						{
+							
 							writer.write(i+ "\n");
-							x = 1;
 						}
 					}
-					if(x != 1) writer.write("0"+ "\n");
-					x = 0;
-					for(int i = 0 ;i<4;i++)
+					for(int i = 0 ;i<5;i++)
 					{
 						if(styleRadioButton.getText().toString().equals(check_sytle[i]))
 						{
 							writer.write(i+ "\n");
-							x = 1;
 						}
 					}
-					if(x != 1) writer.write("0"+ "\n");
-					x = 0;
 					writer.close();
 
 				} catch (Exception e) {
