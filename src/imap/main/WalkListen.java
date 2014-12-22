@@ -121,7 +121,7 @@ public class WalkListen extends Service {
 							media.release();
 						}
 						media = new MediaPlayer();
-						
+						//更改为第i位景点的默认语音
 						File file = new File(Environment.getExternalStorageDirectory(),
 								"myvoice/ccnn.mp3");//默认语音i的地点，或者需要下载的
 
