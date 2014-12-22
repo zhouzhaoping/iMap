@@ -1,6 +1,7 @@
 package imap.me;
 
 import imap.nettools.Variable;
+import imap.util.ParseTimeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -17,7 +18,7 @@ public class SpotItem {
 	{
 		try {
 			spotid = Integer.parseInt(obj.getString("viewSpotId"));
-			time = obj.getString("time");
+			time = ParseTimeUtil.getTimeDelta(obj.getString("time"), "yyyy-MM-dd HH:mm:ss");
 		} catch (JSONException e) {
 			e.printStackTrace();
 		}

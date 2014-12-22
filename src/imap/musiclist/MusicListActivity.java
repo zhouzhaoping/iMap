@@ -75,7 +75,7 @@ public class MusicListActivity extends FragmentActivity {
 			super(fm);
 		}
 
-		private final String[] titles = { "最热", "最新", "筛选" };
+		private final String[] titles = { "最热", "最新", "推荐" };
 
 		@Override
 		public CharSequence getPageTitle(int position) {

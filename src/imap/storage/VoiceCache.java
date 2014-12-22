@@ -1,5 +1,6 @@
 package imap.storage;
 
+import imap.main.MainActivity;
 import imap.nettools.NetThread;
 import imap.nettools.Variable;
 
@@ -114,6 +115,14 @@ public class VoiceCache
 					Toast.LENGTH_SHORT).show();
 		}
 		return null;
+	}
+	
+	public static void getDefaultVoiceAll(Context context)
+	{
+		Toast.makeText(context, "正在批量下载。。。", Toast.LENGTH_SHORT).show();
+		for (int i = 0; i < MainActivity.viewspotlist.size(); ++i)
+			getDefaultVoiceBySpotId(context, MainActivity.viewspotlist.get(i).getId() + "");
+		Toast.makeText(context, "批量下载完成！", Toast.LENGTH_SHORT).show();
 	}
 	
 	private static void refresh()

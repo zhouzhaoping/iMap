@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.util.Scanner;
 
 import imap.nettools.Variable;
+import imap.util.ParseTimeUtil;
 
 public class UnUploadItem {
 	
@@ -30,7 +31,7 @@ public class UnUploadItem {
 		path2 = Variable.voicepath + "/" + obj + ".txt";
 		String[] str = obj.split("_");
 		spotid = Integer.parseInt(str[1]);
-		time = str[2];
+		time = ParseTimeUtil.getTimeDelta(str[2], "yyyyMMddHHmmss");
 		
 		try {
 			Scanner sc = new Scanner(new FileReader(path2));

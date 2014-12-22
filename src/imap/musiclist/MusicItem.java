@@ -1,6 +1,7 @@
 package imap.musiclist;
 
 import imap.nettools.Variable;
+import imap.util.ParseTimeUtil;
 
 import org.json.JSONException;
 import org.json.JSONObject;
@@ -25,7 +26,7 @@ public class MusicItem {
 			name = obj.getString("author");
 			title = obj.getString("title");
 			description = obj.getString("description");
-			postTime = obj.getString("time");
+			postTime = ParseTimeUtil.getTimeDelta(obj.getString("time"), "yyyy-MM-dd HH:mm:ss");
 			face = Variable.int2pic(Integer.parseInt(obj.getString("facePic")));
 			likesum = Integer.parseInt(obj.getString("likes"));
 		} catch (JSONException e) {

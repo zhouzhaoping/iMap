@@ -116,14 +116,18 @@ public class MeListFragment extends Fragment {
 		if (!dir.exists())
 			dir.mkdirs();
 		
-		File[] list = dir.listFiles();       
+		File[] list = dir.listFiles();
 		for(int i = 0; i < list.length; i++)
 		{
 			String name = list[i].getName();
 			if (name.endsWith(".amr"))
 			{
-				UnUploadItem mi = new UnUploadItem(name.substring(0, name.length() - 4));
-				unUpItemList.add(mi);
+				String name2 = Variable.voicepath + "/" + name.substring(0, name.length() - 4) + ".txt";
+				if (new File(name2).exists())
+				{
+					UnUploadItem mi = new UnUploadItem(name.substring(0, name.length() - 4));
+					unUpItemList.add(mi);
+				}
 			}
 		}
 		return unUpItemList;

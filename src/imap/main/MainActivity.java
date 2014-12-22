@@ -357,7 +357,7 @@ public class MainActivity extends Activity {
 					for (int i = 0; i < viewspotlist.size(); i++) {
 						if (marker == viewspotlist.get(i).getMarker()) {
 							System.out.println(i + " -> " + viewspotlist.get(i).getId());
-							builder.setIcon(R.drawable.viewpoint);
+							builder.setIcon(R.drawable.icon);
 
 							builder.setTitle(viewspotlist.get(i).getName());
 							builder.setMessage(viewspotlist.get(i)

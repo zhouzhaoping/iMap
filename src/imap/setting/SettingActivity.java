@@ -3,6 +3,7 @@ package imap.setting;
 import imap.main.LoginActivity;
 import imap.main.MainActivity;
 import imap.nettools.Variable;
+import imap.storage.VoiceCache;
 
 import org.json.JSONException;
 
@@ -31,6 +32,7 @@ public class SettingActivity extends Activity {
 	LinearLayout defaultvoice;
 	TextView defaultvoicetext;
 	
+	LinearLayout downloadall;
 	LinearLayout mapdownload;
 	LinearLayout help;
 	LinearLayout about;
@@ -62,6 +64,7 @@ public class SettingActivity extends Activity {
     	defaultvoice = (LinearLayout)findViewById(R.id.defaultvoice);
     	defaultvoicetext = (TextView)findViewById(R.id.defaultvoicetext);
     	
+    	downloadall = (LinearLayout)findViewById(R.id.downloadall);
     	mapdownload = (LinearLayout)findViewById(R.id.mapdownload);
     	help = (LinearLayout)findViewById(R.id.help);
     	about = (LinearLayout)findViewById(R.id.about);
@@ -102,7 +105,8 @@ public class SettingActivity extends Activity {
     	});
     	defaultvoice.setOnClickListener(new DefaultVoiceRadioClickListener());
     	
-		  
+		
+    	downloadall.setOnClickListener(downloadallListener);
     	mapdownload.setOnClickListener(downloadListener);
     	help.setOnClickListener(helpListener);
     	about.setOnClickListener(aboutListener);
@@ -116,6 +120,12 @@ public class SettingActivity extends Activity {
     private View.OnClickListener heheListener = new View.OnClickListener() {
         public void onClick(View v) {
         	 Toast.makeText(SettingActivity.this, "该功能暂未开放~", Toast.LENGTH_LONG).show();
+        }
+    };
+    
+    private View.OnClickListener downloadallListener = new View.OnClickListener() {
+        public void onClick(View v) {
+        	VoiceCache.getDefaultVoiceAll(SettingActivity.this);
         }
     };
     
@@ -215,6 +225,7 @@ public class SettingActivity extends Activity {
 			  defaultvoicetext.setText("默认语音风格：" + Variable.defaultvoice[index]);
     	   }
     	 }
+    
     
     public static String style2String(int g, int l, int s)
     {
