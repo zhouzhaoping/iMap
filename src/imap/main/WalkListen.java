@@ -127,6 +127,19 @@ public class WalkListen extends Service {
 						media = new MediaPlayer();
 						//更改为第i位景点的默认语音
 						
+						// 对虚拟景点进行的修正
+						if (MainActivity.viewspotlist.get(index).getParent() != -1)
+						{
+							for (int i = 0; i < MainActivity.viewspotlist.size(); ++i)
+							{
+								if (MainActivity.viewspotlist.get(i).getId() == MainActivity.viewspotlist.get(index).getParent())
+								{
+									index = i;
+									break;
+								}
+							}
+						}
+						
 						//签到
 						String spotid = MainActivity.viewspotlist.get(index).getId() + "";
 						 String name = sp.getString("username", "");
