@@ -535,7 +535,7 @@ public class MainActivity extends Activity {
 				button_paihang.setEnabled(true);
 				button_settings.setEnabled(true);
 				// 显示弹窗
-				alert_viewpoint.setIcon(R.drawable.viewpoint);
+				alert_viewpoint.setIcon(R.drawable.icon);
 				alert_viewpoint.setTitle("添加景点");
 
 				// 装载对话框界面布局
@@ -582,7 +582,7 @@ public class MainActivity extends Activity {
 							Toast.makeText(MainActivity.this, "经景点名在20个字以内！",
 									Toast.LENGTH_SHORT).show();
 						else if (add_reason.length() > 200)
-							Toast.makeText(MainActivity.this, "理由在6~14位！",
+							Toast.makeText(MainActivity.this, "理由请小于200字！",
 									Toast.LENGTH_SHORT).show();
 						else if (add_latitude.isEmpty()
 								|| add_longtitude.isEmpty())

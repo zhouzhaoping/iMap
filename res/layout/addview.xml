@@ -3,7 +3,7 @@
 	android:id="@+id/addview"
 	android:orientation="vertical"
 	android:layout_width="fill_parent"
-	android:layout_height="fill_parent"
+	android:layout_height="wrap_content"
 	>
 <TableRow>
 <TextView
@@ -36,6 +36,8 @@
 	android:layout_height="wrap_content"
 	android:hint="请填写您的申请理由"
 	android:selectAllOnFocus="true"
+	android:gravity="top"	
+	android:inputType="textImeMultiLine"
 	
 	/>
 </TableRow>

@@ -66,7 +66,7 @@ public class WalkListen extends Service {
 					//mCurrentLantitude + " " + mCurrentLongitude + " "
 						//	+ walk_listen, Toast.LENGTH_SHORT).show();
 
-			System.out.println("您好：：" + flags + "  " + startId);
+			//System.out.println("您好：：" + flags + "  " + startId);
 
 			if (walk_listen == 0 && playState == true) {
 				playState = false;
