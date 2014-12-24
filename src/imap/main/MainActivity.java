@@ -478,7 +478,7 @@ public class MainActivity extends Activity {
 				//	mylatlong.setmylabellong(mCurrentLongitude);
 					mylatlong.setwalk_listen(walk_listen);
 
-					aManager.set(AlarmManager.RTC, System.currentTimeMillis(), alermpi);
+					aManager.set(AlarmManager.RTC_WAKEUP, System.currentTimeMillis(), alermpi);
 					aManager.cancel(alermpi);
 					
 					//stopService(alerIntent);	
